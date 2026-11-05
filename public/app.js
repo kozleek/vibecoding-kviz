@@ -9,7 +9,8 @@ const ANIMALS = [
   { name: "Jezevci", emoji: "🦡", color: "#5d6a75" },
   { name: "Divočáci", emoji: "🐗", color: "#4c8a35" },
 ];
-const MAX_TEAMS = 9;
+const MAX_TEAMS = 4;
+const MIN_TEAMS = 2;
 const LEVEL_NAMES = { lehka: "Lehká", stredni: "Střední", tezka: "Těžká", hardcore: "Hardcore", mix: "Mix" };
 const TOPIC_SUGGESTIONS = ["Sport", "Vesmír", "Česká historie", "Zeměpis", "Příroda", "Film a seriály", "Hudba", "Věda a technika", "Jídlo"];
 const LOADING_TIPS = [
@@ -36,6 +37,11 @@ let state = load() || {
   index: 0,
   teams: ANIMALS.slice(0, 2).map((a) => ({ ...a, score: 0 })),
 };
+state.teams = state.teams.slice(0, MAX_TEAMS); // starší uložený stav mohl mít víc týmů
+while (state.teams.length < MIN_TEAMS) {
+  const used = new Set(state.teams.map((t) => t.emoji));
+  state.teams.push({ ...ANIMALS.find((a) => !used.has(a.emoji)), score: 0 });
+}
 // doplnění barev u starších uložených týmů
 state.teams.forEach((t, i) => {
   if (!t.color) t.color = (ANIMALS.find((a) => a.emoji === t.emoji) || ANIMALS[i % ANIMALS.length]).color;
@@ -342,7 +348,7 @@ function renderTeams() {
 
     // odebrání týmu jen ve velkém zobrazení
     const tools = el("div", "tools");
-    if (state.teams.length > 1) {
+    if (state.teams.length > MIN_TEAMS) {
       const del = el("button", "del", "✕");
       del.title = "Odebrat tým";
       del.addEventListener("click", () => removeTeam(i));
@@ -383,16 +389,15 @@ applyTeamsLayout();
   setTimeout(() => f.remove(), 800);
 }
 
-function addTeam() {
+// tým vznikne až po výběru emoji; zavření nabídky bez výběru tým nepřidá
+function addTeam(e) {
+  e?.stopPropagation(); // jinak by klik hned zavřel výběr emoji
   if (state.teams.length >= MAX_TEAMS) return;
-  const used = new Set(state.teams.map((t) => t.emoji));
-  const animal = ANIMALS.find((a) => !used.has(a.emoji)) || ANIMALS[state.teams.length];
-  state.teams.push({ ...animal, score: 0 });
-  renderTeams();
-  save();
+  openEmojiPicker("new", e?.currentTarget || $("bigAddTeamBtn"));
 }
 
 function removeTeam(i) {
+  if (state.teams.length <= MIN_TEAMS) return;
   const snapshot = JSON.stringify(state.teams);
   const [t] = state.teams.splice(i, 1);
   renderTeams();
@@ -440,7 +445,8 @@ function openEmojiPicker(i, anchor) {
   const picker = $("emojiPicker");
   if (pickerTeam === i && !picker.hidden) return closeEmojiPicker();
   pickerTeam = i;
-  const team = state.teams[i];
+  const isNew = i === "new";
+  const team = isNew ? { emoji: null, color: "var(--accent)" } : state.teams[i];
   const used = new Set(state.teams.filter((_, j) => j !== i).map((t) => t.emoji));
   const grid = $("emojiGrid");
   grid.innerHTML = "";
@@ -449,6 +455,15 @@ function openEmojiPicker(i, anchor) {
     b.title = EMOJI_DATA[em][0] + (used.has(em) ? " (používá jiný tým)" : "");
     b.style.setProperty("--c", EMOJI_DATA[em][1]);
     b.addEventListener("click", () => {
+      if (isNew) {
+        if (state.teams.length >= MAX_TEAMS) return closeEmojiPicker();
+        state.teams.push({ name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 });
+        closeEmojiPicker();
+        renderTeams();
+        save();
+        $("teams").children[state.teams.length - 1]?.scrollIntoView({ block: "nearest", inline: "nearest" });
+        return;
+      }
       team.emoji = em;
       team.color = EMOJI_DATA[em][1];
       if (!team.customName) team.name = EMOJI_NAMES[em];
@@ -533,8 +548,8 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" || e.key === " " || e.key === "Enter" || e.key.startsWith("Arrow")) return;
   }
 
-  // 1–9 (horní řada i numerická klávesnice), Shift = odečíst
-  const m = e.code.match(/^(?:Digit|Numpad)([1-9])$/);
+  // 1–4 (horní řada i numerická klávesnice), Shift = odečíst
+  const m = e.code.match(/^(?:Digit|Numpad)([1-4])$/);
   if (m) {
     e.preventDefault();
     addPoints(Number(m[1]) - 1, e.shiftKey ? -1 : 1);

@@ -14,13 +14,13 @@ npm start              # http://localhost:3000  (npm run dev = s auto-reloadem)
 
 | Klávesa | Akce |
 |---|---|
-| `1`–`9` | +1 bod týmu s daným číslem |
+| `1`–`4` | +1 bod týmu s daným číslem |
 | `Shift` + číslo | −1 bod |
 | `A` / `B` / `C` | vybrat odpověď (ukáže správnou + vysvětlení) |
 | `Mezerník` / `Enter` | ukázat správnou odpověď bez výběru |
 | `←` / `→` | předchozí / další otázka |
 
-Týmy (max. 9) jdou přidat, odebrat a přejmenovat kliknutím na název. Stav (otázky, body) se drží v `localStorage`, takže přežije reload.
+Týmy (max. 4) jdou přidat, odebrat a přejmenovat kliknutím na název. Stav (otázky, body) se drží v `localStorage`, takže přežije reload.
 
 ## Deploy (Coolify / Nixpacks)
 
