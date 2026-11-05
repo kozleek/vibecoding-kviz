@@ -283,6 +283,7 @@ body[data-diff="lehká"] { --dc: #5bb77d; --dd: #2a6b45; }
 body[data-diff="střední"] { --dc: #eaa846; --dd: #9c5a16; }
 body[data-diff="těžká"] { --dc: #e2685a; --dd: #8f2c24; }
 body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
+body[data-diff="setup"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání kvízu: lesní tyrkys */
 
 .q-text {
   font-family: var(--display); font-weight: 800;

@@ -89,7 +89,9 @@ function show(view) {
 
   clearInterval(loadingTimer);
   if (view === "loading") startLoadingTips();
-  if (view !== "quiz") delete document.body.dataset.diff;
+  // pozadí: u otázek podle obtížnosti, na zadání a při načítání vlastní gradient, jinde neutrální
+  if (view === "setup" || view === "loading") document.body.dataset.diff = "setup";
+  else if (view !== "quiz") delete document.body.dataset.diff;
   if (view === "quiz") renderQuestion(true);
   if (view === "results") renderResults();
   $("main").scrollTop = 0;
