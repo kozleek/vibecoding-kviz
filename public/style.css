@@ -409,10 +409,8 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
   grid-row: span 2; width: 46px; height: 46px; border-radius: 14px;
   display: grid; place-items: center; font-size: 1.6rem;
   background: color-mix(in srgb, var(--team) 18%, var(--surface));
-  position: relative; border: 0; padding: 0; cursor: pointer;
-  transition: transform .12s, box-shadow .12s;
+  position: relative; border: 0; padding: 0; cursor: default; /* ikona týmu bez „ruky“ */
 }
-div.avatar { cursor: inherit; }
 .team .key {
   position: absolute; bottom: -6px; right: -6px;
   min-width: 22px; height: 22px; padding: 0 5px; border-radius: 7px;
