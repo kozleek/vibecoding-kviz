@@ -180,7 +180,7 @@ legend.label { margin-bottom: 10px; }
 }
 .extra-btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn:disabled:hover { border-color: var(--border); }
-.extra-hint { margin: 0 0 12px; }
+.dialog .extra-hint { margin: 0 0 10px; }
 #extra {
   width: 100%; display: block;
   font: inherit; font-size: 1.05rem; line-height: 1.45; resize: vertical; min-height: 80px;
@@ -722,9 +722,9 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .dialog td { padding: 8px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .dialog .shortcuts td:first-child { width: 45%; }
 .dialog.help { max-width: 580px; padding: 28px 36px 32px; }
-.dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.dialog-head h3 { margin: 0; outline: none; }
-.dialog-head form { margin: 0; }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -6px -10px 14px 0; } /* křížek zarovnaný s nadpisem */
+.dialog .dialog-head h3 { margin: 0; outline: none; line-height: 1.2; }
+.dialog .dialog-head form { margin: 0; }
 .dialog-head .icon-btn { width: 44px; height: 44px; font-size: 1.5rem; }
 .dialog-head .icon-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
 .dialog.help td { padding: 10px 0; font-size: 1.05rem; }
@@ -743,7 +743,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 }
 .confirm h3 { margin: 0 0 8px; }
 .confirm p { margin: 0; color: var(--muted); font-size: 1.05rem; line-height: 1.45; }
-.dialog .confirm-actions { display: flex; gap: 10px; margin-top: 24px; }
+.dialog .confirm-actions { display: flex; gap: 10px; margin-top: 20px; }
 .confirm-actions .btn { flex: 1; }
 .btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
 
