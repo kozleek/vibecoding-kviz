@@ -48,12 +48,12 @@ html, body { margin: 0; height: 100%; }
 body {
   font-family: var(--font);
   --dc: var(--bg); --dd: var(--bg);
+  /* světlejší gradient (jen zadání kvízu): dole sytější, nahoru plynule do pozadí */
   background: linear-gradient(0deg,
-    var(--dd) 0%,
-    color-mix(in srgb, var(--dc) 75%, var(--dd)) 18%,
-    color-mix(in srgb, var(--dc) 45%, var(--bg)) 42%,
-    color-mix(in srgb, var(--dc) 16%, var(--bg)) 70%,
-    color-mix(in srgb, var(--dc) 5%, var(--bg)) 100%);
+    color-mix(in srgb, var(--dc) 55%, var(--bg)) 0%,
+    color-mix(in srgb, var(--dc) 32%, var(--bg)) 30%,
+    color-mix(in srgb, var(--dc) 12%, var(--bg)) 65%,
+    color-mix(in srgb, var(--dc) 3%, var(--bg)) 100%);
   background-color: var(--bg);
   transition: --dc .6s ease, --dd .6s ease;
   color: var(--text);

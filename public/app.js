@@ -89,9 +89,9 @@ function show(view) {
 
   clearInterval(loadingTimer);
   if (view === "loading") startLoadingTips();
-  // pozadí: na zadání a při načítání podle zvolené obtížnosti, u otázek jen v mixu, jinde neutrální
-  if (view === "setup" || view === "loading") applySetupGradient();
-  else if (view !== "quiz") delete document.body.dataset.diff;
+  // gradient jen na zadání (podle zvolené obtížnosti); otázky a ostatní obrazovky neutrální – čitelnost na TV/projektoru
+  if (view === "setup") applySetupGradient();
+  else delete document.body.dataset.diff;
   if (view === "quiz") renderQuestion(true);
   if (view === "results") renderResults();
   $("main").scrollTop = 0;
@@ -238,13 +238,11 @@ function renderQuestion(animate = false) {
   const multi = state.quiz.topic.includes(",");
   $("qTopic").hidden = !(multi && q.topic);
   $("qTopic").textContent = q.topic || "";
-  // štítek obtížnosti i barevné pozadí jen v mixu
+  // štítek obtížnosti jen v mixu (bez barevného pozadí)
   const mixQuiz = state.quiz.level === "mix";
   $("qLevel").hidden = !mixQuiz;
   $("qLevel").textContent = q.difficulty;
   $("qLevel").className = "pill level-pill " + q.difficulty;
-  if (mixQuiz) document.body.dataset.diff = q.difficulty;
-  else delete document.body.dataset.diff;
   $("qPoints").hidden = !adaptiveOn();
   $("qPoints").textContent = adaptiveOn() ? pointsLabel(diffPoints(q.difficulty)) : "";
   $("qText").textContent = q.question;
