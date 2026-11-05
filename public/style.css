@@ -42,18 +42,20 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
-/* barva obtížnosti aktuální otázky (jen mix) – plynulý přechod barvy pozadí */
-@property --diff { syntax: "<color>"; inherits: true; initial-value: #f3f1ea; }
+/* barva obtížnosti aktuální otázky – pozadí: dole tmavý odstín, nahoru plynule světlejší */
+@property --dc { syntax: "<color>"; inherits: true; initial-value: #f3f1ea; } /* hlavní barva */
+@property --dd { syntax: "<color>"; inherits: true; initial-value: #f3f1ea; } /* tmavý odstín */
 body {
   font-family: var(--font);
-  --diff: var(--bg);
-  /* dvě barevné „záře“ dole + celkový nádech zdola, ať je obtížnost na první pohled poznat */
-  background:
-    radial-gradient(70% 65% at 12% 100%, color-mix(in srgb, var(--diff) 55%, transparent), transparent 70%),
-    radial-gradient(60% 60% at 90% 92%, color-mix(in srgb, var(--diff) 40%, transparent), transparent 70%),
-    linear-gradient(0deg, color-mix(in srgb, var(--diff) 22%, var(--bg)) 0%, var(--bg) 90%);
+  --dc: var(--bg); --dd: var(--bg);
+  background: linear-gradient(0deg,
+    var(--dd) 0%,
+    color-mix(in srgb, var(--dc) 75%, var(--dd)) 18%,
+    color-mix(in srgb, var(--dc) 45%, var(--bg)) 42%,
+    color-mix(in srgb, var(--dc) 16%, var(--bg)) 70%,
+    color-mix(in srgb, var(--dc) 5%, var(--bg)) 100%);
   background-color: var(--bg);
-  transition: --diff .6s ease;
+  transition: --dc .6s ease, --dd .6s ease;
   color: var(--text);
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -277,10 +279,10 @@ legend.label { margin-bottom: 10px; }
 .level-pill.střední { background: var(--warn-soft); color: var(--warn); }
 .level-pill.těžká { background: var(--bad-soft); color: var(--bad); }
 .level-pill.hardcore { background: var(--text); color: var(--surface); }
-body[data-diff="lehká"] { --diff: var(--good); }
-body[data-diff="střední"] { --diff: var(--warn); }
-body[data-diff="těžká"] { --diff: var(--bad); }
-body[data-diff="hardcore"] { --diff: var(--text); }
+body[data-diff="lehká"] { --dc: #5bb77d; --dd: #2a6b45; }
+body[data-diff="střední"] { --dc: #eaa846; --dd: #9c5a16; }
+body[data-diff="těžká"] { --dc: #e2685a; --dd: #8f2c24; }
+body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
 
 .q-text {
   font-family: var(--display); font-weight: 800;
