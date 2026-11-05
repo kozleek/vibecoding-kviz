@@ -559,7 +559,7 @@ body.teams-big .settings-options { flex-direction: column; align-items: center; 
 /* ============ Velké zobrazení týmů ============ */
 .big-only { display: none; }
 body.teams-big .big-only { display: flex; }
-body.teams-big { grid-template-rows: auto 1fr; }
+body.teams-big { grid-template-rows: auto 1fr; background: var(--bg); } /* nastavení bez gradientu zadání – hlavička stejné barvy jako zbytek */
 body.teams-big main { display: none; }
 body.teams-big .scoreboard {
   display: flex;
