@@ -376,7 +376,7 @@ body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
 /* ============ Scoreboard ============ */
 .scoreboard {
   background: transparent; /* bez podbarvení – gradient obtížnosti jde až dolů */
-  padding: 12px 24px; display: grid; align-items: center; gap: 20px;
+  padding: 12px 24px 28px; display: grid; align-items: center; gap: 20px; /* odsazení od spodního okraje */
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
@@ -691,7 +691,7 @@ body.teams-big .team.bump { transform: scale(1.02); }
   .levels { grid-template-columns: repeat(2, 1fr); }
   .level:last-child { grid-column: 1 / -1; }
   .topbar-info { display: none; }
-  .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 8px; padding-bottom: 8px; }
+  .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 8px; padding-bottom: 18px; }
   .scoreboard-tools { justify-content: flex-end; }
   .answer { gap: 14px; padding: 12px 14px; }
   .q-stage { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -723,7 +723,7 @@ body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--te
   body.teams-big .team .key { min-width: 32px; height: 32px; font-size: 1.05rem; border-radius: 10px; }
 
   /* lišta týmů: menší karty, ať se 4 týmy vejdou vedle sebe */
-  .scoreboard { padding: 10px 16px; gap: 12px; }
+  .scoreboard { padding: 10px 16px 22px; gap: 12px; }
   .teams { gap: 8px; }
   /* ikona vlevo, vpravo název a pod ním skóre – název má celou šířku */
   .scoreboard .team {
