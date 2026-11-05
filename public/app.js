@@ -163,8 +163,16 @@ function startLoadingTips() {
   }, 3500);
 }
 
-function newQuiz() {
-  if (state.quiz && !confirm("Začít nový kvíz? Aktuální otázky se zahodí, body týmů zůstanou.")) return;
+async function newQuiz() {
+  if (state.quiz) {
+    const ok = await confirmDialog({
+      icon: "📝",
+      title: "Začít nový kvíz?",
+      text: "Aktuální otázky se zahodí. Týmy a body zůstanou.",
+      ok: "Nový kvíz",
+    });
+    if (!ok) return;
+  }
   state.quiz = null;
   show("setup");
   $("topic").focus();
@@ -302,7 +310,26 @@ function renderTeams() {
   const max = Math.max(...state.teams.map((t) => t.score));
   const leaders = state.teams.filter((t) => t.score === max).length;
 
+  const big = !!state.bigTeams;
+
   state.teams.forEach((t, i) => {
+    // malé zobrazení: jen čtení, kliknutí na kartu = +1 bod
+    if (!big) {
+      const card = el("button", "team");
+      card.style.setProperty("--team", t.color);
+      if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
+      card.title = `+1 bod (klávesa ${i + 1})`;
+      const avatar = el("div", "avatar", t.emoji);
+      avatar.append(el("span", "key", String(i + 1)));
+      const scoreRow = el("div", "score-row");
+      scoreRow.append(el("span", "score", String(t.score)));
+      card.append(avatar, el("span", "name", t.name), scoreRow,
+        el("div", "crown", card.classList.contains("leader") ? "👑 vede" : ""));
+      card.addEventListener("click", () => addPoints(i, 1));
+      wrap.appendChild(card);
+      return;
+    }
+
     const card = el("div", "team");
     card.style.setProperty("--team", t.color);
     if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
@@ -359,13 +386,13 @@ function renderTeams() {
     wrap.appendChild(card);
   });
 
-  const n = state.teams.length;
-  wrap.style.setProperty("--cols", { 1: 1, 2: 2, 3: 3, 4: 4, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5 }[n] || 3);
-  $("bigAddTeamBtn").disabled = n >= MAX_TEAMS;
+  // ve velkém zobrazení dlaždice (+) pro přidání týmu
+  const canAdd = big && state.teams.length < MAX_TEAMS;
+  wrap.style.setProperty("--cols", Math.min(4, state.teams.length + (canAdd ? 1 : 0)));
 
-  if (state.teams.length < MAX_TEAMS) {
+  if (canAdd) {
     const add = el("button", "add-team");
-    add.innerHTML = '<i class="ph ph-plus"></i>';
+    add.innerHTML = '<i class="ph ph-plus"></i><span>Přidat tým</span>';
     add.title = "Přidat tým";
     add.setAttribute("aria-label", "Přidat tým");
     add.addEventListener("click", addTeam);
@@ -379,7 +406,6 @@ function addPoints(i, delta) {
   if (!t) return;
   t.score += delta;
   renderTeams();
-applyTeamsLayout();
   save();
   const card = $("teams").children[i];
   card.classList.add("bump");
@@ -393,28 +419,57 @@ applyTeamsLayout();
 function addTeam(e) {
   e?.stopPropagation(); // jinak by klik hned zavřel výběr emoji
   if (state.teams.length >= MAX_TEAMS) return;
-  openEmojiPicker("new", e?.currentTarget || $("bigAddTeamBtn"));
+  openEmojiPicker("new", e?.currentTarget || document.querySelector(".add-team"));
 }
 
-function removeTeam(i) {
+async function removeTeam(i) {
   if (state.teams.length <= MIN_TEAMS) return;
-  const snapshot = JSON.stringify(state.teams);
-  const [t] = state.teams.splice(i, 1);
+  const t = state.teams[i];
+  const ok = await confirmDialog({
+    icon: t.emoji,
+    title: `Odebrat tým ${t.name}?`,
+    text: t.score ? `Tým má ${t.score} b. Body se ztratí.` : "Tým zmizí ze seznamu.",
+    ok: "Odebrat",
+    danger: true,
+  });
+  if (!ok) return;
+  state.teams.splice(i, 1);
   renderTeams();
   save();
-  toast(`Tým ${t.name} odebrán`, "Vrátit", () => { state.teams = JSON.parse(snapshot); renderTeams(); save(); });
 }
 
-$("resetScoresBtn").addEventListener("click", () => {
-  const snapshot = state.teams.map((t) => t.score);
+// reset týmů: dva náhodné týmy (různé ikony), body na nule
+$("resetTeamsBtn").addEventListener("click", async () => {
+  const ok = await confirmDialog({
+    icon: "🔀",
+    title: "Resetovat týmy?",
+    text: "Současné týmy i body zmizí a nahradí je dva nové náhodné týmy.",
+    ok: "Resetovat",
+    danger: true,
+  });
+  if (!ok) return;
+  const pool = [...EMOJIS];
+  state.teams = Array.from({ length: MIN_TEAMS }, () => {
+    const em = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
+    return { name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 };
+  });
+  closeEmojiPicker();
+  renderTeams();
+  save();
+});
+
+$("resetScoresBtn").addEventListener("click", async () => {
+  const ok = await confirmDialog({
+    icon: "🧹",
+    title: "Vynulovat body?",
+    text: "Všem týmům se nastaví 0 bodů. Týmy zůstanou.",
+    ok: "Vynulovat",
+    danger: true,
+  });
+  if (!ok) return;
   state.teams.forEach((t) => (t.score = 0));
   renderTeams();
   save();
-  toast("Body vynulovány", "Vrátit", () => {
-    state.teams.forEach((t, i) => (t.score = snapshot[i] ?? 0));
-    renderTeams();
-    save();
-  });
 });
 
 /* ---------- Výběr emoji ---------- */
@@ -494,22 +549,24 @@ document.addEventListener("click", (e) => {
 addEventListener("resize", closeEmojiPicker);
 $("teams").addEventListener("scroll", closeEmojiPicker);
 
-/* ---------- Toast ---------- */
-let toastTimer;
-function toast(text, actionLabel, action) {
-  const t = $("toast");
-  t.innerHTML = "";
-  t.append(el("span", null, text));
-  if (actionLabel) {
-    const b = el("button", "link-btn", actionLabel);
-    b.style.cssText = "color:inherit;margin-left:12px;pointer-events:auto";
-    b.addEventListener("click", () => { action(); t.classList.remove("show"); });
-    t.append(b);
-  }
-  t.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 5000);
+/* ---------- Potvrzovací dialog ---------- */
+function confirmDialog({ icon = "❓", title, text = "", ok = "Potvrdit", danger = false }) {
+  const d = $("confirmDialog");
+  $("confirmIcon").textContent = icon;
+  $("confirmTitle").textContent = title;
+  $("confirmText").textContent = text;
+  $("confirmOk").textContent = ok;
+  $("confirmOk").classList.toggle("danger", danger);
+  d.returnValue = "";
+  closeEmojiPicker();
+  d.showModal();
+  $("confirmOk").focus();
+  return new Promise((resolve) => {
+    d.addEventListener("close", () => resolve(d.returnValue === "ok"), { once: true });
+  });
 }
+// kliknutí na pozadí dialog zavře
+$("confirmDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close("cancel"); });
 
 /* ---------- Celá obrazovka & nápověda ---------- */
 function toggleFullscreen() {
@@ -526,8 +583,8 @@ $("helpBtn").addEventListener("click", () => $("helpDialog").showModal());
 function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
-  $("layoutIcon").className = "ph " + (big ? "ph-arrows-in" : "ph-arrows-out");
-  $("layoutLabel").textContent = big ? "Malé týmy" : "Velké týmy";
+  $("layoutBtn").setAttribute("aria-pressed", String(big));
+  renderTeams();
 }
 function toggleTeamsLayout() {
   state.bigTeams = !state.bigTeams;
@@ -536,13 +593,13 @@ function toggleTeamsLayout() {
   save();
 }
 $("layoutBtn").addEventListener("click", toggleTeamsLayout);
-$("bigAddTeamBtn").addEventListener("click", addTeam);
+$("doneBtn").addEventListener("click", toggleTeamsLayout);
 
 /* ---------- Klávesnice ---------- */
 document.addEventListener("keydown", (e) => {
   const tag = e.target.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || e.ctrlKey || e.metaKey || e.altKey) return;
-  if ($("helpDialog").open) return;
+  if (document.querySelector("dialog[open]")) return;
   if (!$("emojiPicker").hidden) {
     if (e.key === "Escape") closeEmojiPicker();
     if (e.key === "Escape" || e.key === " " || e.key === "Enter" || e.key.startsWith("Arrow")) return;
@@ -575,6 +632,6 @@ document.addEventListener("keydown", (e) => {
 /* ---------- Start ---------- */
 renderTopicChips();
 setCount($("count").value);
-renderTeams();
+applyTeamsLayout();
 if (state.view === "loading" || (!state.quiz && state.view !== "setup")) state.view = state.quiz ? "quiz" : "setup";
 show(state.view);

@@ -348,8 +348,13 @@ legend.label { margin-bottom: 10px; }
   padding: 12px 24px; display: grid; align-items: center; gap: 20px;
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
-.teams { grid-column: 2; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
-.scoreboard-tools { grid-column: 3; justify-self: end; }
+.teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
+.scoreboard-tools { grid-column: 3; grid-row: 1; justify-self: end; }
+.team-actions { display: none; }
+button.team { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+button.team:hover { border-color: color-mix(in srgb, var(--team) 50%, transparent); }
+button.team:active { transform: scale(.98); }
+span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .team {
   --team: var(--accent);
   flex: 0 0 240px; min-width: 0;
@@ -368,7 +373,8 @@ legend.label { margin-bottom: 10px; }
   position: relative; border: 0; padding: 0; cursor: pointer;
   transition: transform .12s, box-shadow .12s;
 }
-.team .avatar:hover { transform: scale(1.06); box-shadow: 0 0 0 2px var(--team); }
+button.avatar:hover { transform: scale(1.06); box-shadow: 0 0 0 2px var(--team); }
+div.avatar { cursor: inherit; }
 .team .key {
   position: absolute; bottom: -6px; right: -6px;
   min-width: 22px; height: 22px; padding: 0 5px; border-radius: 7px;
@@ -381,8 +387,8 @@ legend.label { margin-bottom: 10px; }
   border: 1px solid transparent; border-radius: 8px; padding: 2px 6px; margin-left: -6px;
   background: transparent; color: var(--text); text-overflow: ellipsis;
 }
-.team .name:hover { border-color: var(--border); }
-.team .name:focus { outline: none; border-color: var(--team); background: var(--surface); }
+.team input.name:hover { border-color: var(--border); }
+.team input.name:focus { outline: none; border-color: var(--team); background: var(--surface); }
 .team .crown { font-size: .8rem; color: var(--muted); padding-left: 1px; }
 .team .crown:empty { display: none; }
 .team .name { grid-row: span 1; }
@@ -413,22 +419,18 @@ legend.label { margin-bottom: 10px; }
 .team .float.minus { color: var(--bad); }
 @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-34px); } }
 
-.add-team {
-  flex: 0 0 auto; width: 64px; min-width: 64px; font-size: 1.5rem;
-  display: grid; place-items: center;
-  border: 2px dashed var(--border); border-radius: 16px; background: transparent;
-  color: var(--muted); font-weight: 600; cursor: pointer; padding: 0;
-}
-.add-team:hover { border-color: var(--accent); color: var(--accent); }
+.add-team { display: none; }
 
-.scoreboard-tools { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: .85rem; white-space: nowrap; }
+.scoreboard-tools { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+#layoutBtn[aria-pressed="true"] { background: var(--surface); border-color: var(--border); color: var(--text); }
+.settings-title { margin: 0 auto 0 0; font-family: var(--display); font-weight: 800; font-size: 1.6rem; }
 .link-btn { display: inline-flex; align-items: center; gap: 4px; }
 
 .btn.small { padding: 7px 12px; font-size: .9rem; border-radius: 10px; gap: 6px; }
 
 /* ============ Velké zobrazení týmů ============ */
 .big-only { display: none; }
-body.teams-big .big-only { display: inline-flex; }
+body.teams-big .big-only { display: flex; }
 body.teams-big { grid-template-rows: auto 1fr; }
 body.teams-big main { display: none; }
 body.teams-big .scoreboard {
@@ -436,7 +438,10 @@ body.teams-big .scoreboard {
   min-height: 0; flex-direction: column; align-items: stretch; gap: 14px;
   padding: 8px 24px 24px; border-top: 0; background: var(--bg);
 }
-body.teams-big .scoreboard-tools { order: -1; flex-direction: row; justify-content: flex-end; align-items: center; gap: 12px; }
+body.teams-big .scoreboard-tools { justify-content: flex-end; }
+body.teams-big .team-actions { justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; margin-bottom: auto; }
+body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
+body.teams-big .team-actions #doneBtn { margin-left: 8px; }
 body.teams-big .teams {
   flex: 1; min-height: 0; overflow: auto;
   display: grid; gap: 20px; padding: 4px;
@@ -445,7 +450,14 @@ body.teams-big .teams {
   justify-content: safe center;
   align-content: safe center;
 }
-body.teams-big .add-team { display: none; }
+body.teams-big .add-team {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  border: 3px dashed var(--border); border-radius: 28px; background: transparent;
+  color: var(--muted); font: inherit; font-weight: 600; font-size: 1.1rem; cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+body.teams-big .add-team i { font-size: 4rem; }
+body.teams-big .add-team:hover { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
 body.teams-big .team {
   container-type: size;
   max-width: none; min-width: 0; min-height: 0;
@@ -520,14 +532,20 @@ body.teams-big .team.bump { transform: scale(1.02); }
 .dialog td { padding: 8px 0; border-bottom: 1px solid var(--border); }
 .dialog td:first-child { white-space: nowrap; padding-right: 16px; }
 .dialog form { margin-top: 20px; text-align: right; }
+.confirm form { margin: 0; text-align: center; }
 
-.toast {
-  position: fixed; left: 50%; bottom: 140px; transform: translate(-50%, 20px);
-  background: var(--text); color: var(--bg);
-  padding: 10px 18px; border-radius: 12px; font-weight: 600;
-  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+.confirm { max-width: 420px; text-align: center; padding: 32px 28px 24px; }
+.confirm[open] { animation: dialogIn .18s ease both; }
+@keyframes dialogIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+.confirm-icon {
+  width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 22px;
+  display: grid; place-items: center; font-size: 2.4rem; background: var(--bg-2);
 }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.confirm h3 { margin: 0 0 8px; }
+.confirm p { margin: 0; color: var(--muted); font-size: 1.05rem; line-height: 1.45; }
+.dialog .confirm-actions { display: flex; gap: 10px; margin-top: 24px; }
+.confirm-actions .btn { flex: 1; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
 
 /* ============ Responsive ============ */
 @media (max-width: 720px) {
@@ -539,7 +557,7 @@ body.teams-big .team.bump { transform: scale(1.02); }
   #newQuizBtn { padding: 8px 12px; }
   #newQuizBtn span { display: none; }
   .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 8px; padding-bottom: 8px; }
-  .scoreboard-tools { align-items: flex-start; }
+  .scoreboard-tools { justify-content: flex-end; }
   .answer { gap: 14px; padding: 12px 14px; }
   .q-stage { grid-template-columns: 1fr 1fr; gap: 12px; }
   .q-stage .question { grid-column: 1 / -1; grid-row: 1; }

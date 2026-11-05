@@ -121,11 +121,15 @@
 
   <!-- ===== Týmy ===== -->
   <footer class="scoreboard">
-    <div class="teams" id="teams"></div>
     <div class="scoreboard-tools">
-      <button class="btn ghost small big-only" id="bigAddTeamBtn"><i class="ph ph-plus"></i> Přidat tým</button>
-      <button class="btn soft small" id="layoutBtn" title="Velké / malé zobrazení týmů (T)"><i class="ph ph-arrows-out" id="layoutIcon"></i><span id="layoutLabel">Velké týmy</span></button>
-      <button class="link-btn big-only" id="resetScoresBtn"><i class="ph ph-arrow-counter-clockwise"></i> Vynulovat body</button>
+      <h2 class="settings-title big-only">Nastavení týmů</h2>
+      <button class="icon-btn" id="layoutBtn" title="Nastavení týmů (T)" aria-label="Nastavení týmů" aria-pressed="false"><i class="ph ph-gear-six"></i></button>
+    </div>
+    <div class="teams" id="teams"></div>
+    <div class="team-actions big-only">
+      <button class="btn ghost small" id="resetScoresBtn"><i class="ph ph-arrow-counter-clockwise"></i> Vynulovat body</button>
+      <button class="btn ghost small" id="resetTeamsBtn"><i class="ph ph-shuffle"></i> Resetovat týmy</button>
+      <button class="btn primary small" id="doneBtn"><i class="ph ph-check"></i> Hotovo</button>
     </div>
   </footer>
 
@@ -138,11 +142,11 @@
       <tr><td><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd></td><td>vybrat odpověď</td></tr>
       <tr><td><kbd>Mezerník</kbd></td><td>ukázat odpověď / další otázka</td></tr>
       <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>předchozí / další otázka</td></tr>
-      <tr><td><kbd>T</kbd></td><td>velké / malé zobrazení týmů</td></tr>
+      <tr><td><kbd>T</kbd></td><td>nastavení týmů</td></tr>
       <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
     </table>
-    <p class="muted">Kliknutím na skóre týmu přidáš bod, na název ho přejmenuješ.</p>
+    <p class="muted">Kliknutím na kartu týmu přidáš bod. Úpravy týmů (název, ikona, body, přidání a odebrání) najdeš v nastavení pod ozubeným kolečkem.</p>
     <form method="dialog"><button class="btn primary">Rozumím</button></form>
   </dialog>
 
@@ -150,7 +154,18 @@
     <div class="emoji-grid" id="emojiGrid"></div>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <!-- ===== Potvrzení ===== -->
+  <dialog id="confirmDialog" class="dialog confirm">
+    <form method="dialog">
+      <div class="confirm-icon" id="confirmIcon" aria-hidden="true"></div>
+      <h3 id="confirmTitle"></h3>
+      <p id="confirmText"></p>
+      <div class="confirm-actions">
+        <button class="btn ghost" value="cancel">Zrušit</button>
+        <button class="btn primary" value="ok" id="confirmOk"></button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="app.js"></script>
 </body>
