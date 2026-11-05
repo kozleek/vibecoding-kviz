@@ -335,13 +335,7 @@ function renderResults() {
     .map((t) => ({ ...t, rank: 1 + state.teams.filter((o) => o.score > t.score).length }))
     .sort((a, b) => a.rank - b.rank);
   const allTied = ranked.every((t) => t.rank === 1);
-  const topTie = !allTied && ranked.filter((t) => t.rank === 1).length > 1;
 
-  $("resultsTitle").textContent = allTied ? "Remíza!" : "Konec kvízu!";
-  $("resultsSub").hidden = !(allTied || topTie);
-  $("resultsSub").textContent = allTied
-    ? `Všechny týmy mají ${pointsLabel(ranked[0].score)}.`
-    : topTie ? "O první místo se dělí víc týmů." : "";
 
   // na stupních místa 1–3; při remíze všech jsou všechny týmy na stejné výšce bez medailí
   const onPodium = ranked.filter((t) => t.rank <= 3);
