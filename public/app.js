@@ -12,7 +12,7 @@ const ANIMALS = [
 const MAX_TEAMS = 4;
 const MIN_TEAMS = 2;
 const LEVEL_NAMES = { lehka: "Lehká", stredni: "Střední", tezka: "Těžká", hardcore: "Hardcore", mix: "Mix" };
-const TOPIC_SUGGESTIONS = ["Sport", "Vesmír", "Česká historie", "Zeměpis", "Příroda", "Film a seriály", "Hudba", "Věda a technika", "Jídlo"];
+const TOPIC_SUGGESTIONS = ["Sport", "Vesmír", "Česká historie", "Zeměpis", "Příroda", "Film a seriály"];
 const LOADING_TIPS = [
   "Vymýšlím chytáky do špatných odpovědí…",
   "Ověřuji, že správná odpověď je opravdu správná…",
@@ -29,6 +29,11 @@ const el = (tag, cls, text) => {
   if (text != null) n.textContent = text;
   return n;
 };
+
+/* ---------- Dotykové zařízení ---------- */
+const touchQuery = matchMedia("(hover: none) and (pointer: coarse)");
+const isTouch = () => touchQuery.matches;
+touchQuery.addEventListener?.("change", () => renderTeams());
 
 /* ---------- Stav ---------- */
 let state = load() || {
@@ -102,7 +107,7 @@ $("topic").addEventListener("input", () => {
 });
 
 function setCount(n) {
-  n = Math.min(30, Math.max(1, Number(n) || 10));
+  n = Math.min(100, Math.max(3, Number(n) || 10));
   $("count").value = n;
   document.querySelectorAll("#countChips .chip").forEach((c) => c.classList.toggle("active", Number(c.dataset.count) === n));
 }
@@ -155,6 +160,14 @@ function showError(msg) {
 }
 
 function startLoadingTips() {
+  // při načítání poskakují ikony zvolených týmů
+  const animals = $("loaderAnimals");
+  animals.innerHTML = "";
+  state.teams.forEach((t, j) => {
+    const s = el("span", null, t.emoji);
+    s.style.animationDelay = `${j * 0.15}s`;
+    animals.appendChild(s);
+  });
   let i = 0;
   $("loadingSub").textContent = LOADING_TIPS[0];
   loadingTimer = setInterval(() => {
@@ -313,19 +326,20 @@ function renderTeams() {
   const big = !!state.bigTeams;
 
   state.teams.forEach((t, i) => {
-    // malé zobrazení: jen čtení, kliknutí na kartu = +1 bod
+    // malé zobrazení: na počítači body jen klávesnicí,
+    // na dotykových zařízeních (tablet, mobil – bez klávesnice) klepnutí na kartu = +1 bod
     if (!big) {
-      const card = el("button", "team");
+      const card = el(isTouch() ? "button" : "div", "team");
       card.style.setProperty("--team", t.color);
       if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
-      card.title = `+1 bod (klávesa ${i + 1})`;
+      card.title = isTouch() ? "Klepnutím přidáš bod" : `Bod přidáš klávesou ${i + 1}`;
+      if (isTouch()) card.addEventListener("click", () => addPoints(i, 1));
       const avatar = el("div", "avatar", t.emoji);
       avatar.append(el("span", "key", String(i + 1)));
       const scoreRow = el("div", "score-row");
       scoreRow.append(el("span", "score", String(t.score)));
       card.append(avatar, el("span", "name", t.name), scoreRow,
         el("div", "crown", card.classList.contains("leader") ? "👑 vede" : ""));
-      card.addEventListener("click", () => addPoints(i, 1));
       wrap.appendChild(card);
       return;
     }
@@ -361,7 +375,7 @@ function renderTeams() {
 
     const sub = el("div", "crown", card.classList.contains("leader") ? "👑 vede" : "");
 
-    // skóre; tlačítka −/+ jsou vidět jen ve velkém zobrazení
+    // v nastavení týmů jdou body upravit i tlačítky −/+ (v malém zobrazení jen klávesnicí)
     const scoreRow = el("div", "score-row");
     const minus = el("button", "pm", "−");
     minus.title = "Odebrat bod";
@@ -401,18 +415,21 @@ function renderTeams() {
   if (state.view === "results") renderResults();
 }
 
+// i = index týmu, nebo "all" pro všechny týmy najednou
 function addPoints(i, delta) {
-  const t = state.teams[i];
-  if (!t) return;
-  t.score += delta;
+  const idx = i === "all" ? state.teams.map((_, j) => j) : state.teams[i] ? [i] : [];
+  if (!idx.length) return;
+  idx.forEach((j) => (state.teams[j].score += delta));
   renderTeams();
   save();
-  const card = $("teams").children[i];
-  card.classList.add("bump");
-  setTimeout(() => card.classList.remove("bump"), 160);
-  const f = el("span", "float" + (delta < 0 ? " minus" : ""), delta > 0 ? `+${delta}` : String(delta));
-  card.appendChild(f);
-  setTimeout(() => f.remove(), 800);
+  for (const j of idx) {
+    const card = $("teams").children[j];
+    card.classList.add("bump");
+    setTimeout(() => card.classList.remove("bump"), 160);
+    const f = el("span", "float" + (delta < 0 ? " minus" : ""), delta > 0 ? `+${delta}` : String(delta));
+    card.appendChild(f);
+    setTimeout(() => f.remove(), 800);
+  }
 }
 
 // tým vznikne až po výběru emoji; zavření nabídky bez výběru tým nepřidá
@@ -491,6 +508,22 @@ const EMOJI_DATA = {
   "🌲": ["Smrky", "#2d6a45"], "🍄": ["Houby", "#c0392b"], "🌻": ["Slunečnice", "#d8a417"],
   "🍀": ["Čtyřlístky", "#3aa655"], "⭐": ["Hvězdy", "#d9a91c"], "🔥": ["Plameny", "#e8501d"],
   "⚡": ["Blesky", "#e0b020"], "🚀": ["Rakety", "#5865f2"], "👑": ["Králové", "#c99a2e"],
+  // netradiční zvířata
+  "🦩": ["Plameňáci", "#e2588a"], "🦥": ["Lenochodi", "#8c7a5b"], "🦦": ["Vydry", "#7b5a3c"],
+  "🦨": ["Skunkové", "#4a4a5a"], "🦘": ["Klokani", "#c17a3a"], "🦒": ["Žirafy", "#d39a2b"],
+  "🦓": ["Zebry", "#555a62"], "🦚": ["Pávi", "#1f8f8a"], "🦜": ["Papoušci", "#2fa84f"],
+  "🦭": ["Tuleni", "#6d8496"], "🐡": ["Čtverzubci", "#c39a1f"], "🦑": ["Olihně", "#e0614a"],
+  "🦞": ["Humři", "#c8382c"], "🦀": ["Krabi", "#e04b2a"], "🪼": ["Medúzy", "#9b6bd6"],
+  "🦤": ["Dodové", "#7d8f6a"],
+  // postavy a bytosti
+  "👽": ["Mimozemšťani", "#3fae6b"], "🤖": ["Roboti", "#607d8b"], "👻": ["Duchové", "#8e8ea0"],
+  "🧙": ["Čarodějové", "#6a4fb3"], "🧛": ["Upíři", "#9b2346"], "🧟": ["Zombíci", "#5d8a4a"],
+  "🥷": ["Nindžové", "#3b3b4f"], "🦸": ["Superhrdinové", "#d63a3a"], "🏴‍☠️": ["Piráti", "#3f3f48"],
+  "👸": ["Princezny", "#d65a9c"], "🧚": ["Víly", "#8a6fd6"],
+  // věci a jídlo
+  "🌵": ["Kaktusy", "#4f9a4a"], "🍕": ["Pizzy", "#e0922f"], "🥑": ["Avokáda", "#6b9a2f"],
+  "🍩": ["Donuty", "#d46a9a"], "🎸": ["Kytary", "#c0502f"], "🛸": ["UFO", "#5f7fa8"],
+  "💎": ["Diamanty", "#3a9fd1"],
 };
 const EMOJI_NAMES = Object.fromEntries(Object.entries(EMOJI_DATA).map(([e, [n]]) => [e, n]));
 const EMOJIS = Object.keys(EMOJI_DATA);
@@ -573,17 +606,40 @@ function toggleFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
   else document.documentElement.requestFullscreen?.();
 }
-$("fullscreenBtn").addEventListener("click", toggleFullscreen);
 document.addEventListener("fullscreenchange", () => {
-  $("fsIcon").className = "ph " + (document.fullscreenElement ? "ph-corners-in" : "ph-corners-out");
+  const fs = !!document.fullscreenElement;
+  $("fsIcon").className = "ph " + (fs ? "ph-corners-in" : "ph-corners-out");
+  $("fsLabel").textContent = fs ? "Ukončit celou obrazovku" : "Celá obrazovka";
 });
-$("helpBtn").addEventListener("click", () => $("helpDialog").showModal());
+
+/* ---------- Menu (hamburger) ---------- */
+function openMenu() {
+  closeEmojiPicker();
+  $("menuPanel").hidden = false;
+  $("menuBtn").setAttribute("aria-expanded", "true");
+  $("menuPanel").querySelector("button")?.focus();
+}
+function closeMenu() {
+  $("menuPanel").hidden = true;
+  $("menuBtn").setAttribute("aria-expanded", "false");
+}
+$("menuBtn").addEventListener("click", (e) => {
+  e.stopPropagation();
+  $("menuPanel").hidden ? openMenu() : closeMenu();
+});
+document.addEventListener("click", (e) => {
+  if (!$("menuPanel").hidden && !e.target.closest(".menu")) closeMenu();
+});
+const menuAction = (fn) => () => { closeMenu(); fn(); };
+$("menuTeams").addEventListener("click", menuAction(() => toggleTeamsLayout()));
+$("menuFullscreen").addEventListener("click", menuAction(toggleFullscreen));
+$("menuHelp").addEventListener("click", menuAction(() => $("helpDialog").showModal()));
 
 /* ---------- Velké / malé zobrazení týmů ---------- */
 function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
-  $("layoutBtn").setAttribute("aria-pressed", String(big));
+  $("menuTeamsLabel").textContent = big ? "Zavřít nastavení týmů" : "Nastavení týmů";
   renderTeams();
 }
 function toggleTeamsLayout() {
@@ -592,7 +648,6 @@ function toggleTeamsLayout() {
   applyTeamsLayout();
   save();
 }
-$("layoutBtn").addEventListener("click", toggleTeamsLayout);
 $("doneBtn").addEventListener("click", toggleTeamsLayout);
 
 /* ---------- Klávesnice ---------- */
@@ -600,16 +655,20 @@ document.addEventListener("keydown", (e) => {
   const tag = e.target.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || e.ctrlKey || e.metaKey || e.altKey) return;
   if (document.querySelector("dialog[open]")) return;
+  if (!$("menuPanel").hidden) {
+    if (e.key === "Escape") { closeMenu(); $("menuBtn").focus(); }
+    return;
+  }
   if (!$("emojiPicker").hidden) {
     if (e.key === "Escape") closeEmojiPicker();
     if (e.key === "Escape" || e.key === " " || e.key === "Enter" || e.key.startsWith("Arrow")) return;
   }
 
-  // 1–4 (horní řada i numerická klávesnice), Shift = odečíst
-  const m = e.code.match(/^(?:Digit|Numpad)([1-4])$/);
+  // 1–4 = tým, 0 = všechny týmy (horní řada i numerická klávesnice), Shift = odečíst
+  const m = e.code.match(/^(?:Digit|Numpad)([0-4])$/);
   if (m) {
     e.preventDefault();
-    addPoints(Number(m[1]) - 1, e.shiftKey ? -1 : 1);
+    addPoints(m[1] === "0" ? "all" : Number(m[1]) - 1, e.shiftKey ? -1 : 1);
     return;
   }
   if (e.key === "?") return $("helpDialog").showModal();

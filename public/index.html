@@ -16,9 +16,15 @@
     <a class="brand" href="#" id="brand"><span class="brand-logo">🦊</span> Kvíz</a>
     <div class="topbar-info" id="quizInfo"></div>
     <div class="topbar-actions">
-      <button class="icon-btn" id="helpBtn" title="Klávesové zkratky (?)" aria-label="Klávesové zkratky"><i class="ph ph-keyboard"></i></button>
-      <button class="icon-btn" id="fullscreenBtn" title="Celá obrazovka (F)" aria-label="Celá obrazovka"><i class="ph ph-corners-out" id="fsIcon"></i></button>
       <button class="btn ghost" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
+      <div class="menu">
+        <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
+        <div class="menu-panel" id="menuPanel" role="menu" hidden>
+          <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení týmů</span><kbd>T</kbd></button>
+          <button role="menuitem" id="menuFullscreen"><i class="ph ph-corners-out" id="fsIcon"></i><span id="fsLabel">Celá obrazovka</span><kbd>F</kbd></button>
+          <button role="menuitem" id="menuHelp"><i class="ph ph-keyboard"></i><span>Klávesové zkratky</span><kbd>?</kbd></button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -42,7 +48,7 @@
           <div class="count-row">
             <div class="stepper">
               <button type="button" data-step="-1" aria-label="Méně">−</button>
-              <input id="count" name="count" type="number" min="1" max="30" value="10" inputmode="numeric" aria-label="Počet otázek">
+              <input id="count" name="count" type="number" min="3" max="100" value="10" inputmode="numeric" aria-label="Počet otázek">
               <button type="button" data-step="1" aria-label="Více">+</button>
             </div>
             <div class="chips" id="countChips">
@@ -74,7 +80,7 @@
     <!-- ===== Načítání ===== -->
     <section id="loadingView" class="view view-loading" hidden>
       <div class="loader">
-        <div class="loader-animals" aria-hidden="true"><span>🦊</span><span>🦉</span><span>🐻</span></div>
+        <div class="loader-animals" id="loaderAnimals" aria-hidden="true"></div>
         <h2 id="loadingText">Claude vymýšlí otázky…</h2>
         <p class="muted" id="loadingSub"></p>
         <div class="loader-bar"><div></div></div>
@@ -123,7 +129,6 @@
   <footer class="scoreboard">
     <div class="scoreboard-tools">
       <h2 class="settings-title big-only">Nastavení týmů</h2>
-      <button class="icon-btn" id="layoutBtn" title="Nastavení týmů (T)" aria-label="Nastavení týmů" aria-pressed="false"><i class="ph ph-gear-six"></i></button>
     </div>
     <div class="teams" id="teams"></div>
     <div class="team-actions big-only">
@@ -138,7 +143,8 @@
     <h3>Klávesové zkratky</h3>
     <table>
       <tr><td><kbd>1</kbd> – <kbd>4</kbd></td><td>+1 bod týmu s daným číslem</td></tr>
-      <tr><td><kbd>Shift</kbd> + číslo</td><td>−1 bod (oprava)</td></tr>
+      <tr><td><kbd>0</kbd></td><td>+1 bod všem týmům</td></tr>
+      <tr><td><kbd>Shift</kbd> + číslo</td><td>−1 bod (oprava), <kbd>Shift</kbd>+<kbd>0</kbd> všem</td></tr>
       <tr><td><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd></td><td>vybrat odpověď</td></tr>
       <tr><td><kbd>Mezerník</kbd></td><td>ukázat odpověď / další otázka</td></tr>
       <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>předchozí / další otázka</td></tr>
@@ -146,7 +152,7 @@
       <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
     </table>
-    <p class="muted">Kliknutím na kartu týmu přidáš bod. Úpravy týmů (název, ikona, body, přidání a odebrání) najdeš v nastavení pod ozubeným kolečkem.</p>
+    <p class="muted">Během hry se body mění klávesnicí, na tabletu a mobilu klepnutím na kartu týmu. V nastavení týmů (menu ☰ vpravo nahoře) jdou body upravit i tlačítky −/+ a dají se tam měnit názvy, ikony a týmy přidávat nebo odebírat.</p>
     <form method="dialog"><button class="btn primary">Rozumím</button></form>
   </dialog>
 

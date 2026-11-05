@@ -148,6 +148,9 @@ legend.label { margin-bottom: 10px; }
 .input-xl.invalid { border-color: var(--bad); }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+#topicChips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } /* návrhy témat v jednom řádku */
+#topicChips::-webkit-scrollbar { display: none; }
+#topicChips .chip { flex: none; white-space: nowrap; }
 .chip {
   border: 1px solid var(--border); background: var(--bg);
   padding: 7px 14px; border-radius: 99px; cursor: pointer;
@@ -157,22 +160,28 @@ legend.label { margin-bottom: 10px; }
 .chip:hover { border-color: var(--accent); }
 .chip.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
 
+/* jeden obalující prvek: (−) číslo (+) */
 .stepper {
-  display: flex; align-items: stretch; width: 170px;
-  border: 2px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--bg);
+  display: flex; align-items: stretch; gap: 4px; width: 190px; padding: 5px;
+  border: 2px solid var(--border); border-radius: 16px; background: var(--surface);
+  transition: border-color .12s;
 }
+.stepper:focus-within { border-color: var(--accent); }
 .stepper button {
-  width: 48px; border: 0; background: transparent; font-size: 1.5rem; cursor: pointer; color: var(--muted);
+  width: 46px; flex: none; border: 0; border-radius: 11px; cursor: pointer;
+  background: var(--bg-2); color: var(--text);
+  font-size: 1.6rem; font-weight: 500; line-height: 1;
+  transition: background .12s, color .12s, transform .08s;
 }
 .stepper button:hover { background: var(--accent-soft); color: var(--accent); }
+.stepper button:active { transform: scale(.94); }
 .stepper input {
   flex: 1; min-width: 0; text-align: center; border: 0; background: transparent;
-  font: inherit; font-size: 1.5rem; font-weight: 700; color: var(--text);
+  font: inherit; font-size: 1.4rem; font-weight: 700; color: var(--text);
   -moz-appearance: textfield; appearance: textfield;
 }
 .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; }
 .stepper input:focus { outline: none; }
-.stepper:focus-within { border-color: var(--accent); }
 
 .count-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .count-row .stepper { height: 52px; }
@@ -220,8 +229,6 @@ legend.label { margin-bottom: 10px; }
 .loader p { min-height: 1.5em; margin: 0 0 24px; font-size: 1.1rem; }
 .loader-animals { font-size: 3.2rem; display: flex; gap: 14px; justify-content: center; }
 .loader-animals span { animation: hop 1.2s ease-in-out infinite; }
-.loader-animals span:nth-child(2) { animation-delay: .15s; }
-.loader-animals span:nth-child(3) { animation-delay: .3s; }
 @keyframes hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-16px); } }
 .loader-bar { height: 6px; border-radius: 99px; background: var(--bg-2); overflow: hidden; }
 .loader-bar div {
@@ -351,9 +358,8 @@ legend.label { margin-bottom: 10px; }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
 .scoreboard-tools { grid-column: 3; grid-row: 1; justify-self: end; }
 .team-actions { display: none; }
-button.team { font: inherit; color: inherit; text-align: left; cursor: pointer; }
-button.team:hover { border-color: color-mix(in srgb, var(--team) 50%, transparent); }
-button.team:active { transform: scale(.98); }
+button.team { font: inherit; color: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button.team:active { transform: scale(.97); }
 span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .team {
   --team: var(--accent);
@@ -422,7 +428,25 @@ div.avatar { cursor: inherit; }
 .add-team { display: none; }
 
 .scoreboard-tools { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
-#layoutBtn[aria-pressed="true"] { background: var(--surface); border-color: var(--border); color: var(--text); }
+/* hamburger menu */
+.menu { position: relative; }
+#menuBtn[aria-expanded="true"] { background: var(--surface); border-color: var(--border); color: var(--text); }
+.menu-panel {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: max-content; min-width: 300px; max-width: calc(100vw - 32px);
+  padding: 6px; border-radius: 16px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 2px;
+  animation: pickerIn .15s ease both;
+}
+.menu-panel button {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 11px 12px; border: 0; border-radius: 10px; background: transparent;
+  font: inherit; font-weight: 500; text-align: left; cursor: pointer; color: var(--text);
+}
+.menu-panel button:hover, .menu-panel button:focus-visible { background: var(--bg); outline: none; }
+.menu-panel button i { font-size: 1.25rem; color: var(--muted); }
+.menu-panel button span { flex: 1; white-space: nowrap; }
+.menu-panel kbd { margin-left: auto; }
 .settings-title { margin: 0 auto 0 0; font-family: var(--display); font-weight: 800; font-size: 1.6rem; }
 .link-btn { display: inline-flex; align-items: center; gap: 4px; }
 
@@ -445,7 +469,8 @@ body.teams-big .team-actions #doneBtn { margin-left: 8px; }
 body.teams-big .teams {
   flex: 1; min-height: 0; overflow: auto;
   display: grid; gap: 20px; padding: 4px;
-  grid-template-columns: repeat(var(--cols, 3), 320px); /* pevná šířka dlaždic */
+  /* pevná šířka 320 px; na užších obrazovkách (tablet) se dlaždice zúží, aby se vešly */
+  grid-template-columns: repeat(var(--cols, 3), min(320px, calc((100vw - 56px - (var(--cols, 3) - 1) * 20px) / var(--cols, 3))));
   grid-auto-rows: 400px; /* pevná výška dlaždic */
   justify-content: safe center;
   align-content: safe center;
@@ -480,7 +505,6 @@ body.teams-big .team .name {
 }
 body.teams-big .team .crown { display: block; font-size: clamp(.85rem, 4cqmin, 1.4rem); }
 body.teams-big .team .score-row { gap: 5cqmin; }
-body.teams-big .team .score { font-size: 24cqmin; line-height: 1; padding: 0; min-width: 1.2ch; text-align: center; }
 body.teams-big .team .pm {
   display: grid; place-items: center; flex: none;
   width: 13cqmin; height: 13cqmin; min-width: 40px; min-height: 40px; border-radius: 50%; padding: 0;
@@ -491,6 +515,7 @@ body.teams-big .team .pm {
 }
 body.teams-big .team .pm:hover { background: color-mix(in srgb, var(--team) 14%, var(--surface)); }
 body.teams-big .team .pm:active { transform: scale(.92); }
+body.teams-big .team .score { font-size: 24cqmin; line-height: 1; padding: 0; min-width: 1.2ch; text-align: center; }
 body.teams-big .team .tools { display: flex; top: 12px; right: 12px; opacity: 0; position: absolute; }
 body.teams-big .team:hover .tools, body.teams-big .team:focus-within .tools { opacity: 1; }
 body.teams-big .team .tools button { width: 32px; height: 32px; font-size: 1rem; border: 1px solid var(--border); }
@@ -509,7 +534,7 @@ body.teams-big .team.bump { transform: scale(1.02); }
   animation: pickerIn .15s ease both;
 }
 @keyframes pickerIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; max-height: min(460px, 70vh); overflow-y: auto; }
 .emoji {
   aspect-ratio: 1; border: 0; border-radius: 10px;
   background: color-mix(in srgb, var(--c) 16%, transparent);
@@ -548,12 +573,28 @@ body.teams-big .team.bump { transform: scale(1.02); }
 .btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
 
 /* ============ Responsive ============ */
+/* tablet na šířku a nižší obrazovky: zhuštěné zadání, ať se vejde bez posouvání */
+@media (min-width: 721px) and (max-height: 860px) {
+  main { padding-top: 0; }
+  .view-setup { padding-top: 0; }
+  .hero { margin-bottom: 14px; }
+  .hero h1 { font-size: 2.2rem; margin-bottom: 4px; }
+  .hero p { font-size: 1rem; }
+  .setup { padding: 22px 26px; gap: 16px; }
+  .field { gap: 8px; }
+  .input-xl { padding: 11px 16px; font-size: 1.25rem; }
+  .level span { padding: 10px 8px; gap: 2px; }
+  .level i { font-size: 1.4rem; margin-bottom: 2px; }
+  .level small { font-size: .8rem; }
+  .btn.xl { padding: 14px; }
+}
+
 @media (max-width: 720px) {
   .topbar, main, .scoreboard { padding-left: 16px; padding-right: 16px; }
   .setup { padding: 22px; }
   .levels { grid-template-columns: repeat(2, 1fr); }
   .level:last-child { grid-column: 1 / -1; }
-  .topbar-info, #helpBtn { display: none; }
+  .topbar-info { display: none; }
   #newQuizBtn { padding: 8px 12px; }
   #newQuizBtn span { display: none; }
   .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 8px; padding-bottom: 8px; }
@@ -567,6 +608,17 @@ body.teams-big .team.bump { transform: scale(1.02); }
 }
 @media (hover: none) {
   body.teams-big .team .tools { opacity: 1; }
+}
+/* dotyková zařízení nemají klávesnici – zkratky v menu nedávají smysl */
+@media (hover: none) and (pointer: coarse) { .menu-panel kbd { display: none; } }
+/* tablet (dotyk, širší obrazovka): větší ikony v nastavení týmů */
+@media (hover: none) and (pointer: coarse) and (min-width: 721px) {
+  /* ikona podle šířky i výšky dlaždice, ať využije volné místo i u úzkých karet */
+  body.teams-big .team .avatar {
+    width: min(75cqw, 42cqh); height: min(75cqw, 42cqh);
+    font-size: min(52cqw, 29cqh); border-radius: min(16cqw, 9cqh);
+  }
+  body.teams-big .team .key { min-width: 32px; height: 32px; font-size: 1.05rem; border-radius: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

@@ -15,7 +15,8 @@ npm start              # http://localhost:3000  (npm run dev = s auto-reloadem)
 | Klávesa | Akce |
 |---|---|
 | `1`–`4` | +1 bod týmu s daným číslem |
-| `Shift` + číslo | −1 bod |
+| `0` | +1 bod všem týmům |
+| `Shift` + číslo | −1 bod (`Shift` + `0` všem týmům) |
 | `A` / `B` / `C` | vybrat odpověď (ukáže správnou + vysvětlení) |
 | `Mezerník` / `Enter` | ukázat správnou odpověď bez výběru |
 | `←` / `→` | předchozí / další otázka |

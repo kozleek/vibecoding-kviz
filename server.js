@@ -3,7 +3,8 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5-5";
-const MAX_QUESTIONS = 30;
+const MIN_QUESTIONS = 3;
+const MAX_QUESTIONS = 100;
 const LEVELS = { lehka: "lehká", stredni: "střední", tezka: "těžká", hardcore: "hardcore", mix: "mix" };
 
 const client = new Anthropic();
@@ -67,7 +68,7 @@ function shuffleAnswers(q) {
 
 app.post("/api/generate", async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
-  const count = Math.min(MAX_QUESTIONS, Math.max(1, parseInt(req.body?.count, 10) || 10));
+  const count = Math.min(MAX_QUESTIONS, Math.max(MIN_QUESTIONS, parseInt(req.body?.count, 10) || 10));
   const level = LEVELS[req.body?.level] ? req.body.level : "mix";
 
   if (!topic) return res.status(400).json({ error: "Zadej téma kvízu." });
@@ -86,7 +87,7 @@ app.post("/api/generate", async (req, res) => {
   try {
     const stream = client.beta.messages.stream({
       model: MODEL,
-      max_tokens: 32000,
+      max_tokens: 64000, // až 100 otázek i s vysvětlením
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       output_config: {
