@@ -462,37 +462,12 @@ function renderTeams() {
     name.draggable = false;
     card.addEventListener("dragstart", (e) => {
       if (e.target.closest("input")) return e.preventDefault();
+      dragFrom = i;
       e.dataTransfer.setData("text/plain", String(i));
       e.dataTransfer.effectAllowed = "move";
       card.classList.add("dragging");
     });
-    card.addEventListener("dragend", () => {
-      card.classList.remove("dragging");
-      document.querySelectorAll(".drop-before, .drop-after").forEach((c) => c.classList.remove("drop-before", "drop-after"));
-    });
-    // ukazatel místa vložení: čára před/za kartou podle poloviny, nad kterou je kurzor
-    const afterHalf = (e) => { const r = card.getBoundingClientRect(); return e.clientX > r.left + r.width / 2; };
-    card.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      const after = afterHalf(e);
-      // čára jen u jedné karty
-      document.querySelectorAll(".drop-before, .drop-after").forEach((c) => { if (c !== card) c.classList.remove("drop-before", "drop-after"); });
-      card.classList.toggle("drop-after", after);
-      card.classList.toggle("drop-before", !after);
-    });
-    // odebrat až při skutečném opuštění karty (ne při přejezdu přes vnitřní prvky)
-    card.addEventListener("dragleave", (e) => {
-      if (!card.contains(e.relatedTarget)) card.classList.remove("drop-before", "drop-after");
-    });
-    card.addEventListener("drop", (e) => {
-      e.preventDefault();
-      card.classList.remove("drop-before", "drop-after");
-      const from = Number(e.dataTransfer.getData("text/plain"));
-      if (Number.isNaN(from)) return;
-      let to = afterHalf(e) ? i + 1 : i; // pozice vložení v původním poli
-      if (from < to) to -= 1; // po vyjmutí se indexy za ním posunou
-      moveTeam(from, to);
-    });
+    card.addEventListener("dragend", () => { card.classList.remove("dragging"); dragFrom = null; hideDropLine(); });
 
     card.append(avatar, name, scoreRow, tools, move);
     wrap.appendChild(card);
@@ -538,6 +513,45 @@ function addTeam(e) {
   if (state.teams.length >= MAX_TEAMS) return;
   openEmojiPicker("new", e?.currentTarget || document.querySelector(".add-team"));
 }
+
+/* ---------- Přetahování týmů: jedna čára uprostřed mezery mezi kartami ---------- */
+let dragFrom = null;
+const dropLine = el("div", "drop-line");
+
+// index vložení podle středů karet (0 = před první, n = za poslední)
+function dropIndex(e) {
+  const cards = [...$("teams").querySelectorAll(".team")];
+  return cards.filter((c) => { const r = c.getBoundingClientRect(); return e.clientX > r.left + r.width / 2; }).length;
+}
+function showDropLine(k) {
+  const wrap = $("teams");
+  const cards = [...wrap.querySelectorAll(".team")];
+  // vložení na místo, odkud karta pochází, nic nemění – čáru neukazovat
+  if (!cards.length || k === dragFrom || k === dragFrom + 1) return hideDropLine();
+  const gap = parseFloat(getComputedStyle(wrap).columnGap) || 20;
+  const ref = cards[Math.min(k, cards.length - 1)];
+  const x = k < cards.length ? ref.offsetLeft - gap / 2 : ref.offsetLeft + ref.offsetWidth + gap / 2;
+  dropLine.style.left = `${x}px`;
+  dropLine.style.top = `${ref.offsetTop}px`;
+  dropLine.style.height = `${ref.offsetHeight}px`;
+  if (dropLine.parentNode !== wrap) wrap.appendChild(dropLine);
+}
+function hideDropLine() { dropLine.remove(); }
+
+$("teams").addEventListener("dragover", (e) => {
+  if (dragFrom === null) return;
+  e.preventDefault();
+  showDropLine(dropIndex(e));
+});
+$("teams").addEventListener("dragleave", (e) => { if (!$("teams").contains(e.relatedTarget)) hideDropLine(); });
+$("teams").addEventListener("drop", (e) => {
+  if (dragFrom === null) return;
+  e.preventDefault();
+  const k = dropIndex(e);
+  const from = dragFrom;
+  hideDropLine();
+  moveTeam(from, k > from ? k - 1 : k);
+});
 
 function moveTeam(from, to) {
   if (from === to || to < 0 || to >= state.teams.length) return;
