@@ -455,18 +455,18 @@ async function removeTeam(i) {
   save();
 }
 
-// reset týmů: dva náhodné týmy (různé ikony), body na nule
+// reset týmů: stejný počet týmů, nové náhodné ikony a názvy (různé), body na nule
 $("resetTeamsBtn").addEventListener("click", async () => {
   const ok = await confirmDialog({
     icon: "🔀",
     title: "Resetovat týmy?",
-    text: "Současné týmy i body zmizí a nahradí je dva nové náhodné týmy.",
+    text: "Počet týmů zůstane, ale každý dostane novou náhodnou ikonu a název a body se vynulují.",
     ok: "Resetovat",
     danger: true,
   });
   if (!ok) return;
   const pool = [...EMOJIS];
-  state.teams = Array.from({ length: MIN_TEAMS }, () => {
+  state.teams = Array.from({ length: Math.max(MIN_TEAMS, state.teams.length) }, () => {
     const em = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
     return { name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 };
   });
