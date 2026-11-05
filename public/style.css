@@ -405,6 +405,8 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
 }
 /* barevný okraj kolem celé dlaždice u všech týmů */
 .scoreboard .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
+/* bílý okraj kolem karty v liště, ať barva týmu nesplývá s gradientem pozadí */
+body:not(.teams-big) .scoreboard .team { box-shadow: 0 0 0 3px rgba(255, 255, 255, .9), 0 4px 14px rgba(0, 0, 0, .12); }
 .team .avatar {
   grid-row: span 2; width: 46px; height: 46px; border-radius: 14px;
   display: grid; place-items: center; font-size: 1.6rem;
