@@ -164,8 +164,11 @@
   </footer>
 
   <!-- ===== Nápověda ===== -->
-  <dialog id="helpDialog" class="dialog">
-    <h3>Klávesové zkratky</h3>
+  <dialog id="helpDialog" class="dialog help">
+    <div class="dialog-head">
+      <h3 tabindex="-1" autofocus>Klávesové zkratky</h3>
+      <form method="dialog"><button class="icon-btn" aria-label="Zavřít" title="Zavřít"><i class="ph ph-x"></i></button></form>
+    </div>
     <table class="shortcuts">
       <tr><td><kbd>1</kbd>–<kbd>4</kbd></td><td>+1 bod týmu</td></tr>
       <tr><td><kbd>0</kbd></td><td>+1 bod všem týmům</td></tr>
@@ -179,7 +182,6 @@
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
     </table>
     <p class="muted">S adaptivním bodováním pro mix se místo 1 bodu přičítá počet bodů uvedený u otázky. V nastavení (menu ☰) jdou body upravit i tlačítky −/+.</p>
-    <form method="dialog"><button class="btn primary">Rozumím</button></form>
   </dialog>
 
   <div class="emoji-picker" id="emojiPicker" role="dialog" aria-label="Výběr ikony týmu" hidden>

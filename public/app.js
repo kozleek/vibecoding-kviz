@@ -648,6 +648,7 @@ function confirmDialog({ icon = "❓", title, text = "", ok = "Potvrdit", danger
   });
 }
 // kliknutí na pozadí dialog zavře
+$("helpDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 $("confirmDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close("cancel"); });
 
 /* ---------- Celá obrazovka & nápověda ---------- */

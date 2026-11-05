@@ -618,6 +618,14 @@ body.teams-big .team.bump { transform: scale(1.02); }
 .dialog table { width: 100%; border-collapse: collapse; }
 .dialog td { padding: 8px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .dialog .shortcuts td:first-child { width: 45%; }
+.dialog.help { max-width: 580px; padding: 28px 36px 32px; }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.dialog-head h3 { margin: 0; outline: none; }
+.dialog-head form { margin: 0; }
+.dialog-head .icon-btn { width: 44px; height: 44px; font-size: 1.5rem; }
+.dialog-head .icon-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
+.dialog.help td { padding: 10px 0; font-size: 1.05rem; }
+.dialog.help p { margin: 18px 0 0; }
 .dialog p { line-height: 1.5; }
 .dialog td:first-child { white-space: nowrap; padding-right: 16px; }
 .dialog form { margin-top: 20px; text-align: right; }
