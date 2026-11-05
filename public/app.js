@@ -633,7 +633,7 @@ const EMOJI_DATA = {
   "🦓": ["Zebry", "#555a62"], "🦚": ["Pávi", "#1f8f8a"], "🦜": ["Papoušci", "#2fa84f"],
   "🦭": ["Tuleni", "#6d8496"], "🐡": ["Čtverzubci", "#c39a1f"], "🦑": ["Olihně", "#e0614a"],
   "🦞": ["Humři", "#c8382c"], "🦀": ["Krabi", "#e04b2a"], "🪼": ["Medúzy", "#9b6bd6"],
-  "🦤": ["Dodové", "#7d8f6a"],
+  "🦤": ["Dodové", "#7d8f6a"], "🐳": ["Velryby", "#3a7bd5"], "🦢": ["Labutě", "#7d93a8"],
   // postavy a bytosti
   "👽": ["Mimozemšťani", "#3fae6b"], "🤖": ["Roboti", "#607d8b"], "👻": ["Duchové", "#8e8ea0"],
   "🧙": ["Čarodějové", "#6a4fb3"], "🧛": ["Upíři", "#9b2346"], "🧟": ["Zombíci", "#5d8a4a"],
@@ -679,7 +679,6 @@ function openEmojiPicker(i, anchor) {
   // velká dlaždice 2×2: náhodná ikona, kterou nemá jiný tým
   const random = el("button", "emoji emoji-random");
   random.innerHTML = '<i class="ph ph-shuffle" aria-hidden="true"></i><span>Náhodně</span>';
-  random.title = "Náhodná ikona";
   random.addEventListener("click", () => {
     const pool = EMOJIS.filter((em) => !used.has(em) && em !== team.emoji);
     choose(pool[Math.floor(Math.random() * pool.length)]);

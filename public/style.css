@@ -671,6 +671,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   border: 2px dashed color-mix(in srgb, var(--accent) 45%, transparent);
 }
 .emoji-random span { font-size: .8rem; font-weight: 700; }
+.emoji-random:hover, .emoji-random:focus-visible { transform: none; background: color-mix(in srgb, var(--accent) 22%, transparent); }
 
 /* ============ Dialog & toast ============ */
 .dialog {
