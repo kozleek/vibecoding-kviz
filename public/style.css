@@ -571,9 +571,9 @@ body.teams-big .team-actions { justify-content: center; align-items: center; gap
 body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
 body.teams-big .teams {
   flex: 1; min-height: 0; overflow: auto;
-  display: grid; gap: 20px; padding: 4px;
+  display: grid; gap: 20px; padding: 14px; /* rezerva, ať se barevný okraj a stín dlaždic neořezávají */
   /* pevná šířka 320 px; na užších obrazovkách (tablet) se dlaždice zúží, aby se vešly */
-  grid-template-columns: repeat(var(--cols, 3), min(320px, calc((100vw - 56px - (var(--cols, 3) - 1) * 20px) / var(--cols, 3))));
+  grid-template-columns: repeat(var(--cols, 3), min(320px, calc((100vw - 84px - (var(--cols, 3) - 1) * 20px) / var(--cols, 3))));
   grid-auto-rows: 400px; /* pevná výška dlaždic */
   justify-content: safe center;
   align-content: safe center;
