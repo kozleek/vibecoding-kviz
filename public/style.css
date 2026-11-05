@@ -648,6 +648,15 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .emoji:hover, .emoji:focus-visible { background: color-mix(in srgb, var(--c) 35%, transparent); transform: scale(1.12); outline: none; }
 .emoji.current { background: color-mix(in srgb, var(--c) 30%, transparent); box-shadow: inset 0 0 0 3px var(--c); }
 .emoji.used { opacity: .35; }
+.emoji-random {
+  grid-column: span 2; grid-row: span 2; aspect-ratio: auto;
+  --c: var(--accent);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  font-size: 2rem; color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 2px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.emoji-random span { font-size: .8rem; font-weight: 700; }
 
 /* ============ Dialog & toast ============ */
 .dialog {

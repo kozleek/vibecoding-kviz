@@ -618,11 +618,8 @@ function openEmojiPicker(i, anchor) {
   const used = new Set(state.teams.filter((_, j) => j !== i).map((t) => t.emoji));
   const grid = $("emojiGrid");
   grid.innerHTML = "";
-  for (const em of EMOJIS) {
-    const b = el("button", "emoji" + (em === team.emoji ? " current" : "") + (used.has(em) ? " used" : ""), em);
-    b.title = EMOJI_DATA[em][0] + (used.has(em) ? " (používá jiný tým)" : "");
-    b.style.setProperty("--c", EMOJI_DATA[em][1]);
-    b.addEventListener("click", () => {
+
+  const choose = (em) => {
       if (isNew) {
         if (state.teams.length >= MAX_TEAMS) return closeEmojiPicker();
         state.teams.push({ name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 });
@@ -638,7 +635,23 @@ function openEmojiPicker(i, anchor) {
       closeEmojiPicker();
       renderTeams();
       save();
-    });
+  };
+
+  // velká dlaždice 2×2: náhodná ikona, kterou nemá jiný tým
+  const random = el("button", "emoji emoji-random");
+  random.innerHTML = '<i class="ph ph-shuffle" aria-hidden="true"></i><span>Náhodně</span>';
+  random.title = "Náhodná ikona";
+  random.addEventListener("click", () => {
+    const pool = EMOJIS.filter((em) => !used.has(em) && em !== team.emoji);
+    choose(pool[Math.floor(Math.random() * pool.length)]);
+  });
+  grid.appendChild(random);
+
+  for (const em of EMOJIS) {
+    const b = el("button", "emoji" + (em === team.emoji ? " current" : "") + (used.has(em) ? " used" : ""), em);
+    b.title = EMOJI_DATA[em][0] + (used.has(em) ? " (používá jiný tým)" : "");
+    b.style.setProperty("--c", EMOJI_DATA[em][1]);
+    b.addEventListener("click", () => choose(em));
     grid.appendChild(b);
   }
   picker.style.setProperty("--team", team.color);
@@ -650,7 +663,7 @@ function openEmojiPicker(i, anchor) {
   const h = picker.offsetHeight;
   const above = r.top - h - 10;
   picker.style.top = (above >= 8 ? above : Math.min(r.bottom + 10, innerHeight - h - 8)) + "px";
-  grid.querySelector(".current, .emoji")?.focus();
+  grid.querySelector(".current, .emoji-random")?.focus();
 }
 function closeEmojiPicker() {
   $("emojiPicker").hidden = true;
