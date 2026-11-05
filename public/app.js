@@ -301,14 +301,29 @@ function renderTeams() {
     card.style.setProperty("--team", t.color);
     if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
 
-    const avatar = el("div", "avatar", t.emoji);
+    const avatar = el("button", "avatar", t.emoji);
+    avatar.title = "Změnit ikonu";
+    avatar.setAttribute("aria-label", `Změnit ikonu týmu ${t.name}`);
     avatar.append(el("span", "key", String(i + 1)));
+    avatar.addEventListener("click", (e) => { e.stopPropagation(); openEmojiPicker(i, avatar); });
 
     const name = el("input", "name");
     name.value = t.name;
     name.maxLength = 20;
     name.setAttribute("aria-label", `Název týmu ${i + 1}`);
-    name.addEventListener("change", () => { t.name = name.value.trim() || t.name; name.value = t.name; save(); });
+    name.addEventListener("change", () => {
+      const v = name.value.trim();
+      if (!v) {
+        // prázdný název = zpět na automatický podle ikony
+        t.customName = false;
+        t.name = EMOJI_NAMES[t.emoji] || t.name;
+      } else if (v !== t.name) {
+        t.name = v;
+        t.customName = true;
+      }
+      name.value = t.name;
+      save();
+    });
     name.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === "Escape") name.blur(); });
 
     const sub = el("div", "crown", card.classList.contains("leader") ? "👑 vede" : `klávesa ${i + 1}`);
@@ -384,6 +399,59 @@ $("resetScoresBtn").addEventListener("click", () => {
   });
 });
 
+/* ---------- Výběr emoji ---------- */
+const EMOJI_NAMES = {
+  "🦊": "Lišky", "🐻": "Medvědi", "🦉": "Sovy", "🐺": "Vlci", "🦌": "Jeleni", "🦔": "Ježci",
+  "🐿️": "Veverky", "🦡": "Jezevci", "🐗": "Divočáci", "🐰": "Zajíci", "🦝": "Mývalové", "🦫": "Bobři",
+  "🐸": "Žáby", "🐍": "Hadi", "🦎": "Ještěrky", "🐢": "Želvy", "🦅": "Orli", "🐦": "Ptáci",
+  "🦆": "Kachny", "🦇": "Netopýři", "🐭": "Myšky", "🦋": "Motýli", "🐝": "Včely", "🐞": "Berušky",
+  "🐌": "Šneci", "🕷️": "Pavouci", "🐼": "Pandy", "🐨": "Koaly", "🐯": "Tygři", "🦁": "Lvi",
+  "🐮": "Krávy", "🐷": "Prasátka", "🐵": "Opice", "🐧": "Tučňáci", "🐙": "Chobotnice", "🦈": "Žraloci",
+  "🦄": "Jednorožci", "🐲": "Draci", "🦖": "Dinosauři", "🌲": "Smrky", "🍄": "Houby", "🌻": "Slunečnice",
+  "🍀": "Čtyřlístky", "⭐": "Hvězdy", "🔥": "Plameny", "⚡": "Blesky", "🚀": "Rakety", "👑": "Králové",
+};
+const EMOJIS = Object.keys(EMOJI_NAMES);
+let pickerTeam = null;
+
+function openEmojiPicker(i, anchor) {
+  const picker = $("emojiPicker");
+  if (pickerTeam === i && !picker.hidden) return closeEmojiPicker();
+  pickerTeam = i;
+  const team = state.teams[i];
+  const used = new Set(state.teams.filter((_, j) => j !== i).map((t) => t.emoji));
+  const grid = $("emojiGrid");
+  grid.innerHTML = "";
+  for (const em of EMOJIS) {
+    const b = el("button", "emoji" + (em === team.emoji ? " current" : "") + (used.has(em) ? " used" : ""), em);
+    b.title = used.has(em) ? "Používá jiný tým" : "";
+    b.addEventListener("click", () => {
+      team.emoji = em;
+      if (!team.customName) team.name = EMOJI_NAMES[em];
+      closeEmojiPicker();
+      renderTeams();
+      save();
+    });
+    grid.appendChild(b);
+  }
+  picker.style.setProperty("--team", team.color);
+  picker.hidden = false;
+
+  const r = anchor.getBoundingClientRect();
+  const w = picker.offsetWidth;
+  picker.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + "px";
+  picker.style.bottom = innerHeight - r.top + 10 + "px";
+  grid.querySelector(".current, .emoji")?.focus();
+}
+function closeEmojiPicker() {
+  $("emojiPicker").hidden = true;
+  pickerTeam = null;
+}
+document.addEventListener("click", (e) => {
+  if (!$("emojiPicker").hidden && !e.target.closest("#emojiPicker")) closeEmojiPicker();
+});
+addEventListener("resize", closeEmojiPicker);
+$("teams").addEventListener("scroll", closeEmojiPicker);
+
 /* ---------- Toast ---------- */
 let toastTimer;
 function toast(text, actionLabel, action) {
@@ -417,6 +485,10 @@ document.addEventListener("keydown", (e) => {
   const tag = e.target.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || e.ctrlKey || e.metaKey || e.altKey) return;
   if ($("helpDialog").open) return;
+  if (!$("emojiPicker").hidden) {
+    if (e.key === "Escape") closeEmojiPicker();
+    if (e.key === "Escape" || e.key === " " || e.key === "Enter" || e.key.startsWith("Arrow")) return;
+  }
 
   // 1–9 (horní řada i numerická klávesnice), Shift = odečíst
   const m = e.code.match(/^(?:Digit|Numpad)([1-9])$/);
