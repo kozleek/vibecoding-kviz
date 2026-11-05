@@ -283,7 +283,6 @@ body[data-diff="lehká"] { --dc: #5bb77d; --dd: #2a6b45; }
 body[data-diff="střední"] { --dc: #eaa846; --dd: #9c5a16; }
 body[data-diff="těžká"] { --dc: #e2685a; --dd: #8f2c24; }
 body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
-body[data-diff="setup"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání kvízu: lesní tyrkys */
 
 .q-text {
   font-family: var(--display); font-weight: 800;
@@ -375,17 +374,16 @@ body[data-diff="setup"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání kvízu: le
 
 /* ============ Scoreboard ============ */
 .scoreboard {
-  background: transparent; /* bez podbarvení – gradient obtížnosti jde až dolů */
+  background: var(--surface); border-top: 1px solid var(--border); /* bílá lišta kvůli kontrastu týmů */
   padding: 12px 24px 28px; display: grid; align-items: center; gap: 20px; /* odsazení od spodního okraje */
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
 .bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 12px; } /* vždy u pravého okraje */
 .bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
-/* spodní ikony: na barevném gradientu otázky bílé, jinde (světlé pozadí) šedé; na hover šedé na bílém podkladu */
-.scoreboard .bar-btn { color: var(--muted); border-color: var(--border); }
-body[data-diff] .scoreboard .bar-btn { color: #fff; border-color: color-mix(in srgb, #fff 45%, transparent); }
-body .scoreboard .bar-btn:hover { background: var(--surface); border-color: var(--border); color: var(--muted); }
+/* spodní ikony na bílé liště: šedé, na hover tmavší */
+.scoreboard .bar-btn { color: var(--muted); border-color: var(--border); background: transparent; }
+body .scoreboard .bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
 body.teams-big .bar-actions { display: none; }
 /* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
 @media (hover: none) and (pointer: coarse), (max-width: 1100px) { .bar-actions { display: none; } }
@@ -405,8 +403,7 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
 }
 /* barevný okraj kolem celé dlaždice u všech týmů */
 .scoreboard .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
-/* karta v liště na bílém podkladu se stínem, ať barva týmu nesplývá s gradientem pozadí */
-body:not(.teams-big) .scoreboard .team { background: var(--surface); box-shadow: 0 6px 18px rgba(0, 0, 0, .14); }
+
 .team .avatar {
   grid-row: span 2; width: 46px; height: 46px; border-radius: 14px;
   display: grid; place-items: center; font-size: 1.6rem;
