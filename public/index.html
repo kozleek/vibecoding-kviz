@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kvíz</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦊</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" id="brand"><span class="brand-logo">🦊</span> Kvíz</a>
+    <div class="topbar-info" id="quizInfo"></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="helpBtn" title="Klávesové zkratky (?)" aria-label="Klávesové zkratky"><i class="ph ph-keyboard"></i></button>
+      <button class="icon-btn" id="fullscreenBtn" title="Celá obrazovka (F)" aria-label="Celá obrazovka"><i class="ph ph-corners-out" id="fsIcon"></i></button>
+      <button class="btn ghost" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ===== Zadání ===== -->
+    <section id="setupView" class="view view-setup">
+      <div class="hero">
+        <h1>O čem bude kvíz?</h1>
+        <p>Napiš téma a Claude připraví otázky se třemi možnostmi a vysvětlením.</p>
+      </div>
+
+      <form id="setupForm" class="card setup" novalidate>
+        <div class="field">
+          <label for="topic" class="label">Téma <span class="muted">· více témat odděl čárkou</span></label>
+          <input id="topic" name="topic" type="text" class="input-xl" placeholder="např. sport, vesmír" autocomplete="off" required>
+          <div class="chips" id="topicChips"></div>
+        </div>
+
+        <div class="field">
+          <span class="label">Počet otázek</span>
+          <div class="count-row">
+            <div class="stepper">
+              <button type="button" data-step="-1" aria-label="Méně">−</button>
+              <input id="count" name="count" type="number" min="1" max="30" value="10" inputmode="numeric" aria-label="Počet otázek">
+              <button type="button" data-step="1" aria-label="Více">+</button>
+            </div>
+            <div class="chips" id="countChips">
+              <button type="button" class="chip" data-count="5">5</button>
+              <button type="button" class="chip" data-count="10">10</button>
+              <button type="button" class="chip" data-count="15">15</button>
+              <button type="button" class="chip" data-count="20">20</button>
+            </div>
+          </div>
+        </div>
+
+        <fieldset class="field">
+          <legend class="label">Obtížnost</legend>
+          <div class="levels">
+            <label class="level"><input type="radio" name="level" value="lehka"><span><i>🌱</i><b>Lehká</b><small>zná skoro každý</small></span></label>
+            <label class="level"><input type="radio" name="level" value="stredni"><span><i>🌿</i><b>Střední</b><small>chce to přehled</small></span></label>
+            <label class="level"><input type="radio" name="level" value="tezka"><span><i>🌲</i><b>Těžká</b><small>pro znalce</small></span></label>
+            <label class="level hardcore"><input type="radio" name="level" value="hardcore"><span><i>🔥</i><b>Hardcore</b><small>pro kvízové mazáky</small></span></label>
+            <label class="level"><input type="radio" name="level" value="mix" checked><span><i>🍂</i><b>Mix</b><small>od lehkých po těžké</small></span></label>
+          </div>
+        </fieldset>
+
+        <p class="error" id="setupError" role="alert" hidden></p>
+
+        <button class="btn primary xl" type="submit" id="generateBtn">Vygenerovat kvíz <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+
+    <!-- ===== Načítání ===== -->
+    <section id="loadingView" class="view view-loading" hidden>
+      <div class="loader">
+        <div class="loader-animals" aria-hidden="true"><span>🦊</span><span>🦉</span><span>🐻</span></div>
+        <h2 id="loadingText">Claude vymýšlí otázky…</h2>
+        <p class="muted" id="loadingSub"></p>
+        <div class="loader-bar"><div></div></div>
+      </div>
+    </section>
+
+    <!-- ===== Otázka ===== -->
+    <section id="quizView" class="view view-quiz" hidden>
+
+      <div class="q-stage">
+      <button class="side-btn" id="prevBtn" aria-label="Předchozí otázka" title="Předchozí otázka (←)"><i class="ph ph-caret-left" aria-hidden="true"></i></button>
+      <article class="question" id="questionCard">
+        <div class="q-meta">
+          <span class="q-num" id="qCounter"></span>
+          <span class="pill" id="qTopic" hidden></span>
+          <span class="pill level-pill" id="qLevel"></span>
+        </div>
+
+        <h2 class="q-text" id="qText"></h2>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="explanation" id="explanation" hidden>
+          <div class="explanation-icon" aria-hidden="true">💡</div>
+          <div><strong id="exTitle"></strong><p id="exText"></p></div>
+        </div>
+
+      </article>
+      <button class="side-btn" id="nextBtn" aria-label="Další otázka" title="Další otázka (→)"><i class="ph ph-caret-right" aria-hidden="true"></i></button>
+      </div>
+    </section>
+
+    <!-- ===== Výsledky ===== -->
+    <section id="resultsView" class="view view-results" hidden>
+      <h1 class="results-title">Konec kvízu! 🎉</h1>
+      <div class="podium" id="podium"></div>
+      <ol class="rest" id="rest"></ol>
+      <div class="results-actions">
+        <button class="btn ghost" id="backBtn">← Zpět na otázky</button>
+        <button class="btn primary" id="againBtn">Nový kvíz</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Týmy ===== -->
+  <footer class="scoreboard">
+    <div class="teams" id="teams"></div>
+    <div class="scoreboard-tools">
+      <button class="link-btn" id="resetScoresBtn"><i class="ph ph-arrow-counter-clockwise"></i> Vynulovat body</button>
+    </div>
+  </footer>
+
+  <!-- ===== Nápověda ===== -->
+  <dialog id="helpDialog" class="dialog">
+    <h3>Klávesové zkratky</h3>
+    <table>
+      <tr><td><kbd>1</kbd> – <kbd>9</kbd></td><td>+1 bod týmu s daným číslem</td></tr>
+      <tr><td><kbd>Shift</kbd> + číslo</td><td>−1 bod (oprava)</td></tr>
+      <tr><td><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd></td><td>vybrat odpověď</td></tr>
+      <tr><td><kbd>Mezerník</kbd></td><td>ukázat odpověď / další otázka</td></tr>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>předchozí / další otázka</td></tr>
+      <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
+      <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
+    </table>
+    <p class="muted">Kliknutím na skóre týmu přidáš bod, na název ho přejmenuješ.</p>
+    <form method="dialog"><button class="btn primary">Rozumím</button></form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
