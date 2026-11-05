@@ -652,7 +652,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   animation: pickerIn .15s ease both;
 }
 @keyframes pickerIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; max-height: min(460px, 70vh); overflow-y: auto; }
+.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; max-height: calc(100vh - 48px); overflow-y: auto; } /* celá mřížka bez posuvníku, posouvání jen na nízkých obrazovkách */
 .emoji {
   aspect-ratio: 1; border: 0; border-radius: 10px;
   background: color-mix(in srgb, var(--c) 16%, transparent);
@@ -668,7 +668,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   font-size: 2rem; color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border: 2px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+  border: 0;
 }
 .emoji-random span { font-size: .8rem; font-weight: 700; }
 .emoji-random:hover, .emoji-random:focus-visible { transform: none; background: color-mix(in srgb, var(--accent) 22%, transparent); }
