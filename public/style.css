@@ -375,14 +375,19 @@ body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
 
 /* ============ Scoreboard ============ */
 .scoreboard {
-  background: var(--surface); border-top: 1px solid var(--border);
+  background: transparent; /* bez podbarvení – gradient obtížnosti jde až dolů */
   padding: 12px 24px; display: grid; align-items: center; gap: 20px;
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
 .bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 4px; } /* vždy u pravého okraje */
-.bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
-.bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
+/* podbarvená tlačítka jako menu, ať jsou vidět i na tmavém gradientu */
+.bar-btn {
+  width: 44px; height: 44px; font-size: 1.35rem;
+  background: var(--surface); border-color: var(--border); color: var(--text);
+  box-shadow: 0 1px 2px rgba(30, 40, 30, .06);
+}
+.bar-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
 body.teams-big .bar-actions { display: none; }
 /* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
 @media (hover: none) and (pointer: coarse), (max-width: 1100px) { .bar-actions { display: none; } }
