@@ -338,19 +338,19 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   width: clamp(52px, 4.6vw, 84px); height: clamp(52px, 4.6vw, 84px); border-radius: 50%;
   display: grid; place-items: center;
   /* méně výrazné šipky: průhledné, tenký rámeček, tlumená ikona */
-  border: 1.5px solid var(--border); background: transparent; color: var(--muted);
-  font-size: clamp(1.3rem, 1.9vw, 2.2rem); cursor: pointer; box-shadow: none;
+  border: 1px solid transparent; background: transparent; color: color-mix(in srgb, var(--muted) 55%, transparent);
+  font-size: clamp(1.2rem, 1.7vw, 2rem); cursor: pointer; box-shadow: none;
   transition: transform .1s, background .15s, border-color .15s, color .15s, opacity .2s;
 }
-.side-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+.side-btn:hover:not(:disabled) { border-color: var(--border); color: var(--text); background: var(--surface); }
 .side-btn:active:not(:disabled), .side-btn.is-pressed { transform: scale(.92); }
 .side-btn.is-pressed:not(.primary) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .side-btn.primary.is-pressed { filter: brightness(1.15); }
 .side-btn.is-pressed:disabled { opacity: 1; }
 .side-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-.side-btn:disabled { opacity: .25; cursor: default; box-shadow: none; }
+.side-btn:disabled { opacity: .15; cursor: default; box-shadow: none; }
 /* „další“ po odhalení odpovědi: jen jemně zvýrazněná */
-.side-btn.primary { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); color: var(--accent); }
+.side-btn.primary { background: transparent; border-color: transparent; color: color-mix(in srgb, var(--accent) 70%, transparent); }
 .side-btn.primary:hover { background: var(--surface); color: var(--accent); filter: none; }
 
 /* ============ Results ============ */
