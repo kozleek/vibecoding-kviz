@@ -624,7 +624,7 @@ body.teams-big .team .tools { display: flex; top: 12px; right: 12px; opacity: 0;
 body.teams-big .team:hover .tools, body.teams-big .team:focus-within .tools { opacity: 1; }
 body.teams-big .team .tools button { width: 32px; height: 32px; font-size: 1rem; border: 1px solid var(--border); }
 body.teams-big .team .float { font-size: 14cqmin; right: auto; left: 0; width: 100%; text-align: center; top: 35%; }
-body.teams-big .team.bump { transform: scale(1.02); }
+body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při změně skóre nezvětšuje */
 @media (max-width: 720px) {
   body.teams-big .teams { grid-template-columns: repeat(min(var(--cols), 2), minmax(0, 170px)); grid-auto-rows: 260px; gap: 12px; }
 }
