@@ -72,7 +72,7 @@ function questionPoints() {
   if (!adaptiveOn() || state.view !== "quiz") return 1;
   return diffPoints(currentQ()?.difficulty);
 }
-const pointsLabel = (n) => (n === 1 ? "1 bod" : n < 5 ? `${n} body` : `${n} bodů`);
+const pointsLabel = (n) => (n === 1 ? "1 bod" : n >= 2 && n <= 4 ? `${n} body` : `${n} bodů`);
 
 const scoringActive = () => !!state.quiz && (state.view === "quiz" || state.view === "results");
 
@@ -327,29 +327,48 @@ $("nextBtn").addEventListener("click", () => go(1));
 
 /* ---------- Výsledky ---------- */
 function renderResults() {
-  const sorted = state.teams.map((t, i) => ({ ...t, i })).sort((a, b) => b.score - a.score);
   const podium = $("podium");
   const rest = $("rest");
   podium.innerHTML = "";
   rest.innerHTML = "";
 
-  // pořadí na stupních: 2. – 1. – 3.
-  const order = [1, 0, 2].filter((p) => sorted[p]);
-  for (const p of order) {
-    const t = sorted[p];
-    const place = el("div", `podium-place p${p + 1}`);
+  // pořadí se shodami: stejný počet bodů = stejné místo (1, 1, 3, …)
+  const ranked = state.teams
+    .map((t) => ({ ...t, rank: 1 + state.teams.filter((o) => o.score > t.score).length }))
+    .sort((a, b) => a.rank - b.rank);
+  const allTied = ranked.every((t) => t.rank === 1);
+  const topTie = !allTied && ranked.filter((t) => t.rank === 1).length > 1;
+
+  $("resultsTitle").textContent = allTied ? "Remíza!" : "Konec kvízu!";
+  $("resultsSub").hidden = !(allTied || topTie);
+  $("resultsSub").textContent = allTied
+    ? `Všechny týmy mají ${pointsLabel(ranked[0].score)}.`
+    : topTie ? "O první místo se dělí víc týmů." : "";
+
+  // na stupních místa 1–3; při remíze všech jsou všechny týmy na stejné výšce bez medailí
+  const onPodium = ranked.filter((t) => t.rank <= 3);
+  const byRank = (r) => onPodium.filter((t) => t.rank === r);
+  // vítěz(ové) uprostřed, ostatní střídavě vlevo a vpravo (2. místo blíž středu)
+  let order = onPodium;
+  if (!allTied) {
+    const left = [], right = [];
+    [...byRank(2), ...byRank(3)].forEach((t, i) => (i % 2 === 0 ? left.unshift(t) : right.push(t)));
+    order = [...left, ...byRank(1), ...right];
+  }
+  for (const t of order) {
+    const place = el("div", allTied ? "podium-place tie" : `podium-place p${t.rank}`);
     place.style.setProperty("--team", t.color);
     place.append(
       el("div", "podium-emoji", t.emoji),
       el("div", "podium-name", t.name),
       el("div", "podium-score", `${t.score} b.`),
-      el("div", "podium-block", ["🥇", "🥈", "🥉"][p])
+      el("div", "podium-block", allTied ? "" : ["🥇", "🥈", "🥉"][t.rank - 1])
     );
     podium.appendChild(place);
   }
-  sorted.slice(3).forEach((t, i) => {
+  ranked.filter((t) => t.rank > 3).forEach((t) => {
     const li = el("li");
-    li.append(el("span", "muted", `${i + 4}.`), el("span", null, `${t.emoji} ${t.name}`), el("b", null, `${t.score} b.`));
+    li.append(el("span", "muted", `${t.rank}.`), el("span", null, `${t.emoji} ${t.name}`), el("b", null, `${t.score} b.`));
     rest.appendChild(li);
   });
 }
