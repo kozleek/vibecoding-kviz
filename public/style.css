@@ -227,8 +227,15 @@ legend.label { margin-bottom: 10px; }
 .loader { text-align: center; max-width: 480px; }
 .loader h2 { font-family: var(--display); font-size: 2rem; margin: 18px 0 6px; }
 .loader p { min-height: 1.5em; margin: 0 0 24px; font-size: 1.1rem; }
-.loader-animals { font-size: 3.2rem; display: flex; gap: 14px; justify-content: center; }
-.loader-animals span { animation: hop 1.2s ease-in-out infinite; }
+.loader-animals { font-size: 3rem; display: flex; gap: 16px; justify-content: center; }
+/* ikona týmu v barevném čtverečku jako na kartě týmu */
+.loader-animals span {
+  width: 84px; height: 84px; border-radius: 24px; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--team, var(--accent)) 18%, var(--surface));
+  border-top: 5px solid var(--team, var(--accent));
+  animation: hop 1.2s ease-in-out infinite;
+}
+body.is-loading .scoreboard { display: none; }
 @keyframes hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-16px); } }
 .loader-bar { height: 6px; border-radius: 99px; background: var(--bg-2); overflow: hidden; }
 .loader-bar div {
@@ -363,7 +370,7 @@ button.team:active { transform: scale(.97); }
 span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .team {
   --team: var(--accent);
-  flex: 0 0 240px; min-width: 0;
+  flex: 0 1 300px; width: 300px; min-width: 0;
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto;
   column-gap: 10px; align-items: center;
   padding: 10px 12px; border-radius: 16px;
@@ -389,7 +396,7 @@ div.avatar { cursor: inherit; }
   background: var(--team); color: #fff; border: 2px solid var(--bg);
 }
 .team .name {
-  font: inherit; font-weight: 700; font-size: 1rem; min-width: 0; width: 100%;
+  font: inherit; font-weight: 700; font-size: 1.2rem; min-width: 0; width: 100%;
   border: 1px solid transparent; border-radius: 8px; padding: 2px 6px; margin-left: -6px;
   background: transparent; color: var(--text); text-overflow: ellipsis;
 }
@@ -397,7 +404,11 @@ div.avatar { cursor: inherit; }
 .team input.name:focus { outline: none; border-color: var(--team); background: var(--surface); }
 .team .crown { font-size: .8rem; color: var(--muted); padding-left: 1px; }
 .team .crown:empty { display: none; }
-.team .name { grid-row: span 1; }
+.team .name { grid-row: span 1; grid-column: 2; }
+/* malá karta: název svisle uprostřed; u vedoucího týmu název nad korunkou */
+.scoreboard .team .name { grid-row: 1 / span 2; align-self: center; }
+.scoreboard .team:has(.crown:not(:empty)) .name { grid-row: 1; align-self: end; }
+.scoreboard .team .crown { grid-column: 2; grid-row: 2; align-self: start; }
 .team .score-row { grid-row: span 2; display: flex; align-items: center; }
 .team .score {
   font-family: var(--display); font-weight: 800; font-size: 2.4rem; line-height: 1;
@@ -447,7 +458,16 @@ div.avatar { cursor: inherit; }
 .menu-panel button i { font-size: 1.25rem; color: var(--muted); }
 .menu-panel button span { flex: 1; white-space: nowrap; }
 .menu-panel kbd { margin-left: auto; }
-.settings-title { margin: 0 auto 0 0; font-family: var(--display); font-weight: 800; font-size: 1.6rem; }
+/* nastavení týmů: nadpis a křížek v hlavičce místo tématu kvízu a menu */
+.settings-title, #closeSettingsBtn { display: none; }
+.settings-title { flex: 1; margin: 0; padding-left: 16px; border-left: 2px solid var(--border); font-family: var(--display); font-weight: 800; font-size: 1.35rem; line-height: 1.6; }
+body.teams-big .settings-title { display: block; }
+body.teams-big #closeSettingsBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
+body.teams-big .topbar-info, body.teams-big .menu { display: none; }
+body.teams-big .scoreboard-tools { display: none; }
+/* menu: skupina ukázkových kvízů */
+.menu-label { padding: 6px 12px 2px; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.menu-panel button small { margin-left: auto; color: var(--muted); font-size: .8rem; }
 .link-btn { display: inline-flex; align-items: center; gap: 4px; }
 
 .btn.small { padding: 7px 12px; font-size: .9rem; border-radius: 10px; gap: 6px; }
@@ -462,7 +482,7 @@ body.teams-big .scoreboard {
   min-height: 0; flex-direction: column; align-items: stretch; gap: 14px;
   padding: 8px 24px 24px; border-top: 0; background: var(--bg);
 }
-body.teams-big .scoreboard-tools { justify-content: flex-end; }
+#closeSettingsBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
 body.teams-big .team-actions { justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; margin-bottom: auto; }
 body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
 body.teams-big .team-actions #doneBtn { margin-left: 8px; }
@@ -595,8 +615,6 @@ body.teams-big .team.bump { transform: scale(1.02); }
   .levels { grid-template-columns: repeat(2, 1fr); }
   .level:last-child { grid-column: 1 / -1; }
   .topbar-info { display: none; }
-  #newQuizBtn { padding: 8px 12px; }
-  #newQuizBtn span { display: none; }
   .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 8px; padding-bottom: 8px; }
   .scoreboard-tools { justify-content: flex-end; }
   .answer { gap: 14px; padding: 12px 14px; }
@@ -609,13 +627,18 @@ body.teams-big .team.bump { transform: scale(1.02); }
 @media (hover: none) {
   body.teams-big .team .tools { opacity: 1; }
 }
-/* desktop: hamburger menu; dotyková zařízení: jen tlačítko nastavení týmů */
-.touch-only { display: none; }
-#settingsBtn[aria-pressed="true"] { background: var(--surface); border-color: var(--border); color: var(--text); }
-/* dotyková zařízení nemají klávesnici – menu se zkratkami ani čísla kláves u týmů nedávají smysl */
+/* mimo běžící kvíz: bez bodů, lišta týmů slouží jako odkaz do nastavení týmů */
+body.no-scoring .score-row, body.no-scoring .crown, body.no-scoring #resetScoresBtn { display: none !important; }
+body.no-scoring:not(.teams-big) .scoreboard { cursor: pointer; }
+/* bez skóre je název svisle uprostřed karty */
+body.no-scoring:not(.teams-big) .scoreboard .team .name { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); }
+
+/* menu: na dotykových zařízeních jen nastavení týmů a ukázkový kvíz */
+.menu-sep { height: 1px; margin: 4px 8px; background: var(--border); }
+/* dotyková zařízení nemají klávesnici – zkratky v menu nedávají smysl (čísla týmů zůstávají kvůli přehlednosti) */
 @media (hover: none) and (pointer: coarse) {
-  .desktop-only, .team .key { display: none; }
-  .touch-only { display: grid; }
+  .desktop-only, .menu-panel .desktop-only, .menu-panel kbd { display: none; }
 }
 /* tablet (dotyk, širší obrazovka): větší ikony v nastavení týmů */
 @media (hover: none) and (pointer: coarse) and (min-width: 721px) {
@@ -631,11 +654,11 @@ body.teams-big .team.bump { transform: scale(1.02); }
   .teams { gap: 8px; }
   /* ikona vlevo, vpravo název a pod ním skóre – název má celou šířku */
   .scoreboard .team {
-    flex: 0 1 220px; width: 220px; min-width: 0; padding: 8px 10px; column-gap: 10px; border-radius: 14px;
+    flex: 0 1 234px; width: 234px; min-width: 0; padding: 12px 14px; column-gap: 14px; row-gap: 2px; border-radius: 14px;
     grid-template-columns: auto minmax(0, 1fr);
   }
   .scoreboard .team .avatar { width: 44px; height: 44px; font-size: 1.5rem; border-radius: 12px; }
-  .scoreboard .team .name { font-size: .95rem; grid-column: 2; grid-row: 1; }
+  .scoreboard .team .name { font-size: 1.1rem; grid-column: 2; grid-row: 1; }
   .scoreboard .team .score-row { grid-column: 2; grid-row: 2; }
   .scoreboard .team .score { font-size: 1.7rem; text-align: left; padding: 0; }
   .scoreboard .team .crown { display: none; }

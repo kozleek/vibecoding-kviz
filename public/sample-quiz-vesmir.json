@@ -1,0 +1,126 @@
+{
+  "topic": "Vesmír (ukázkový kvíz)",
+  "level": "stredni",
+  "questions": [
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Která planeta obíhá nejblíže Slunci?",
+      "answers": { "a": "Venuše", "b": "Merkur", "c": "Mars" },
+      "correct": "b",
+      "explanation": "Merkur je Slunci nejblíž a zároveň je nejmenší planetou Sluneční soustavy. Oběhne ho za pouhých 88 dní."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Která planeta má nejteplejší povrch?",
+      "answers": { "a": "Venuše", "b": "Merkur", "c": "Jupiter" },
+      "correct": "a",
+      "explanation": "Venuše má hustou atmosféru z oxidu uhličitého, která vytváří extrémní skleníkový efekt. Povrch má kolem 465 °C, víc než Merkur, i když je od Slunce dál."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Jak dlouho trvá, než světlo ze Slunce doletí na Zemi?",
+      "answers": { "a": "Asi 8 sekund", "b": "Asi 8 hodin", "c": "Asi 8 minut" },
+      "correct": "c",
+      "explanation": "Světlo urazí asi 150 milionů km ze Slunce k Zemi zhruba za 8 minut a 20 sekund. Slunce tedy vždy vidíme takové, jaké bylo před osmi minutami."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Kdo byl prvním člověkem ve vesmíru?",
+      "answers": { "a": "Jurij Gagarin", "b": "Neil Armstrong", "c": "Alan Shepard" },
+      "correct": "a",
+      "explanation": "Jurij Gagarin obletěl 12. dubna 1961 v lodi Vostok 1 jednou Zemi. Alan Shepard byl prvním Američanem ve vesmíru a Neil Armstrong prvním člověkem na Měsíci."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Ve kterém roce přistáli lidé poprvé na Měsíci?",
+      "answers": { "a": "1965", "b": "1969", "c": "1972" },
+      "correct": "b",
+      "explanation": "Mise Apollo 11 přistála na Měsíci 20. července 1969. Jako první z lodi vystoupili Neil Armstrong a Buzz Aldrin."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Jak se jmenuje galaxie, ve které leží Sluneční soustava?",
+      "answers": { "a": "Galaxie v Andromedě", "b": "Velké Magellanovo mračno", "c": "Mléčná dráha" },
+      "correct": "c",
+      "explanation": "Žijeme v Mléčné dráze, spirální galaxii se stovkami miliard hvězd. Andromeda je naše nejbližší velká sousední galaxie."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Která planeta má nejvýraznější soustavu prstenců?",
+      "answers": { "a": "Saturn", "b": "Jupiter", "c": "Neptun" },
+      "correct": "a",
+      "explanation": "Saturnovy prstence z ledu a prachu jsou vidět i malým dalekohledem. Prstence mají všechny obří planety, ostatní jsou ale tenké a tmavé."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Jak se jmenuje nejvyšší známá hora ve Sluneční soustavě?",
+      "answers": { "a": "Maxwell Montes", "b": "Olympus Mons", "c": "Mount Everest" },
+      "correct": "b",
+      "explanation": "Olympus Mons je obří sopka na Marsu, vysoká zhruba 22 km, tedy asi dvaapůlkrát víc než Mount Everest."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Kdo byl prvním Čechoslovákem ve vesmíru?",
+      "answers": { "a": "Ivan Bella", "b": "Aleš Svoboda", "c": "Vladimír Remek" },
+      "correct": "c",
+      "explanation": "Vladimír Remek letěl do vesmíru v roce 1978 v lodi Sojuz 28 jako první člověk mimo SSSR a USA. Ivan Bella se v roce 1999 stal prvním Slovákem ve vesmíru."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Kolik planet má Sluneční soustava?",
+      "answers": { "a": "Osm", "b": "Devět", "c": "Sedm" },
+      "correct": "a",
+      "explanation": "Od roku 2006 má Sluneční soustava osm planet. Pluto bylo tehdy Mezinárodní astronomickou unií přeřazeno mezi trpasličí planety."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Co měří jednotka světelný rok?",
+      "answers": { "a": "Čas", "b": "Vzdálenost", "c": "Jas hvězdy" },
+      "correct": "b",
+      "explanation": "Světelný rok je vzdálenost, kterou světlo urazí za jeden rok, tedy zhruba 9,46 bilionu km. Navzdory názvu to není jednotka času."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Který měsíc je největší ve Sluneční soustavě?",
+      "answers": { "a": "Titan", "b": "Ganymed", "c": "Měsíc" },
+      "correct": "b",
+      "explanation": "Jupiterův měsíc Ganymed je největším měsícem Sluneční soustavy a je dokonce větší než planeta Merkur. Saturnův Titan je druhý největší."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Ze kterých dvou prvků se Slunce skládá převážně?",
+      "answers": { "a": "Z kyslíku a uhlíku", "b": "Ze železa a niklu", "c": "Z vodíku a helia" },
+      "correct": "c",
+      "explanation": "Slunce tvoří přibližně ze tří čtvrtin vodík a z jedné čtvrtiny helium. V jádru se vodík jadernou fúzí mění na helium a uvolňuje se energie."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Jak se jmenuje vesmírný dalekohled vypuštěný v prosinci 2021?",
+      "answers": { "a": "Vesmírný dalekohled Jamese Webba", "b": "Hubbleův vesmírný dalekohled", "c": "Kepler" },
+      "correct": "a",
+      "explanation": "Dalekohled Jamese Webba odstartoval 25. prosince 2021 a pozoruje vesmír hlavně v infračerveném světle. Hubble létá od roku 1990."
+    },
+    {
+      "topic": "Vesmír",
+      "difficulty": "střední",
+      "question": "Která planeta obíhá kolem Slunce „vleže“, s osou skloněnou asi o 98°?",
+      "answers": { "a": "Neptun", "b": "Venuše", "c": "Uran" },
+      "correct": "c",
+      "explanation": "Uran má osu rotace skloněnou zhruba o 98°, takže se kolem Slunce valí po boku. Nejspíš za to může dávná srážka s velkým tělesem."
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "topic": "Příroda (ukázkový kvíz)",
+  "level": "tezka",
+  "questions": [
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Který strom je nejvyšším žijícím stromem na světě?",
+      "answers": { "a": "Sekvojovec obrovský", "b": "Sekvoje vždyzelená", "c": "Blahovičník královský" },
+      "correct": "b",
+      "explanation": "Nejvyšší známý strom je sekvoje vždyzelená Hyperion v Kalifornii, vysoká přibližně 116 m. Sekvojovec obrovský je zase největším stromem podle objemu kmene."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Jak se nazývá výdej vody z rostliny odpařováním, hlavně průduchy v listech?",
+      "answers": { "a": "Transpirace", "b": "Gutace", "c": "Osmóza" },
+      "correct": "a",
+      "explanation": "Transpirace je odpařování vody hlavně průduchy listů a pohání tok vody od kořenů vzhůru. Gutace je vylučování kapek vody, když se voda odpařovat nestačí."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Které z těchto zvířat je savec, který klade vejce?",
+      "answers": { "a": "Hrabáč kapský", "b": "Pásovec devítipásý", "c": "Ježura australská" },
+      "correct": "c",
+      "explanation": "Ježura patří stejně jako ptakopysk mezi ptakořitné, jediné savce kladoucí vejce. Hrabáč i pásovec rodí živá mláďata."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Který plyn je po dusíku a kyslíku třetím nejzastoupenějším v suchém vzduchu?",
+      "answers": { "a": "Argon", "b": "Oxid uhličitý", "c": "Neon" },
+      "correct": "a",
+      "explanation": "Argon tvoří zhruba 0,93 % suchého vzduchu, což je víc než dvacetinásobek podílu oxidu uhličitého (asi 0,04 %)."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Který národní park je rozlohou největší v Česku?",
+      "answers": { "a": "Krkonošský národní park", "b": "Národní park Šumava", "c": "Národní park Podyjí" },
+      "correct": "b",
+      "explanation": "Národní park Šumava má rozlohu zhruba 680 km² a je největším národním parkem v Česku. Podyjí je naopak nejmenší."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Který pták dokáže létat i pozpátku?",
+      "answers": { "a": "Rorýs obecný", "b": "Ledňáček říční", "c": "Kolibřík" },
+      "correct": "c",
+      "explanation": "Kolibříci mávají křídly v osmičkách až desítkykrát za sekundu, díky čemuž umí viset na místě i couvat."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Jak se nazývá vědní obor, který se zabývá houbami?",
+      "answers": { "a": "Bryologie", "b": "Mykologie", "c": "Lichenologie" },
+      "correct": "b",
+      "explanation": "Houbami se zabývá mykologie. Bryologie studuje mechorosty a lichenologie lišejníky."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Která z těchto rostlin rostoucích v Česku je masožravá?",
+      "answers": { "a": "Rosnatka okrouhlolistá", "b": "Suchopýr pochvatý", "c": "Vachta trojlistá" },
+      "correct": "a",
+      "explanation": "Rosnatka okrouhlolistá roste na rašeliništích a lapá hmyz lepkavými žláznatými chlupy na listech. V Česku je chráněná jako silně ohrožený druh."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Kolik srdcí má chobotnice?",
+      "answers": { "a": "Jedno", "b": "Dvě", "c": "Tři" },
+      "correct": "c",
+      "explanation": "Chobotnice má tři srdce: dvě žaberní pumpují krev přes žábry a třetí ji rozvádí do těla. Její krev je modrá kvůli hemocyaninu, který obsahuje měď."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Které zvíře dosahuje nejvyšší rychlosti ze všech živočichů?",
+      "answers": { "a": "Gepard", "b": "Sokol stěhovavý", "c": "Rorýs obecný" },
+      "correct": "b",
+      "explanation": "Sokol stěhovavý přesahuje při střemhlavém letu za kořistí rychlost 300 km/h. Gepard je nejrychlejší jen mezi suchozemskými zvířaty."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Jakou nadmořskou výšku má Sněžka, nejvyšší hora Česka?",
+      "answers": { "a": "1 491 m", "b": "1 378 m", "c": "1 603 m" },
+      "correct": "c",
+      "explanation": "Sněžka v Krkonoších měří 1 603 m. Praděd, nejvyšší hora Moravy, má 1 491 m."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Která řeka je nejdelší na území Česka?",
+      "answers": { "a": "Vltava", "b": "Labe", "c": "Morava" },
+      "correct": "a",
+      "explanation": "Vltava měří asi 430 km a celá teče po českém území. Labe je celkově mnohem delší, ale v Česku má jen zhruba 370 km."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Která dřevina má v českých lesích největší zastoupení?",
+      "answers": { "a": "Borovice lesní", "b": "Smrk ztepilý", "c": "Buk lesní" },
+      "correct": "b",
+      "explanation": "Smrk ztepilý tvoří zhruba polovinu českých lesů, hlavně kvůli výsadbě v minulých staletích. Přirozeně by u nás převládal buk."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Jaký je latinský rodový název vlka obecného?",
+      "answers": { "a": "Vulpes", "b": "Lynx", "c": "Canis" },
+      "correct": "c",
+      "explanation": "Vlk obecný se latinsky jmenuje Canis lupus. Do stejného rodu patří i pes. Vulpes je rod lišek a Lynx rod rysů."
+    },
+    {
+      "topic": "Příroda",
+      "difficulty": "těžká",
+      "question": "Který z těchto savců upadá v zimě do pravého zimního spánku (hibernace)?",
+      "answers": { "a": "Ježek západní", "b": "Medvěd hnědý", "c": "Veverka obecná" },
+      "correct": "a",
+      "explanation": "Ježek hibernuje: tělesná teplota mu klesá až k několika stupňům a srdce zpomalí na pár tepů za minutu. Medvěd upadá jen do zimního klidu s mírně sníženou teplotou a veverka zůstává aktivní."
+    }
+  ]
+}

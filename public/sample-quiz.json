@@ -1,0 +1,126 @@
+{
+  "topic": "Sport (ukázkový kvíz)",
+  "level": "mix",
+  "questions": [
+    {
+      "topic": "Sport",
+      "difficulty": "lehká",
+      "question": "Kolik hráčů jednoho týmu je při fotbalovém zápase současně na hřišti?",
+      "answers": { "a": "10", "b": "11", "c": "12" },
+      "correct": "b",
+      "explanation": "Fotbalový tým nastupuje s 11 hráči včetně brankáře."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "lehká",
+      "question": "Kolik kruhů je na olympijské vlajce?",
+      "answers": { "a": "Pět", "b": "Čtyři", "c": "Šest" },
+      "correct": "a",
+      "explanation": "Pět propojených kruhů symbolizuje pět obydlených kontinentů spojených olympijským hnutím."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "lehká",
+      "question": "Ve kterém sportu se hraje s pukem?",
+      "answers": { "a": "Pozemní hokej", "b": "Curling", "c": "Lední hokej" },
+      "correct": "c",
+      "explanation": "Puk je gumový kotouč, se kterým se hraje lední hokej. Pozemní hokej se hraje s míčkem a v curlingu se posílají žulové kameny."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "lehká",
+      "question": "Kolik bodů dostane basketbalový tým za koš hozený zpoza tříbodové čáry?",
+      "answers": { "a": "Dva", "b": "Tři", "c": "Čtyři" },
+      "correct": "b",
+      "explanation": "Koš zpoza tříbodové čáry má hodnotu tří bodů, koš z bližší vzdálenosti dvou bodů a trestný hod jednoho bodu."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "lehká",
+      "question": "Jak dlouhý je bazén, ve kterém se plave na olympijských hrách?",
+      "answers": { "a": "50 metrů", "b": "25 metrů", "c": "100 metrů" },
+      "correct": "a",
+      "explanation": "Olympijský bazén má délku 50 metrů. Pětadvacetimetrový bazén se používá pro závody na krátkém bazénu."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "střední",
+      "question": "Ve kterém městě se konaly první novodobé olympijské hry v roce 1896?",
+      "answers": { "a": "V Paříži", "b": "V Londýně", "c": "V Athénách" },
+      "correct": "c",
+      "explanation": "První novodobé olympijské hry se z podnětu Pierra de Coubertina konaly v roce 1896 v Athénách, jako připomínka antické tradice."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "střední",
+      "question": "Jak dlouhý je maratonský běh?",
+      "answers": { "a": "40 km", "b": "42,195 km", "c": "45 km" },
+      "correct": "b",
+      "explanation": "Maraton měří 42,195 km. Tato délka se ustálila od olympijských her v Londýně v roce 1908."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "střední",
+      "question": "Ve kterém roce vyhráli čeští hokejisté olympijský turnaj v Naganu?",
+      "answers": { "a": "1998", "b": "1996", "c": "2002" },
+      "correct": "a",
+      "explanation": "V roce 1998 v Naganu porazili Češi ve finále Rusko 1:0 gólem Petra Svobody. Turnaj se dodnes připomíná jako „turnaj století“."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "střední",
+      "question": "Kolik jamek má standardní golfové kolo?",
+      "answers": { "a": "9", "b": "21", "c": "18" },
+      "correct": "c",
+      "explanation": "Standardní kolo golfu má 18 jamek. Kratší hřiště mívají 9 jamek, které se pak hrají dvakrát."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "střední",
+      "question": "Ve kterém cyklistickém závodě nosí celkový lídr žlutý trikot?",
+      "answers": { "a": "Giro d'Italia", "b": "Tour de France", "c": "Vuelta a España" },
+      "correct": "b",
+      "explanation": "Žlutý trikot (maillot jaune) patří lídrovi Tour de France. Na Giru se jezdí v růžovém a na Vueltě v červeném."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "těžká",
+      "question": "Emil Zátopek získal na olympijských hrách 1952 v Helsinkách zlato na 5 km, na 10 km a v jaké další disciplíně?",
+      "answers": { "a": "V běhu na 3 000 m překážek", "b": "V maratonu", "c": "V chůzi na 20 km" },
+      "correct": "b",
+      "explanation": "Zátopek v Helsinkách vyhrál 5 km, 10 km i maraton, který tehdy běžel vůbec poprvé v životě. Tento triumf se dosud nikomu nepodařilo zopakovat."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "těžká",
+      "question": "Ve které disciplíně je Jan Železný trojnásobným olympijským vítězem?",
+      "answers": { "a": "V hodu diskem", "b": "Ve vrhu koulí", "c": "V hodu oštěpem" },
+      "correct": "c",
+      "explanation": "Jan Železný vyhrál hod oštěpem na olympijských hrách 1992, 1996 a 2000 a drží i světový rekord 98,48 m z roku 1996."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "těžká",
+      "question": "Které město hostilo zimní olympijské hry v roce 1984?",
+      "answers": { "a": "Sarajevo", "b": "Calgary", "c": "Lake Placid" },
+      "correct": "a",
+      "explanation": "Zimní olympijské hry 1984 se konaly v Sarajevu, tehdy v Jugoslávii. Lake Placid hostil hry v roce 1980 a Calgary v roce 1988."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "těžká",
+      "question": "Ve kterém sportu získala Ester Ledecká na olympijských hrách 2018 zlato kromě snowboardingu?",
+      "answers": { "a": "V biatlonu", "b": "V alpském lyžování", "c": "V běhu na lyžích" },
+      "correct": "b",
+      "explanation": "V Pchjongčchangu 2018 vyhrála Ledecká super-G v alpském lyžování a paralelní obří slalom na snowboardu. Jako první sportovkyně získala zlato ve dvou sportech na jedněch zimních hrách."
+    },
+    {
+      "topic": "Sport",
+      "difficulty": "těžká",
+      "question": "Která česká tenistka vyhrála Wimbledon v letech 2011 a 2014?",
+      "answers": { "a": "Markéta Vondroušová", "b": "Karolína Plíšková", "c": "Petra Kvitová" },
+      "correct": "c",
+      "explanation": "Petra Kvitová vyhrála Wimbledon dvakrát, v roce 2011 a 2014. Markéta Vondroušová ho vyhrála v roce 2023 a Karolína Plíšková byla finalistkou v roce 2021."
+    }
+  ]
+}

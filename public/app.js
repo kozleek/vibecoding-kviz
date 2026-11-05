@@ -62,12 +62,19 @@ function save() {
 /* ---------- Přepínání obrazovek ---------- */
 let loadingTimer = null;
 
+const scoringActive = () => !!state.quiz && (state.view === "quiz" || state.view === "results");
+
 function show(view) {
   state.view = view;
   for (const v of ["setup", "loading", "quiz", "results"]) $(v + "View").hidden = v !== view;
   $("newQuizBtn").hidden = !state.quiz || view === "setup" || view === "loading";
   $("quizInfo").textContent =
     state.quiz && view !== "setup" ? `${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]}` : "";
+
+  // body se počítají jen když kvíz běží (otázky a výsledky); jinak lišta týmů slouží k jejich úpravě
+  document.body.classList.toggle("no-scoring", !scoringActive());
+  document.body.classList.toggle("is-loading", view === "loading"); // při načítání bez lišty týmů
+  renderTeams();
 
   clearInterval(loadingTimer);
   if (view === "loading") startLoadingTips();
@@ -165,6 +172,7 @@ function startLoadingTips() {
   animals.innerHTML = "";
   state.teams.forEach((t, j) => {
     const s = el("span", null, t.emoji);
+    s.style.setProperty("--team", t.color);
     s.style.animationDelay = `${j * 0.15}s`;
     animals.appendChild(s);
   });
@@ -190,7 +198,7 @@ async function newQuiz() {
   show("setup");
   $("topic").focus();
 }
-$("newQuizBtn").addEventListener("click", newQuiz);
+$("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 $("againBtn").addEventListener("click", newQuiz);
 $("backBtn").addEventListener("click", () => show("quiz"));
 $("brand").addEventListener("click", (e) => { e.preventDefault(); if (state.view !== "setup") newQuiz(); });
@@ -329,11 +337,12 @@ function renderTeams() {
     // malé zobrazení: na počítači body jen klávesnicí,
     // na dotykových zařízeních (tablet, mobil – bez klávesnice) klepnutí na kartu = +1 bod
     if (!big) {
-      const card = el(isTouch() ? "button" : "div", "team");
+      const tapToScore = isTouch() && scoringActive();
+      const card = el(tapToScore ? "button" : "div", "team");
       card.style.setProperty("--team", t.color);
-      if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
-      card.title = isTouch() ? "Klepnutím přidáš bod" : `Bod přidáš klávesou ${i + 1}`;
-      if (isTouch()) card.addEventListener("click", () => addPoints(i, 1));
+      if (scoringActive() && max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
+      card.title = !scoringActive() ? "Upravit týmy" : tapToScore ? "Klepnutím přidáš bod" : `Bod přidáš klávesou ${i + 1}`;
+      if (tapToScore) card.addEventListener("click", () => addPoints(i, 1));
       const avatar = el("div", "avatar", t.emoji);
       avatar.append(el("span", "key", String(i + 1)));
       const scoreRow = el("div", "score-row");
@@ -346,7 +355,7 @@ function renderTeams() {
 
     const card = el("div", "team");
     card.style.setProperty("--team", t.color);
-    if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
+    if (scoringActive() && max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
 
     const avatar = el("button", "avatar", t.emoji);
     avatar.title = "Změnit ikonu";
@@ -417,6 +426,7 @@ function renderTeams() {
 
 // i = index týmu, nebo "all" pro všechny týmy najednou
 function addPoints(i, delta) {
+  if (!scoringActive()) return;
   const idx = i === "all" ? state.teams.map((_, j) => j) : state.teams[i] ? [i] : [];
   if (!idx.length) return;
   idx.forEach((j) => (state.teams[j].score += delta));
@@ -502,7 +512,7 @@ const EMOJI_DATA = {
   "🦋": ["Motýli", "#2f7fe0"], "🐝": ["Včely", "#d99a00"], "🐞": ["Berušky", "#d6332f"],
   "🐌": ["Šneci", "#b07a4a"], "🕷️": ["Pavouci", "#45454f"], "🐼": ["Pandy", "#4a4f57"],
   "🐨": ["Koaly", "#7f8c99"], "🐯": ["Tygři", "#ef7f1a"], "🦁": ["Lvi", "#cf9520"],
-  "🐮": ["Krávy", "#6d7a86"], "🐷": ["Prasátka", "#e2708f"], "🐵": ["Opice", "#9b6b43"],
+  "🐮": ["Kravičky", "#6d7a86"], "🐷": ["Prasátka", "#e2708f"], "🐵": ["Opice", "#9b6b43"],
   "🐧": ["Tučňáci", "#2c4a6b"], "🐙": ["Chobotnice", "#d1495b"], "🦈": ["Žraloci", "#4f7d9c"],
   "🦄": ["Jednorožci", "#b061d6"], "🐲": ["Draci", "#2f9e5b"], "🦖": ["Dinosauři", "#5a9e3c"],
   "🌲": ["Smrky", "#2d6a45"], "🍄": ["Houby", "#c0392b"], "🌻": ["Slunečnice", "#d8a417"],
@@ -634,13 +644,44 @@ const menuAction = (fn) => () => { closeMenu(); fn(); };
 $("menuTeams").addEventListener("click", menuAction(() => toggleTeamsLayout()));
 $("menuFullscreen").addEventListener("click", menuAction(toggleFullscreen));
 $("menuHelp").addEventListener("click", menuAction(() => $("helpDialog").showModal()));
+document.querySelectorAll("[data-demo]").forEach((b) =>
+  b.addEventListener("click", menuAction(() => loadDemoQuiz(b.dataset.demo)))
+);
+
+/* ---------- Ukázkový kvíz (bez Claude API) ---------- */
+async function loadDemoQuiz(file) {
+  if (state.quiz) {
+    const ok = await confirmDialog({
+      icon: "🏆",
+      title: "Spustit ukázkový kvíz?",
+      text: "Aktuální otázky se nahradí ukázkovým kvízem. Týmy a body zůstanou.",
+      ok: "Spustit",
+    });
+    if (!ok) return;
+  }
+  try {
+    const res = await fetch(file, { cache: "no-cache" });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    state.quiz = {
+      topic: data.topic,
+      level: data.level,
+      questions: data.questions.map((q) => ({ ...q, picked: null, revealed: false })),
+    };
+    state.index = 0;
+    if (state.bigTeams) { state.bigTeams = false; applyTeamsLayout(); }
+    show("quiz");
+  } catch {
+    show("setup");
+    showError("Ukázkový kvíz se nepodařilo načíst.");
+  }
+}
 
 /* ---------- Velké / malé zobrazení týmů ---------- */
 function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
   $("menuTeamsLabel").textContent = big ? "Zavřít nastavení týmů" : "Nastavení týmů";
-  $("settingsBtn").setAttribute("aria-pressed", String(big));
   renderTeams();
 }
 function toggleTeamsLayout() {
@@ -649,8 +690,12 @@ function toggleTeamsLayout() {
   applyTeamsLayout();
   save();
 }
-$("doneBtn").addEventListener("click", toggleTeamsLayout);
-$("settingsBtn").addEventListener("click", toggleTeamsLayout);
+$("doneBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
+$("closeSettingsBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
+// mimo běžící kvíz: kliknutí kamkoli do lišty týmů otevře nastavení týmů
+document.querySelector(".scoreboard").addEventListener("click", (e) => {
+  if (!state.bigTeams && !scoringActive()) { e.stopPropagation(); toggleTeamsLayout(); }
+});
 
 /* ---------- Klávesnice ---------- */
 document.addEventListener("keydown", (e) => {
