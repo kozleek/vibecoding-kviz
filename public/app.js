@@ -12,7 +12,6 @@ const ANIMALS = [
 const MAX_TEAMS = 4;
 const MIN_TEAMS = 0; // bez týmů = nesoutěžní režim (bez lišty týmů)
 const LEVEL_NAMES = { lehka: "Lehká", stredni: "Střední", tezka: "Těžká", hardcore: "Hardcore", mix: "Mix" };
-const TOPIC_SUGGESTIONS = ["Sport", "Vesmír", "Česká historie", "Zeměpis", "Příroda", "Film a seriály"];
 const LOADING_TIPS = [
   "Vymýšlím chytáky do špatných odpovědí…",
   "Ověřuji, že správná odpověď je opravdu správná…",
@@ -112,28 +111,24 @@ function topicList() {
   return $("topic").value.split(/[,;]+/).map((t) => t.trim()).filter(Boolean);
 }
 
-function renderTopicChips() {
-  const chosen = topicList().map((t) => t.toLowerCase());
-  const wrap = $("topicChips");
-  wrap.innerHTML = "";
-  for (const s of TOPIC_SUGGESTIONS) {
-    const b = el("button", "chip" + (chosen.includes(s.toLowerCase()) ? " active" : ""), s);
-    b.type = "button";
-    b.addEventListener("click", () => {
-      let list = topicList();
-      const i = list.findIndex((t) => t.toLowerCase() === s.toLowerCase());
-      if (i >= 0) list.splice(i, 1);
-      else list.push(s);
-      $("topic").value = list.join(", ");
-      $("topic").classList.remove("invalid");
-      renderTopicChips();
-    });
-    wrap.appendChild(b);
-  }
-}
-$("topic").addEventListener("input", () => {
+$("topic").addEventListener("input", () => $("topic").classList.remove("invalid"));
+
+// náhodné téma: pole pro téma se vypne, téma vybere AI
+function applyRandomTopic() {
+  const on = $("randomTopic").checked;
+  $("topic").disabled = on;
+  $("topic").placeholder = on ? "Téma vybere AI" : "např. sport, vesmír";
   $("topic").classList.remove("invalid");
-  renderTopicChips();
+}
+$("randomTopic").addEventListener("change", applyRandomTopic);
+
+// upřesnění zadání (doplňující prompt)
+$("extraBtn").addEventListener("click", () => {
+  const open = $("extraField").hidden;
+  $("extraField").hidden = !open;
+  $("extraBtn").setAttribute("aria-expanded", String(open));
+  $("extraBtn").classList.toggle("active", open);
+  if (open) $("extra").focus();
 });
 
 function setCount(n) {
@@ -150,14 +145,17 @@ $("count").addEventListener("change", () => setCount($("count").value));
 $("setupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const topics = topicList();
-  if (!topics.length) {
+  const randomTopic = $("randomTopic").checked;
+  if (!topics.length && !randomTopic) {
     $("topic").classList.add("invalid");
     $("topic").focus();
-    return showError("Napiš téma kvízu nebo vyber některý z návrhů.");
+    return showError("Napiš téma kvízu nebo zapni náhodné téma.");
   }
   setCount($("count").value);
   const body = {
-    topic: topics.join(", "),
+    topic: randomTopic ? "" : topics.join(", "),
+    randomTopic,
+    instructions: $("extra").value.trim(),
     count: Number($("count").value),
     level: new FormData(e.target).get("level"),
   };
@@ -901,7 +899,6 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* ---------- Start ---------- */
-renderTopicChips();
 setCount($("count").value);
 applyTeamsLayout();
 if (state.view === "loading" || (!state.quiz && state.view !== "setup")) state.view = state.quiz ? "quiz" : "setup";

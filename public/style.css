@@ -161,9 +161,17 @@ legend.label { margin-bottom: 10px; }
 .input-xl.invalid { border-color: var(--bad); }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-#topicChips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } /* návrhy témat v jednom řádku */
-#topicChips::-webkit-scrollbar { display: none; }
-#topicChips .chip { flex: none; white-space: nowrap; }
+/* pod polem téma: přepínač náhodného tématu a tlačítko upřesnění */
+.topic-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.topic-tools .toggle-text { flex-direction: row; align-items: baseline; gap: 6px; }
+#extraBtn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.extra-field { display: grid; gap: 8px; margin-top: 4px; }
+.extra-field textarea {
+  font: inherit; font-size: 1.05rem; line-height: 1.45; resize: vertical; min-height: 80px;
+  padding: 12px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--bg); color: var(--text);
+}
+.extra-field textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.input-xl:disabled { opacity: .55; cursor: not-allowed; }
 .chip {
   border: 1px solid var(--border); background: var(--bg);
   padding: 7px 14px; border-radius: 99px; cursor: pointer;

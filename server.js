@@ -15,6 +15,7 @@ app.use(express.static("public"));
 const QUIZ_SCHEMA = {
   type: "object",
   properties: {
+    quizTopic: { type: "string" }, // název tématu kvízu (u náhodného tématu ho volí Claude)
     questions: {
       type: "array",
       items: {
@@ -37,7 +38,7 @@ const QUIZ_SCHEMA = {
       },
     },
   },
-  required: ["questions"],
+  required: ["quizTopic", "questions"],
   additionalProperties: false,
 };
 
@@ -77,10 +78,12 @@ function shuffleAnswers(q) {
 
 app.post("/api/generate", async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
+  const randomTopic = req.body?.randomTopic === true;
+  const instructions = String(req.body?.instructions || "").trim().slice(0, 1500);
   const count = Math.min(MAX_QUESTIONS, Math.max(MIN_QUESTIONS, parseInt(req.body?.count, 10) || 10));
   const level = LEVELS[req.body?.level] ? req.body.level : "mix";
 
-  if (!topic) return res.status(400).json({ error: "Zadej téma kvízu." });
+  if (!topic && !randomTopic) return res.status(400).json({ error: "Zadej téma kvízu nebo zapni náhodné téma." });
 
   const levelText =
     level === "mix"
@@ -88,10 +91,15 @@ app.post("/api/generate", async (req, res) => {
       : `Všechny otázky mají obtížnost „${LEVELS[level]}“.`;
 
   const topics = [...new Set(topic.split(/[,;\n]+/).map((t) => t.trim()).filter(Boolean))];
-  const topicText =
-    topics.length > 1
-      ? `Témata: ${topics.join(", ")}\nRozděl otázky mezi témata co nejrovnoměrněji a promíchej je. Do pole topic napiš, ke kterému tématu otázka patří (přesně jeho název ze seznamu).`
-      : `Téma: ${topics[0]}\nDo pole topic napiš krátký název tématu.`;
+  const topicText = randomTopic
+    ? "Téma si vyber sám: zvol jedno náhodné, zajímavé a dostatečně široké téma vhodné pro týmový kvíz (klidně netradiční, vyhni se nejobvyklejším jako sport nebo zeměpis). Krátký český název tématu napiš do pole quizTopic a do pole topic u každé otázky."
+    : topics.length > 1
+      ? `Témata: ${topics.join(", ")}\nRozděl otázky mezi témata co nejrovnoměrněji a promíchej je. Do pole topic napiš, ke kterému tématu otázka patří (přesně jeho název ze seznamu). Do pole quizTopic napiš témata oddělená čárkou.`
+      : `Téma: ${topics[0]}\nDo pole topic i quizTopic napiš krátký název tématu.`;
+  // upřesnění od moderátora (styl otázek, odpovědí, cílová skupina…)
+  const extraText = instructions
+    ? `\n\nUpřesnění od moderátora kvízu (dodrž ho, pokud není v rozporu s formátem tří odpovědí a jedné správné):\n${instructions}`
+    : "";
 
   try {
     const stream = client.beta.messages.stream({
@@ -107,7 +115,7 @@ app.post("/api/generate", async (req, res) => {
       messages: [
         {
           role: "user",
-          content: `${topicText}\nPočet otázek: ${count}\n${levelText}`,
+          content: `${topicText}\nPočet otázek: ${count}\n${levelText}${extraText}`,
         },
       ],
     });
@@ -125,7 +133,8 @@ app.post("/api/generate", async (req, res) => {
     let questions = data.questions.slice(0, count).map(shuffleAnswers);
     if (level === "mix") questions = shuffle(questions); // mix: obtížnosti náhodně promíchané, ne popořadě
 
-    res.json({ topic: topics.join(", "), level, questions });
+    const quizTopic = randomTopic ? String(data.quizTopic || "Náhodné téma").slice(0, 120) : topics.join(", ");
+    res.json({ topic: quizTopic, level, questions });
   } catch (err) {
     console.error(err);
     if (err instanceof Anthropic.AuthenticationError || /authentication method/i.test(err?.message)) {
