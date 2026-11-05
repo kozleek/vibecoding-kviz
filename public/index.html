@@ -21,15 +21,19 @@
       <div class="menu">
         <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
         <div class="menu-panel" id="menuPanel" role="menu" hidden>
+          <div class="menu-box">
           <button role="menuitem" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
           <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení</span><kbd>T</kbd></button>
           <button role="menuitem" id="menuFullscreen" class="desktop-only"><i class="ph ph-corners-out" id="fsIcon"></i><span id="fsLabel">Celá obrazovka</span><kbd>F</kbd></button>
           <button role="menuitem" id="menuHelp" class="desktop-only"><i class="ph ph-keyboard"></i><span>Klávesové zkratky</span><kbd>?</kbd></button>
-          <div class="menu-sep" role="separator"></div>
+          </div>
+          <!-- ukázkové kvízy v samostatném boxu -->
+          <div class="menu-box" role="group" aria-label="Ukázkové kvízy">
           <div class="menu-label">Ukázkové kvízy</div>
           <button role="menuitem" data-demo="sample-quiz.json"><i class="ph ph-soccer-ball"></i><span>Sport</span><small>mix</small></button>
           <button role="menuitem" data-demo="sample-quiz-priroda.json"><i class="ph ph-leaf"></i><span>Příroda</span><small>těžká</small></button>
           <button role="menuitem" data-demo="sample-quiz-vesmir.json"><i class="ph ph-planet"></i><span>Vesmír</span><small>střední</small></button>
+          </div>
         </div>
       </div>
     </div>

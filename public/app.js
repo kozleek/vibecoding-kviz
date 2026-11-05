@@ -666,7 +666,7 @@ function openMenu() {
   closeEmojiPicker();
   $("menuPanel").hidden = false;
   $("menuBtn").setAttribute("aria-expanded", "true");
-  $("menuPanel").querySelector("button")?.focus();
+  $("menuPanel").querySelector("button:not([hidden])")?.focus();
 }
 function closeMenu() {
   $("menuPanel").hidden = true;

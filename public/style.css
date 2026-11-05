@@ -450,10 +450,13 @@ div.avatar { cursor: inherit; }
 #menuBtn[aria-expanded="true"] { background: var(--surface); border-color: var(--border); color: var(--text); }
 .menu-panel {
   position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: max-content; min-width: 300px; max-width: calc(100vw - 32px);
+  display: flex; flex-direction: column; gap: 8px; /* dva samostatné boxy pod sebou */
+  animation: pickerIn .15s ease both;
+}
+.menu-box {
   padding: 6px; border-radius: 16px;
   background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
   display: flex; flex-direction: column; gap: 2px;
-  animation: pickerIn .15s ease both;
 }
 .menu-panel button {
   display: flex; align-items: center; gap: 12px; width: 100%;
@@ -671,7 +674,6 @@ body.no-scoring:not(.teams-big) .scoreboard { cursor: pointer; }
 body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--team); }
 
 /* menu: na dotykových zařízeních jen nastavení týmů a ukázkový kvíz */
-.menu-sep { height: 1px; margin: 4px 8px; background: var(--border); }
 /* dotyková zařízení nemají klávesnici – zkratky v menu nedávají smysl (čísla týmů zůstávají kvůli přehlednosti) */
 @media (hover: none) and (pointer: coarse) {
   .desktop-only, .menu-panel .desktop-only, .menu-panel kbd { display: none; }
