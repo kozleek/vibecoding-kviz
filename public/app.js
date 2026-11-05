@@ -446,7 +446,37 @@ function renderTeams() {
       tools.append(del);
     }
 
-    card.append(avatar, name, scoreRow, tools);
+    // pořadí: šipky ‹ › (i na dotyku) + přetažení karty
+    const move = el("div", "move");
+    const left = el("button", null, "‹");
+    left.title = "Posunout doleva"; left.setAttribute("aria-label", `Posunout tým ${t.name} doleva`);
+    left.disabled = i === 0;
+    left.addEventListener("click", () => moveTeam(i, i - 1));
+    const right = el("button", null, "›");
+    right.title = "Posunout doprava"; right.setAttribute("aria-label", `Posunout tým ${t.name} doprava`);
+    right.disabled = i === state.teams.length - 1;
+    right.addEventListener("click", () => moveTeam(i, i + 1));
+    move.append(left, right);
+
+    card.draggable = true;
+    name.draggable = false;
+    card.addEventListener("dragstart", (e) => {
+      if (e.target.closest("input")) return e.preventDefault();
+      e.dataTransfer.setData("text/plain", String(i));
+      e.dataTransfer.effectAllowed = "move";
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend", () => card.classList.remove("dragging"));
+    card.addEventListener("dragover", (e) => { e.preventDefault(); card.classList.add("drop-target"); });
+    card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
+    card.addEventListener("drop", (e) => {
+      e.preventDefault();
+      card.classList.remove("drop-target");
+      const from = Number(e.dataTransfer.getData("text/plain"));
+      if (!Number.isNaN(from)) moveTeam(from, i);
+    });
+
+    card.append(avatar, name, scoreRow, tools, move);
     wrap.appendChild(card);
   });
 
@@ -489,6 +519,15 @@ function addTeam(e) {
   e?.stopPropagation(); // jinak by klik hned zavřel výběr emoji
   if (state.teams.length >= MAX_TEAMS) return;
   openEmojiPicker("new", e?.currentTarget || document.querySelector(".add-team"));
+}
+
+function moveTeam(from, to) {
+  if (from === to || to < 0 || to >= state.teams.length) return;
+  const [t] = state.teams.splice(from, 1);
+  state.teams.splice(to, 0, t);
+  closeEmojiPicker();
+  renderTeams();
+  save();
 }
 
 async function removeTeam(i) {

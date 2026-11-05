@@ -622,6 +622,20 @@ body.teams-big .team .pm:active { transform: scale(.92); }
 body.teams-big .team .score { font-size: 24cqmin; line-height: 1; padding: 0; min-width: 1.2ch; text-align: center; }
 body.teams-big .team .tools { display: flex; top: 12px; right: 12px; opacity: 0; position: absolute; }
 body.teams-big .team:hover .tools, body.teams-big .team:focus-within .tools { opacity: 1; }
+/* změna pořadí: šipky vlevo nahoře + přetahování */
+.scoreboard .team .move { display: none; }
+body.teams-big .team .move { display: flex; gap: 4px; position: absolute; top: 12px; left: 12px; opacity: 0; transition: opacity .15s; }
+body.teams-big .team:hover .move, body.teams-big .team:focus-within .move { opacity: 1; }
+body.teams-big .team .move button {
+  width: 32px; height: 32px; border-radius: 8px; padding: 0; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  font-size: 1.3rem; line-height: 1;
+}
+body.teams-big .team .move button:hover:not(:disabled) { color: var(--text); border-color: var(--accent); }
+body.teams-big .team .move button:disabled { opacity: .3; cursor: default; }
+body.teams-big .team[draggable="true"] { cursor: grab; }
+body.teams-big .team.dragging { opacity: .45; }
+body.teams-big .team.drop-target { outline: 3px dashed var(--accent); outline-offset: 6px; }
 body.teams-big .team .tools button { width: 32px; height: 32px; font-size: 1rem; border: 1px solid var(--border); }
 body.teams-big .team .float { font-size: 14cqmin; right: auto; left: 0; width: 100%; text-align: center; top: 35%; }
 body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při změně skóre nezvětšuje */
@@ -729,7 +743,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   .team .score { font-size: 1.8rem; }
 }
 @media (hover: none) {
-  body.teams-big .team .tools { opacity: 1; }
+  body.teams-big .team .tools, body.teams-big .team .move { opacity: 1; }
 }
 /* mimo běžící kvíz: bez bodů, lišta týmů slouží jako odkaz do nastavení týmů */
 /* nesoutěžní režim: bez týmů se lišta mimo nastavení neukazuje */
