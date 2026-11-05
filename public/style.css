@@ -635,13 +635,19 @@ body.teams-big .team .move button:hover:not(:disabled) { color: var(--text); bor
 body.teams-big .team .move button:disabled { opacity: .3; cursor: default; }
 body.teams-big .team[draggable="true"] { cursor: grab; }
 body.teams-big .team.dragging { opacity: .45; }
+/* ukazatel vložení: svislá linka s „kolíčky“ na koncích, uprostřed mezery mezi kartami */
 body.teams-big .team.drop-before::after, body.teams-big .team.drop-after::after {
-  content: ""; position: absolute; top: 4%; bottom: 4%; width: 6px; border-radius: 3px;
-  background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
-  pointer-events: none;
+  content: ""; position: absolute; top: -8px; bottom: -8px; width: 16px; pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 8px, var(--accent) 6.5px, transparent 7px),
+    radial-gradient(circle at 50% calc(100% - 8px), var(--accent) 6.5px, transparent 7px),
+    linear-gradient(var(--accent), var(--accent)) center / 5px calc(100% - 16px) no-repeat;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 45%, transparent));
+  animation: dropPulse 1s ease-in-out infinite;
 }
-body.teams-big .team.drop-before::after { left: -16px; }
-body.teams-big .team.drop-after::after { right: -16px; }
+body.teams-big .team.drop-before::after { left: -18px; }
+body.teams-big .team.drop-after::after { right: -18px; }
+@keyframes dropPulse { 50% { opacity: .75; } }
 body.teams-big .team .tools button { width: 32px; height: 32px; font-size: 1rem; border: 1px solid var(--border); }
 body.teams-big .team .float { font-size: 14cqmin; right: auto; left: 0; width: 100%; text-align: center; top: 35%; }
 body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při změně skóre nezvětšuje */
