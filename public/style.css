@@ -412,7 +412,6 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
   position: relative; border: 0; padding: 0; cursor: pointer;
   transition: transform .12s, box-shadow .12s;
 }
-button.avatar:hover { transform: scale(1.06); box-shadow: 0 0 0 2px var(--team); }
 div.avatar { cursor: inherit; }
 .team .key {
   position: absolute; bottom: -6px; right: -6px;
