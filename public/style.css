@@ -235,7 +235,6 @@ legend.label { margin-bottom: 10px; }
   border-top: 5px solid var(--team, var(--accent));
   animation: hop 1.2s ease-in-out infinite;
 }
-body.is-loading .scoreboard { display: none; }
 @keyframes hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-16px); } }
 .loader-bar { height: 6px; border-radius: 99px; background: var(--bg-2); overflow: hidden; }
 .loader-bar div {
@@ -485,7 +484,6 @@ body.teams-big .scoreboard {
 #closeSettingsBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
 body.teams-big .team-actions { justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; margin-bottom: auto; }
 body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
-body.teams-big .team-actions #doneBtn { margin-left: 8px; }
 body.teams-big .teams {
   flex: 1; min-height: 0; overflow: auto;
   display: grid; gap: 20px; padding: 4px;
@@ -628,10 +626,9 @@ body.teams-big .team.bump { transform: scale(1.02); }
   body.teams-big .team .tools { opacity: 1; }
 }
 /* mimo běžící kvíz: bez bodů, lišta týmů slouží jako odkaz do nastavení týmů */
-body.no-scoring .score-row, body.no-scoring .crown, body.no-scoring #resetScoresBtn { display: none !important; }
+/* skóre je vidět i mimo kvíz (pokračování hry), jen se nedá měnit */
+body.no-scoring .pm { display: none !important; }
 body.no-scoring:not(.teams-big) .scoreboard { cursor: pointer; }
-/* bez skóre je název svisle uprostřed karty */
-body.no-scoring:not(.teams-big) .scoreboard .team .name { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
 body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); }
 
 /* menu: na dotykových zařízeních jen nastavení týmů a ukázkový kvíz */

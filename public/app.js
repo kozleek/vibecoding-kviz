@@ -73,7 +73,6 @@ function show(view) {
 
   // body se počítají jen když kvíz běží (otázky a výsledky); jinak lišta týmů slouží k jejich úpravě
   document.body.classList.toggle("no-scoring", !scoringActive());
-  document.body.classList.toggle("is-loading", view === "loading"); // při načítání bez lišty týmů
   renderTeams();
 
   clearInterval(loadingTimer);
@@ -340,22 +339,21 @@ function renderTeams() {
       const tapToScore = isTouch() && scoringActive();
       const card = el(tapToScore ? "button" : "div", "team");
       card.style.setProperty("--team", t.color);
-      if (scoringActive() && max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
+      if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
       card.title = !scoringActive() ? "Upravit týmy" : tapToScore ? "Klepnutím přidáš bod" : `Bod přidáš klávesou ${i + 1}`;
       if (tapToScore) card.addEventListener("click", () => addPoints(i, 1));
       const avatar = el("div", "avatar", t.emoji);
       avatar.append(el("span", "key", String(i + 1)));
       const scoreRow = el("div", "score-row");
       scoreRow.append(el("span", "score", String(t.score)));
-      card.append(avatar, el("span", "name", t.name), scoreRow,
-        el("div", "crown", card.classList.contains("leader") ? "👑 vede" : ""));
+      card.append(avatar, el("span", "name", t.name), scoreRow);
       wrap.appendChild(card);
       return;
     }
 
     const card = el("div", "team");
     card.style.setProperty("--team", t.color);
-    if (scoringActive() && max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
+    if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
 
     const avatar = el("button", "avatar", t.emoji);
     avatar.title = "Změnit ikonu";
@@ -382,7 +380,6 @@ function renderTeams() {
     });
     name.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === "Escape") name.blur(); });
 
-    const sub = el("div", "crown", card.classList.contains("leader") ? "👑 vede" : "");
 
     // v nastavení týmů jdou body upravit i tlačítky −/+ (v malém zobrazení jen klávesnicí)
     const scoreRow = el("div", "score-row");
@@ -405,7 +402,7 @@ function renderTeams() {
       tools.append(del);
     }
 
-    card.append(avatar, name, scoreRow, sub, tools);
+    card.append(avatar, name, scoreRow, tools);
     wrap.appendChild(card);
   });
 
@@ -690,7 +687,6 @@ function toggleTeamsLayout() {
   applyTeamsLayout();
   save();
 }
-$("doneBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 $("closeSettingsBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 // mimo běžící kvíz: kliknutí kamkoli do lišty týmů otevře nastavení týmů
 document.querySelector(".scoreboard").addEventListener("click", (e) => {
