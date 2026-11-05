@@ -379,8 +379,12 @@ body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
-.bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 4px; } /* vždy u pravého okraje */
+.bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 12px; } /* vždy u pravého okraje */
 .bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
+/* spodní ikony: na barevném gradientu otázky bílé, jinde (světlé pozadí) šedé; na hover šedé na bílém podkladu */
+.scoreboard .bar-btn { color: var(--muted); border-color: var(--border); }
+body[data-diff] .scoreboard .bar-btn { color: #fff; border-color: color-mix(in srgb, #fff 45%, transparent); }
+body .scoreboard .bar-btn:hover { background: var(--surface); border-color: var(--border); color: var(--muted); }
 body.teams-big .bar-actions { display: none; }
 /* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
 @media (hover: none) and (pointer: coarse), (max-width: 1100px) { .bar-actions { display: none; } }
