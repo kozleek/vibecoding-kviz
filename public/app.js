@@ -227,13 +227,12 @@ function renderQuestion(animate = false) {
   const multi = state.quiz.topic.includes(",");
   $("qTopic").hidden = !(multi && q.topic);
   $("qTopic").textContent = q.topic || "";
-  // obtížnost ukazujeme jen v mixu – štítek i barevné pozadí stránky
+  // štítek obtížnosti jen v mixu; barevné pozadí podle obtížnosti u všech otázek
   const mixQuiz = state.quiz.level === "mix";
   $("qLevel").hidden = !mixQuiz;
   $("qLevel").textContent = q.difficulty;
   $("qLevel").className = "pill level-pill " + q.difficulty;
-  if (mixQuiz) document.body.dataset.diff = q.difficulty;
-  else delete document.body.dataset.diff;
+  document.body.dataset.diff = q.difficulty;
   $("qPoints").hidden = !adaptiveOn();
   $("qPoints").textContent = adaptiveOn() ? pointsLabel(diffPoints(q.difficulty)) : "";
   $("qText").textContent = q.question;
