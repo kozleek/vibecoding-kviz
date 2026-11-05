@@ -101,6 +101,11 @@
     <section id="loadingView" class="view view-loading" hidden>
       <div class="loader">
         <div class="loader-animals" id="loaderAnimals" aria-hidden="true"></div>
+        <!-- náhodné téma: „losovací buben“ s tématy, po vylosování se ukáže výsledek -->
+        <div class="topic-draw" id="topicDraw" hidden>
+          <div class="topic-draw-label" id="topicDrawLabel">Losuji téma…</div>
+          <div class="topic-draw-value" id="topicDrawValue" aria-live="polite"></div>
+        </div>
         <h2 id="loadingText">Vymýšlím otázky…</h2>
         <p class="muted" id="loadingSub"></p>
         <div class="loader-bar"><div></div></div>

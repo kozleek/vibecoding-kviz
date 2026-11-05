@@ -173,6 +173,7 @@ $("setupForm").addEventListener("submit", async (e) => {
   };
   $("setupError").hidden = true;
   show("loading");
+  if (randomTopic) startTopicDraw();
   try {
     const res = await fetch("/api/generate", {
       method: "POST",
@@ -187,12 +188,50 @@ $("setupForm").addEventListener("submit", async (e) => {
       questions: data.questions.map((q) => ({ ...q, picked: null, revealed: false })),
     };
     state.index = 0;
+    // náhodné téma: nejdřív chvíli ukázat vylosované téma, pak kvíz
+    if (randomTopic) await revealTopicDraw(data.topic);
     show("quiz");
   } catch (err) {
+    stopTopicDraw();
     show("setup");
     showError(err.message);
   }
 });
+
+/* ---------- Losování náhodného tématu (animace při načítání) ---------- */
+const DRAW_TOPICS = [
+  "Sopky", "Dinosauři", "Hudba 80. let", "Starověký Egypt", "Vesmír", "Olympijské hry", "Oceány",
+  "Vynálezy", "Pohádky", "Čeští panovníci", "Hmyz", "Filmové hlášky", "Hlavní města", "Lidské tělo",
+  "Mytologie", "Počasí", "Hrady a zámky", "Kuchyně světa", "Videohry", "Ptáci", "Malíři", "Fotbal",
+  "Chemické prvky", "Rekordy", "Piráti", "Rostliny", "Dopravní prostředky", "Komiksy",
+];
+let drawTimer = null;
+function startTopicDraw() {
+  $("topicDraw").hidden = false;
+  $("topicDraw").classList.remove("done");
+  $("topicDrawLabel").textContent = "Losuji téma…";
+  $("loadingText").hidden = true;
+  let last = "";
+  drawTimer = setInterval(() => {
+    let t;
+    do t = DRAW_TOPICS[Math.floor(Math.random() * DRAW_TOPICS.length)]; while (t === last);
+    last = t;
+    $("topicDrawValue").textContent = t;
+  }, 110);
+}
+function stopTopicDraw() {
+  clearInterval(drawTimer);
+  drawTimer = null;
+  $("topicDraw").hidden = true;
+  $("loadingText").hidden = false;
+}
+function revealTopicDraw(topic) {
+  clearInterval(drawTimer);
+  $("topicDrawLabel").textContent = "Téma kvízu";
+  $("topicDrawValue").textContent = topic;
+  $("topicDraw").classList.add("done");
+  return new Promise((resolve) => setTimeout(() => { stopTopicDraw(); resolve(); }, 2200));
+}
 
 function showError(msg) {
   $("setupError").textContent = msg;
