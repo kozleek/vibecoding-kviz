@@ -10,7 +10,7 @@ const ANIMALS = [
   { name: "Divočáci", emoji: "🐗", color: "#4c8a35" },
 ];
 const MAX_TEAMS = 4;
-const MIN_TEAMS = 2;
+const MIN_TEAMS = 0; // bez týmů = nesoutěžní režim (bez lišty týmů)
 const LEVEL_NAMES = { lehka: "Lehká", stredni: "Střední", tezka: "Těžká", hardcore: "Hardcore", mix: "Mix" };
 const TOPIC_SUGGESTIONS = ["Sport", "Vesmír", "Česká historie", "Zeměpis", "Příroda", "Film a seriály"];
 const LOADING_TIPS = [
@@ -193,7 +193,9 @@ function startLoadingTips() {
   // při načítání poskakují ikony zvolených týmů
   const animals = $("loaderAnimals");
   animals.innerHTML = "";
-  state.teams.forEach((t, j) => {
+  // bez týmů (nesoutěžní režim) poskakují výchozí zvířátka
+  const loaderTeams = state.teams.length ? state.teams : ANIMALS.slice(0, 3);
+  loaderTeams.forEach((t, j) => {
     const s = el("span", null, t.emoji);
     s.style.setProperty("--team", t.color);
     s.style.animationDelay = `${j * 0.15}s`;
@@ -367,6 +369,7 @@ function renderResults() {
 
 /* ---------- Týmy ---------- */
 function renderTeams() {
+  document.body.classList.toggle("no-teams", state.teams.length === 0);
   const wrap = $("teams");
   wrap.innerHTML = "";
   const max = Math.max(...state.teams.map((t) => t.score));
@@ -515,7 +518,7 @@ async function resetTeams() {
   });
   if (!ok) return;
   const pool = [...EMOJIS];
-  state.teams = Array.from({ length: Math.max(MIN_TEAMS, state.teams.length) }, () => {
+  state.teams = Array.from({ length: state.teams.length || 2 }, () => { // bez týmů vytvoří 2 nové
     const em = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
     return { name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 };
   });

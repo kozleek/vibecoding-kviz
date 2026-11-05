@@ -723,6 +723,9 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   body.teams-big .team .tools { opacity: 1; }
 }
 /* mimo běžící kvíz: bez bodů, lišta týmů slouží jako odkaz do nastavení týmů */
+/* nesoutěžní režim: bez týmů se lišta mimo nastavení neukazuje */
+body.no-teams:not(.teams-big) .scoreboard { display: none; }
+body.no-teams .podium, body.no-teams .rest, body.no-teams #resetScoresBtn { display: none !important; }
 /* skóre je vidět i mimo kvíz (pokračování hry); v nastavení jde vždy upravit tlačítky −/+ */
 body.no-scoring:not(.teams-big) .scoreboard { cursor: pointer; }
 body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--team); }
