@@ -380,13 +380,7 @@ body[data-diff="hardcore"] { --dc: #7d7d8c; --dd: #2a2a33; }
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
 .bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 4px; } /* vždy u pravého okraje */
-/* podbarvená tlačítka jako menu, ať jsou vidět i na tmavém gradientu */
-.bar-btn {
-  width: 44px; height: 44px; font-size: 1.35rem;
-  background: var(--surface); border-color: var(--border); color: var(--text);
-  box-shadow: 0 1px 2px rgba(30, 40, 30, .06);
-}
-.bar-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
 body.teams-big .bar-actions { display: none; }
 /* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
 @media (hover: none) and (pointer: coarse), (max-width: 1100px) { .bar-actions { display: none; } }
@@ -469,8 +463,18 @@ div.avatar { cursor: inherit; }
 /* hamburger menu */
 .menu { position: relative; }
 /* hamburger vždy podbarvený, ať je jasné, že je to tlačítko */
-#menuBtn { background: var(--surface); border-color: var(--border); color: var(--text); box-shadow: 0 1px 2px rgba(30, 40, 30, .06); }
-#menuBtn:hover, #menuBtn[aria-expanded="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+/* menu a tlačítka v liště: průhledná (jen jemné „sklo“), plná barva až na hover */
+#menuBtn, .bar-btn {
+  background: color-mix(in srgb, var(--surface) 30%, transparent);
+  border-color: color-mix(in srgb, var(--surface) 55%, transparent);
+  color: var(--text); box-shadow: none;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  transition: background .15s, border-color .15s, color .15s;
+}
+#menuBtn:hover, #menuBtn[aria-expanded="true"], .bar-btn:hover {
+  background: var(--surface); border-color: var(--accent); color: var(--accent);
+  box-shadow: 0 1px 2px rgba(30, 40, 30, .08);
+}
 .menu-panel {
   position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: max-content; min-width: 300px; max-width: calc(100vw - 32px);
   display: flex; flex-direction: column; gap: 8px; /* dva samostatné boxy pod sebou */
