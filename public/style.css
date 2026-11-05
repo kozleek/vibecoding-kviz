@@ -383,7 +383,8 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
   border-top: 4px solid var(--team);
   position: relative; transition: transform .15s, border-color .2s;
 }
-.team.leader { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
+/* barevný okraj kolem celé dlaždice u všech týmů */
+.scoreboard .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
 .team .avatar {
   grid-row: span 2; width: 46px; height: 46px; border-radius: 14px;
   display: grid; place-items: center; font-size: 1.6rem;
@@ -548,7 +549,7 @@ body.teams-big .team {
   background: var(--surface); box-shadow: var(--shadow);
   border-top-width: 10px; text-align: center;
 }
-body.teams-big .team.leader { box-shadow: 0 0 0 3px var(--team), var(--shadow); }
+body.teams-big .scoreboard .team { box-shadow: 0 0 0 3px var(--team), var(--shadow); }
 body.teams-big .team .avatar {
   width: 38cqmin; height: 38cqmin; font-size: 26cqmin; border-radius: 9cqmin; flex: none;
 }
@@ -667,7 +668,7 @@ body.teams-big .team.bump { transform: scale(1.02); }
 /* mimo běžící kvíz: bez bodů, lišta týmů slouží jako odkaz do nastavení týmů */
 /* skóre je vidět i mimo kvíz (pokračování hry); v nastavení jde vždy upravit tlačítky −/+ */
 body.no-scoring:not(.teams-big) .scoreboard { cursor: pointer; }
-body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); }
+body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--team); }
 
 /* menu: na dotykových zařízeních jen nastavení týmů a ukázkový kvíz */
 .menu-sep { height: 1px; margin: 4px 8px; background: var(--border); }
