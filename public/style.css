@@ -609,8 +609,10 @@ body.teams-big .team.bump { transform: scale(1.02); }
 @media (hover: none) {
   body.teams-big .team .tools { opacity: 1; }
 }
-/* dotyková zařízení nemají klávesnici – zkratky v menu nedávají smysl */
-@media (hover: none) and (pointer: coarse) { .menu-panel kbd { display: none; } }
+/* dotyková zařízení nemají klávesnici – zkratky v menu ani čísla kláves u týmů nedávají smysl */
+@media (hover: none) and (pointer: coarse) {
+  .menu-panel kbd, .team .key { display: none; }
+}
 /* tablet (dotyk, širší obrazovka): větší ikony v nastavení týmů */
 @media (hover: none) and (pointer: coarse) and (min-width: 721px) {
   /* ikona podle šířky i výšky dlaždice, ať využije volné místo i u úzkých karet */
@@ -619,6 +621,35 @@ body.teams-big .team.bump { transform: scale(1.02); }
     font-size: min(52cqw, 29cqh); border-radius: min(16cqw, 9cqh);
   }
   body.teams-big .team .key { min-width: 32px; height: 32px; font-size: 1.05rem; border-radius: 10px; }
+
+  /* lišta týmů: menší karty, ať se 4 týmy vejdou vedle sebe */
+  .scoreboard { padding: 10px 16px; gap: 12px; }
+  .teams { gap: 8px; }
+  /* ikona vlevo, vpravo název a pod ním skóre – název má celou šířku */
+  .scoreboard .team {
+    flex: 0 1 220px; width: 220px; min-width: 0; padding: 8px 10px; column-gap: 10px; border-radius: 14px;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .scoreboard .team .avatar { width: 44px; height: 44px; font-size: 1.5rem; border-radius: 12px; }
+  .scoreboard .team .name { font-size: .95rem; grid-column: 2; grid-row: 1; }
+  .scoreboard .team .score-row { grid-column: 2; grid-row: 2; }
+  .scoreboard .team .score { font-size: 1.7rem; text-align: left; padding: 0; }
+  .scoreboard .team .crown { display: none; }
+  body.teams-big .scoreboard .team { flex: none; width: auto; padding: 16px; border-radius: 28px; }
+
+  /* zadání kvízu: kompaktnější, bez popisků úrovní */
+  main { padding-top: 0; }
+  .view-setup { padding-top: 0; }
+  .hero { margin-bottom: 12px; }
+  .hero h1 { font-size: 2rem; margin-bottom: 2px; }
+  .hero p { font-size: .95rem; }
+  .setup { padding: 20px 24px; gap: 14px; }
+  .field { gap: 8px; }
+  .input-xl { padding: 10px 14px; font-size: 1.2rem; }
+  .level span { padding: 10px 6px; flex-direction: row; justify-content: center; gap: 8px; }
+  .level i { font-size: 1.3rem; margin: 0; }
+  .level small { display: none; }
+  .btn.xl { padding: 13px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
