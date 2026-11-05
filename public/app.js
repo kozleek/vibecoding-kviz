@@ -640,6 +640,7 @@ function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
   $("menuTeamsLabel").textContent = big ? "Zavřít nastavení týmů" : "Nastavení týmů";
+  $("settingsBtn").setAttribute("aria-pressed", String(big));
   renderTeams();
 }
 function toggleTeamsLayout() {
@@ -649,6 +650,7 @@ function toggleTeamsLayout() {
   save();
 }
 $("doneBtn").addEventListener("click", toggleTeamsLayout);
+$("settingsBtn").addEventListener("click", toggleTeamsLayout);
 
 /* ---------- Klávesnice ---------- */
 document.addEventListener("keydown", (e) => {

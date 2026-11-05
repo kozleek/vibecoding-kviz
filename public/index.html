@@ -17,7 +17,9 @@
     <div class="topbar-info" id="quizInfo"></div>
     <div class="topbar-actions">
       <button class="btn ghost" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
-      <div class="menu">
+      <!-- na dotykových zařízeních místo menu jen nastavení týmů -->
+      <button class="icon-btn touch-only" id="settingsBtn" title="Nastavení týmů" aria-label="Nastavení týmů" aria-pressed="false"><i class="ph ph-gear-six"></i></button>
+      <div class="menu desktop-only">
         <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
         <div class="menu-panel" id="menuPanel" role="menu" hidden>
           <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení týmů</span><kbd>T</kbd></button>

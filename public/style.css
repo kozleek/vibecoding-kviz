@@ -53,7 +53,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 [hidden] { display: none !important; }
-button { font: inherit; color: inherit; }
+button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
 .muted { color: var(--muted); }
 
 kbd {
@@ -609,9 +609,13 @@ body.teams-big .team.bump { transform: scale(1.02); }
 @media (hover: none) {
   body.teams-big .team .tools { opacity: 1; }
 }
-/* dotyková zařízení nemají klávesnici – zkratky v menu ani čísla kláves u týmů nedávají smysl */
+/* desktop: hamburger menu; dotyková zařízení: jen tlačítko nastavení týmů */
+.touch-only { display: none; }
+#settingsBtn[aria-pressed="true"] { background: var(--surface); border-color: var(--border); color: var(--text); }
+/* dotyková zařízení nemají klávesnici – menu se zkratkami ani čísla kláves u týmů nedávají smysl */
 @media (hover: none) and (pointer: coarse) {
-  .menu-panel kbd, .team .key { display: none; }
+  .desktop-only, .team .key { display: none; }
+  .touch-only { display: grid; }
 }
 /* tablet (dotyk, širší obrazovka): větší ikony v nastavení týmů */
 @media (hover: none) and (pointer: coarse) and (min-width: 721px) {
