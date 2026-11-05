@@ -164,13 +164,29 @@ legend.label { margin-bottom: 10px; }
 /* pod polem téma: přepínač náhodného tématu a tlačítko upřesnění */
 .topic-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .topic-tools .toggle-text { flex-direction: row; align-items: baseline; gap: 6px; }
-#extraBtn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
-.extra-field { display: grid; gap: 8px; margin-top: 4px; }
-.extra-field textarea {
+/* ikona upřesnění vedle pole téma */
+.topic-row { display: flex; gap: 10px; align-items: stretch; }
+.topic-row .input-xl { flex: 1; min-width: 0; }
+.extra-btn {
+  flex: none; aspect-ratio: 1; border-radius: 14px; cursor: pointer; position: relative;
+  display: grid; place-items: center; font-size: 1.6rem;
+  border: 2px solid var(--border); background: var(--bg); color: var(--muted);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.extra-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.extra-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.extra-btn.active::after { /* tečka = zadání je upřesněné */
+  content: ""; position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+}
+.extra-btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn:disabled:hover { border-color: var(--border); }
+.extra-hint { margin: 0 0 12px; }
+#extra {
+  width: 100%; display: block;
   font: inherit; font-size: 1.05rem; line-height: 1.45; resize: vertical; min-height: 80px;
   padding: 12px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--bg); color: var(--text);
 }
-.extra-field textarea:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+#extra:focus { outline: none; border-color: var(--accent); background: var(--surface); }
 .input-xl:disabled { opacity: .55; cursor: not-allowed; }
 .chip {
   border: 1px solid var(--border); background: var(--bg);

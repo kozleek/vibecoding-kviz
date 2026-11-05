@@ -113,23 +113,35 @@ function topicList() {
 
 $("topic").addEventListener("input", () => $("topic").classList.remove("invalid"));
 
-// náhodné téma: pole pro téma se vypne, téma vybere AI
+// náhodné téma: pole pro téma i upřesnění zadání se vypnou, téma vybere AI
 function applyRandomTopic() {
   const on = $("randomTopic").checked;
   $("topic").disabled = on;
   $("topic").placeholder = on ? "Téma vybere AI" : "např. sport, vesmír";
   $("topic").classList.remove("invalid");
+  $("extraBtn").disabled = on;
 }
 $("randomTopic").addEventListener("change", applyRandomTopic);
 
-// upřesnění zadání (doplňující prompt)
-$("extraBtn").addEventListener("click", () => {
-  const open = $("extraField").hidden;
-  $("extraField").hidden = !open;
-  $("extraBtn").setAttribute("aria-expanded", String(open));
-  $("extraBtn").classList.toggle("active", open);
-  if (open) $("extra").focus();
+// upřesnění zadání (doplňující prompt) v modálním okně; text se pamatuje
+function renderExtraBtn() {
+  const filled = !!$("extra").value.trim();
+  $("extraBtn").classList.toggle("active", filled);
+  $("extraBtn").title = filled ? "Zadání upřesněno – upravit" : "Upřesnit zadání";
+}
+$("extra").value = state.extraPrompt || "";
+renderExtraBtn();
+$("extraBtn").addEventListener("click", () => { if (!$("extraBtn").disabled) $("extraDialog").showModal(); });
+$("extra").addEventListener("input", () => { state.extraPrompt = $("extra").value; save(); });
+$("extraSave").addEventListener("click", () => $("extraDialog").close());
+$("extraClear").addEventListener("click", () => {
+  $("extra").value = "";
+  state.extraPrompt = "";
+  save();
+  $("extra").focus();
 });
+$("extraDialog").addEventListener("close", renderExtraBtn);
+$("extraDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 
 function setCount(n) {
   n = Math.min(100, Math.max(3, Number(n) || 10));
@@ -155,7 +167,7 @@ $("setupForm").addEventListener("submit", async (e) => {
   const body = {
     topic: randomTopic ? "" : topics.join(", "),
     randomTopic,
-    instructions: $("extra").value.trim(),
+    instructions: randomTopic ? "" : $("extra").value.trim(),
     count: Number($("count").value),
     level: new FormData(e.target).get("level"),
   };

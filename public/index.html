@@ -50,18 +50,16 @@
       <form id="setupForm" class="card setup" novalidate>
         <div class="field">
           <label for="topic" class="label">Téma <span class="muted">· více témat odděl čárkou</span></label>
-          <input id="topic" name="topic" type="text" class="input-xl" placeholder="např. sport, vesmír" autocomplete="off" required>
+          <div class="topic-row">
+            <input id="topic" name="topic" type="text" class="input-xl" placeholder="např. sport, vesmír" autocomplete="off" required>
+            <button type="button" class="extra-btn" id="extraBtn" aria-haspopup="dialog" aria-label="Upřesnit zadání" title="Upřesnit zadání"><i class="ph ph-sliders-horizontal"></i></button>
+          </div>
           <div class="topic-tools">
             <label class="toggle">
               <input type="checkbox" id="randomTopic">
               <span class="switch" aria-hidden="true"></span>
               <span class="toggle-text">Náhodné téma <small>vybere AI</small></span>
             </label>
-            <button type="button" class="btn ghost small" id="extraBtn" aria-expanded="false" aria-controls="extraField"><i class="ph ph-sliders-horizontal"></i> Upřesnit zadání</button>
-          </div>
-          <div class="extra-field" id="extraField" hidden>
-            <label for="extra" class="label">Upřesnění <span class="muted">· styl otázek a odpovědí, cílová skupina, na co se zaměřit…</span></label>
-            <textarea id="extra" rows="3" maxlength="1500" placeholder="např. otázky pro děti 10–12 let, vtipné špatné odpovědi, zaměř se na zajímavosti"></textarea>
           </div>
         </div>
 
@@ -197,6 +195,20 @@
   <div class="emoji-picker" id="emojiPicker" role="dialog" aria-label="Výběr ikony týmu" hidden>
     <div class="emoji-grid" id="emojiGrid"></div>
   </div>
+
+  <!-- ===== Upřesnění zadání ===== -->
+  <dialog id="extraDialog" class="dialog help">
+    <div class="dialog-head">
+      <h3>Upřesnit zadání</h3>
+      <form method="dialog"><button class="icon-btn" aria-label="Zavřít" title="Zavřít"><i class="ph ph-x"></i></button></form>
+    </div>
+    <p class="muted extra-hint">Styl otázek a odpovědí, cílová skupina, na co se zaměřit…</p>
+    <textarea id="extra" rows="5" maxlength="1500" autofocus placeholder="např. otázky pro děti 10–12 let, vtipné špatné odpovědi, zaměř se na zajímavosti"></textarea>
+    <div class="confirm-actions">
+      <button type="button" class="btn ghost" id="extraClear">Vymazat</button>
+      <button type="button" class="btn primary" id="extraSave">Hotovo</button>
+    </div>
+  </dialog>
 
   <!-- ===== Potvrzení ===== -->
   <dialog id="confirmDialog" class="dialog confirm">
