@@ -363,7 +363,7 @@ legend.label { margin-bottom: 10px; }
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
-.bar-actions { grid-column: 3; grid-row: 1; justify-self: start; display: flex; gap: 4px; }
+.bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 4px; } /* vždy u pravého okraje */
 .bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
 .bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
 body.teams-big .bar-actions { display: none; }
