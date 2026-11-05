@@ -363,7 +363,12 @@ legend.label { margin-bottom: 10px; }
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
-.scoreboard-tools { grid-column: 3; grid-row: 1; justify-self: end; }
+.bar-actions { grid-column: 3; grid-row: 1; justify-self: start; display: flex; gap: 4px; }
+.bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
+.bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
+body.teams-big .bar-actions { display: none; }
+/* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
+@media (hover: none) and (pointer: coarse), (max-width: 1100px) { .bar-actions { display: none; } }
 .team-actions { display: none; }
 button.team { font: inherit; color: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 button.team:active { transform: scale(.97); }

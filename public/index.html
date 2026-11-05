@@ -135,9 +135,12 @@
 
   <!-- ===== Týmy ===== -->
   <footer class="scoreboard">
-    <div class="scoreboard-tools">
-    </div>
     <div class="teams" id="teams"></div>
+    <!-- malá lišta: vynulování bodů a náhodné týmy vedle sebe (stejné akce jako v nastavení) -->
+    <div class="bar-actions">
+      <button class="icon-btn bar-btn" id="barResetScores" title="Vynulovat body" aria-label="Vynulovat body"><i class="ph ph-arrow-counter-clockwise"></i></button>
+      <button class="icon-btn bar-btn" id="barResetTeams" title="Resetovat týmy" aria-label="Resetovat týmy"><i class="ph ph-shuffle"></i></button>
+    </div>
     <div class="settings-options big-only">
       <label class="toggle">
         <input type="checkbox" id="adaptiveToggle">

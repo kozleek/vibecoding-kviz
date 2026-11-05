@@ -477,7 +477,7 @@ async function removeTeam(i) {
 }
 
 // reset týmů: stejný počet týmů, nové náhodné ikony a názvy (různé), body na nule
-$("resetTeamsBtn").addEventListener("click", async () => {
+async function resetTeams() {
   const ok = await confirmDialog({
     icon: "🔀",
     title: "Resetovat týmy?",
@@ -494,7 +494,7 @@ $("resetTeamsBtn").addEventListener("click", async () => {
   closeEmojiPicker();
   renderTeams();
   save();
-});
+}
 
 function renderAdaptive() {
   $("adaptiveToggle").checked = !!state.adaptiveScoring;
@@ -518,7 +518,7 @@ document.querySelectorAll("#diffPoints input").forEach((inp) =>
 );
 renderAdaptive();
 
-$("resetScoresBtn").addEventListener("click", async () => {
+async function resetScores() {
   const ok = await confirmDialog({
     icon: "🧹",
     title: "Vynulovat body?",
@@ -530,7 +530,13 @@ $("resetScoresBtn").addEventListener("click", async () => {
   state.teams.forEach((t) => (t.score = 0));
   renderTeams();
   save();
-});
+}
+
+$("resetTeamsBtn").addEventListener("click", resetTeams);
+$("resetScoresBtn").addEventListener("click", resetScores);
+// tlačítka v malé liště – zastavit klik, jinak by mimo kvíz otevřel nastavení
+$("barResetTeams").addEventListener("click", (e) => { e.stopPropagation(); resetTeams(); });
+$("barResetScores").addEventListener("click", (e) => { e.stopPropagation(); resetScores(); });
 
 /* ---------- Výběr emoji ---------- */
 // emoji: [název týmu, barva týmu]
