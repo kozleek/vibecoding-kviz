@@ -326,17 +326,22 @@ function renderTeams() {
     });
     name.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === "Escape") name.blur(); });
 
-    const sub = el("div", "crown", card.classList.contains("leader") ? "👑 vede" : `klávesa ${i + 1}`);
+    const sub = el("div", "crown", card.classList.contains("leader") ? "👑 vede" : "");
 
-    const score = el("button", "score", String(t.score));
-    score.title = "Kliknutím přidáš bod";
-    score.addEventListener("click", () => addPoints(i, 1));
-
-    const tools = el("div", "tools");
-    const minus = el("button", null, "−");
+    // skóre; tlačítka −/+ jsou vidět jen ve velkém zobrazení
+    const scoreRow = el("div", "score-row");
+    const minus = el("button", "pm", "−");
     minus.title = "Odebrat bod";
+    minus.setAttribute("aria-label", `Odebrat bod týmu ${t.name}`);
     minus.addEventListener("click", () => addPoints(i, -1));
-    tools.append(minus);
+    const plus = el("button", "pm", "+");
+    plus.title = "Přidat bod";
+    plus.setAttribute("aria-label", `Přidat bod týmu ${t.name}`);
+    plus.addEventListener("click", () => addPoints(i, 1));
+    scoreRow.append(minus, el("span", "score", String(t.score)), plus);
+
+    // odebrání týmu jen ve velkém zobrazení
+    const tools = el("div", "tools");
     if (state.teams.length > 1) {
       const del = el("button", "del", "✕");
       del.title = "Odebrat tým";
@@ -344,12 +349,19 @@ function renderTeams() {
       tools.append(del);
     }
 
-    card.append(avatar, name, score, sub, tools);
+    card.append(avatar, name, scoreRow, sub, tools);
     wrap.appendChild(card);
   });
 
+  const n = state.teams.length;
+  wrap.style.setProperty("--cols", { 1: 1, 2: 2, 3: 3, 4: 4, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5 }[n] || 3);
+  $("bigAddTeamBtn").disabled = n >= MAX_TEAMS;
+
   if (state.teams.length < MAX_TEAMS) {
-    const add = el("button", "add-team", "+ Přidat tým");
+    const add = el("button", "add-team");
+    add.innerHTML = '<i class="ph ph-plus"></i>';
+    add.title = "Přidat tým";
+    add.setAttribute("aria-label", "Přidat tým");
     add.addEventListener("click", addTeam);
     wrap.appendChild(add);
   }
@@ -361,6 +373,7 @@ function addPoints(i, delta) {
   if (!t) return;
   t.score += delta;
   renderTeams();
+applyTeamsLayout();
   save();
   const card = $("teams").children[i];
   card.classList.add("bump");
@@ -400,17 +413,27 @@ $("resetScoresBtn").addEventListener("click", () => {
 });
 
 /* ---------- Výběr emoji ---------- */
-const EMOJI_NAMES = {
-  "🦊": "Lišky", "🐻": "Medvědi", "🦉": "Sovy", "🐺": "Vlci", "🦌": "Jeleni", "🦔": "Ježci",
-  "🐿️": "Veverky", "🦡": "Jezevci", "🐗": "Divočáci", "🐰": "Zajíci", "🦝": "Mývalové", "🦫": "Bobři",
-  "🐸": "Žáby", "🐍": "Hadi", "🦎": "Ještěrky", "🐢": "Želvy", "🦅": "Orli", "🐦": "Ptáci",
-  "🦆": "Kachny", "🦇": "Netopýři", "🐭": "Myšky", "🦋": "Motýli", "🐝": "Včely", "🐞": "Berušky",
-  "🐌": "Šneci", "🕷️": "Pavouci", "🐼": "Pandy", "🐨": "Koaly", "🐯": "Tygři", "🦁": "Lvi",
-  "🐮": "Krávy", "🐷": "Prasátka", "🐵": "Opice", "🐧": "Tučňáci", "🐙": "Chobotnice", "🦈": "Žraloci",
-  "🦄": "Jednorožci", "🐲": "Draci", "🦖": "Dinosauři", "🌲": "Smrky", "🍄": "Houby", "🌻": "Slunečnice",
-  "🍀": "Čtyřlístky", "⭐": "Hvězdy", "🔥": "Plameny", "⚡": "Blesky", "🚀": "Rakety", "👑": "Králové",
+// emoji: [název týmu, barva týmu]
+const EMOJI_DATA = {
+  "🦊": ["Lišky", "#e0702f"], "🐻": ["Medvědi", "#8a5a3b"], "🦉": ["Sovy", "#7656c2"],
+  "🐺": ["Vlci", "#3f6fb0"], "🦌": ["Jeleni", "#b8862a"], "🦔": ["Ježci", "#c24f7c"],
+  "🐿️": ["Veverky", "#21958a"], "🦡": ["Jezevci", "#5d6a75"], "🐗": ["Divočáci", "#4c8a35"],
+  "🐰": ["Zajíci", "#d77a9c"], "🦝": ["Mývalové", "#6b6f8a"], "🦫": ["Bobři", "#9a6a3a"],
+  "🐸": ["Žáby", "#3fa34d"], "🐍": ["Hadi", "#6b8e23"], "🦎": ["Ještěrky", "#2fa37a"],
+  "🐢": ["Želvy", "#4f8f6a"], "🦅": ["Orli", "#7a4e2d"], "🐦": ["Ptáci", "#3a8fd1"],
+  "🦆": ["Kachny", "#c99a12"], "🦇": ["Netopýři", "#4b3f72"], "🐭": ["Myšky", "#8f8fa0"],
+  "🦋": ["Motýli", "#2f7fe0"], "🐝": ["Včely", "#d99a00"], "🐞": ["Berušky", "#d6332f"],
+  "🐌": ["Šneci", "#b07a4a"], "🕷️": ["Pavouci", "#45454f"], "🐼": ["Pandy", "#4a4f57"],
+  "🐨": ["Koaly", "#7f8c99"], "🐯": ["Tygři", "#ef7f1a"], "🦁": ["Lvi", "#cf9520"],
+  "🐮": ["Krávy", "#6d7a86"], "🐷": ["Prasátka", "#e2708f"], "🐵": ["Opice", "#9b6b43"],
+  "🐧": ["Tučňáci", "#2c4a6b"], "🐙": ["Chobotnice", "#d1495b"], "🦈": ["Žraloci", "#4f7d9c"],
+  "🦄": ["Jednorožci", "#b061d6"], "🐲": ["Draci", "#2f9e5b"], "🦖": ["Dinosauři", "#5a9e3c"],
+  "🌲": ["Smrky", "#2d6a45"], "🍄": ["Houby", "#c0392b"], "🌻": ["Slunečnice", "#d8a417"],
+  "🍀": ["Čtyřlístky", "#3aa655"], "⭐": ["Hvězdy", "#d9a91c"], "🔥": ["Plameny", "#e8501d"],
+  "⚡": ["Blesky", "#e0b020"], "🚀": ["Rakety", "#5865f2"], "👑": ["Králové", "#c99a2e"],
 };
-const EMOJIS = Object.keys(EMOJI_NAMES);
+const EMOJI_NAMES = Object.fromEntries(Object.entries(EMOJI_DATA).map(([e, [n]]) => [e, n]));
+const EMOJIS = Object.keys(EMOJI_DATA);
 let pickerTeam = null;
 
 function openEmojiPicker(i, anchor) {
@@ -423,9 +446,11 @@ function openEmojiPicker(i, anchor) {
   grid.innerHTML = "";
   for (const em of EMOJIS) {
     const b = el("button", "emoji" + (em === team.emoji ? " current" : "") + (used.has(em) ? " used" : ""), em);
-    b.title = used.has(em) ? "Používá jiný tým" : "";
+    b.title = EMOJI_DATA[em][0] + (used.has(em) ? " (používá jiný tým)" : "");
+    b.style.setProperty("--c", EMOJI_DATA[em][1]);
     b.addEventListener("click", () => {
       team.emoji = em;
+      team.color = EMOJI_DATA[em][1];
       if (!team.customName) team.name = EMOJI_NAMES[em];
       closeEmojiPicker();
       renderTeams();
@@ -439,7 +464,9 @@ function openEmojiPicker(i, anchor) {
   const r = anchor.getBoundingClientRect();
   const w = picker.offsetWidth;
   picker.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + "px";
-  picker.style.bottom = innerHeight - r.top + 10 + "px";
+  const h = picker.offsetHeight;
+  const above = r.top - h - 10;
+  picker.style.top = (above >= 8 ? above : Math.min(r.bottom + 10, innerHeight - h - 8)) + "px";
   grid.querySelector(".current, .emoji")?.focus();
 }
 function closeEmojiPicker() {
@@ -480,6 +507,22 @@ document.addEventListener("fullscreenchange", () => {
 });
 $("helpBtn").addEventListener("click", () => $("helpDialog").showModal());
 
+/* ---------- Velké / malé zobrazení týmů ---------- */
+function applyTeamsLayout() {
+  const big = !!state.bigTeams;
+  document.body.classList.toggle("teams-big", big);
+  $("layoutIcon").className = "ph " + (big ? "ph-arrows-in" : "ph-arrows-out");
+  $("layoutLabel").textContent = big ? "Malé týmy" : "Velké týmy";
+}
+function toggleTeamsLayout() {
+  state.bigTeams = !state.bigTeams;
+  closeEmojiPicker();
+  applyTeamsLayout();
+  save();
+}
+$("layoutBtn").addEventListener("click", toggleTeamsLayout);
+$("bigAddTeamBtn").addEventListener("click", addTeam);
+
 /* ---------- Klávesnice ---------- */
 document.addEventListener("keydown", (e) => {
   const tag = e.target.tagName;
@@ -499,6 +542,8 @@ document.addEventListener("keydown", (e) => {
   }
   if (e.key === "?") return $("helpDialog").showModal();
   if (e.key === "f" || e.key === "F") return toggleFullscreen();
+  if (e.key === "t" || e.key === "T") return toggleTeamsLayout();
+  if (state.bigTeams) return;
 
   if (state.view === "results" && e.key === "ArrowLeft") return show("quiz");
   if (state.view !== "quiz") return;

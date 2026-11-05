@@ -350,7 +350,7 @@ legend.label { margin-bottom: 10px; }
 .teams { flex: 1; min-width: 0; display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px; }
 .team {
   --team: var(--accent);
-  flex: 1 1 0; min-width: 170px; max-width: 260px;
+  flex: 1 0 215px; min-width: 215px; max-width: 280px;
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto;
   column-gap: 10px; align-items: center;
   padding: 10px 12px; border-radius: 16px;
@@ -382,14 +382,15 @@ legend.label { margin-bottom: 10px; }
 .team .name:hover { border-color: var(--border); }
 .team .name:focus { outline: none; border-color: var(--team); background: var(--surface); }
 .team .crown { font-size: .8rem; color: var(--muted); padding-left: 1px; }
+.team .crown:empty { display: none; }
+.team .name { grid-row: span 1; }
+.team .score-row { grid-row: span 2; display: flex; align-items: center; }
 .team .score {
-  grid-row: span 2;
   font-family: var(--display); font-weight: 800; font-size: 2.4rem; line-height: 1;
-  min-width: 1.6ch; text-align: right; padding: 4px 6px; border-radius: 12px;
-  border: 0; background: transparent; cursor: pointer; color: var(--text);
-  transition: background .15s;
+  min-width: 1.6ch; text-align: right; padding: 4px 6px; color: var(--text);
 }
-.team .score:hover { background: color-mix(in srgb, var(--team) 15%, transparent); }
+/* v malém zobrazení nejde měnit skóre ani odebrat tým (jen klávesami 1–9) */
+.scoreboard .team .pm, .scoreboard .team .tools { display: none; }
 .team .tools {
   position: absolute; top: 4px; right: 4px; display: flex; gap: 2px;
   opacity: 0; transition: opacity .15s;
@@ -411,14 +412,77 @@ legend.label { margin-bottom: 10px; }
 @keyframes floatUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-34px); } }
 
 .add-team {
-  flex: 0 0 auto; min-width: 120px;
+  flex: 0 0 auto; width: 64px; min-width: 64px; font-size: 1.5rem;
+  display: grid; place-items: center;
   border: 2px dashed var(--border); border-radius: 16px; background: transparent;
-  color: var(--muted); font-weight: 600; cursor: pointer; padding: 0 18px;
+  color: var(--muted); font-weight: 600; cursor: pointer; padding: 0;
 }
 .add-team:hover { border-color: var(--accent); color: var(--accent); }
 
 .scoreboard-tools { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: .85rem; white-space: nowrap; }
 .link-btn { display: inline-flex; align-items: center; gap: 4px; }
+
+.btn.small { padding: 7px 12px; font-size: .9rem; border-radius: 10px; gap: 6px; }
+
+/* ============ Velké zobrazení týmů ============ */
+.big-only { display: none; }
+body.teams-big .big-only { display: inline-flex; }
+body.teams-big { grid-template-rows: auto 1fr; }
+body.teams-big main { display: none; }
+body.teams-big .scoreboard {
+  min-height: 0; flex-direction: column; align-items: stretch; gap: 14px;
+  padding: 8px 24px 24px; border-top: 0; background: var(--bg);
+}
+body.teams-big .scoreboard-tools { order: -1; flex-direction: row; justify-content: flex-end; align-items: center; gap: 12px; }
+body.teams-big .teams {
+  flex: 1; min-height: 0; overflow: auto;
+  display: grid; gap: 20px; padding: 4px;
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  grid-auto-rows: 400px; /* pevná výška dlaždic */
+  align-content: safe center;
+}
+body.teams-big .add-team { display: none; }
+body.teams-big .team {
+  container-type: size;
+  max-width: none; min-width: 0; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2cqmin; padding: 16px; border-radius: 28px;
+  background: var(--surface); box-shadow: var(--shadow);
+  border-top-width: 10px; text-align: center;
+}
+body.teams-big .team.leader { box-shadow: 0 0 0 3px var(--team), var(--shadow); }
+body.teams-big .team .avatar {
+  width: 38cqmin; height: 38cqmin; font-size: 26cqmin; border-radius: 9cqmin; flex: none;
+}
+body.teams-big .team .key {
+  min-width: 9cqmin; height: 9cqmin; font-size: 5cqmin; border-radius: 2.5cqmin; border-width: 3px;
+  bottom: -2cqmin; right: -2cqmin; border-color: var(--surface); padding: 0;
+}
+body.teams-big .team .name {
+  margin: 2cqmin 0 0; text-align: center; font-family: var(--display); font-weight: 800;
+  font-size: clamp(1.1rem, 8cqmin, 3rem); width: 90%;
+}
+body.teams-big .team .crown { display: block; font-size: clamp(.85rem, 4cqmin, 1.4rem); }
+body.teams-big .team .score-row { gap: 5cqmin; }
+body.teams-big .team .score { font-size: 24cqmin; line-height: 1; padding: 0; min-width: 1.2ch; text-align: center; }
+body.teams-big .team .pm {
+  display: grid; place-items: center; flex: none;
+  width: 13cqmin; height: 13cqmin; min-width: 40px; min-height: 40px; border-radius: 50%; padding: 0;
+  font-size: max(1.4rem, 8cqmin); font-weight: 600; line-height: 1;
+  border: 2px solid color-mix(in srgb, var(--team) 45%, var(--border));
+  background: var(--surface); color: var(--team); cursor: pointer;
+  transition: background .12s, transform .1s;
+}
+body.teams-big .team .pm:hover { background: color-mix(in srgb, var(--team) 14%, var(--surface)); }
+body.teams-big .team .pm:active { transform: scale(.92); }
+body.teams-big .team .tools { display: flex; top: 12px; right: 12px; opacity: 0; position: absolute; }
+body.teams-big .team:hover .tools, body.teams-big .team:focus-within .tools { opacity: 1; }
+body.teams-big .team .tools button { width: 32px; height: 32px; font-size: 1rem; border: 1px solid var(--border); }
+body.teams-big .team .float { font-size: 14cqmin; right: auto; left: 0; width: 100%; text-align: center; top: 35%; }
+body.teams-big .team.bump { transform: scale(1.02); }
+@media (max-width: 720px) {
+  body.teams-big .teams { grid-template-columns: repeat(min(var(--cols), 2), minmax(0, 1fr)); grid-auto-rows: 300px; }
+}
 
 /* ============ Emoji picker ============ */
 .emoji-picker {
@@ -429,14 +493,15 @@ legend.label { margin-bottom: 10px; }
   animation: pickerIn .15s ease both;
 }
 @keyframes pickerIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
 .emoji {
-  aspect-ratio: 1; border: 0; border-radius: 10px; background: transparent;
+  aspect-ratio: 1; border: 0; border-radius: 10px;
+  background: color-mix(in srgb, var(--c) 16%, transparent);
   font-size: 1.5rem; line-height: 1; cursor: pointer; padding: 0;
   transition: background .1s, transform .1s;
 }
-.emoji:hover, .emoji:focus-visible { background: var(--bg-2); transform: scale(1.15); outline: none; }
-.emoji.current { background: color-mix(in srgb, var(--team, var(--accent)) 22%, transparent); box-shadow: inset 0 0 0 2px var(--team, var(--accent)); }
+.emoji:hover, .emoji:focus-visible { background: color-mix(in srgb, var(--c) 35%, transparent); transform: scale(1.12); outline: none; }
+.emoji.current { background: color-mix(in srgb, var(--c) 30%, transparent); box-shadow: inset 0 0 0 3px var(--c); }
 .emoji.used { opacity: .35; }
 
 /* ============ Dialog & toast ============ */
@@ -479,9 +544,7 @@ legend.label { margin-bottom: 10px; }
   .team .score { font-size: 1.8rem; }
 }
 @media (hover: none) {
-  .team .crown { display: none; }
-  .team .tools { position: static; opacity: 1; grid-column: 2; grid-row: 2; gap: 6px; }
-  .team .tools button { width: 30px; height: 26px; border: 1px solid var(--border); }
+  body.teams-big .team .tools { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
