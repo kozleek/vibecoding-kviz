@@ -466,14 +466,32 @@ function renderTeams() {
       e.dataTransfer.effectAllowed = "move";
       card.classList.add("dragging");
     });
-    card.addEventListener("dragend", () => card.classList.remove("dragging"));
-    card.addEventListener("dragover", (e) => { e.preventDefault(); card.classList.add("drop-target"); });
-    card.addEventListener("dragleave", () => card.classList.remove("drop-target"));
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+      document.querySelectorAll(".drop-before, .drop-after").forEach((c) => c.classList.remove("drop-before", "drop-after"));
+    });
+    // ukazatel místa vložení: čára před/za kartou podle poloviny, nad kterou je kurzor
+    const afterHalf = (e) => { const r = card.getBoundingClientRect(); return e.clientX > r.left + r.width / 2; };
+    card.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const after = afterHalf(e);
+      // čára jen u jedné karty
+      document.querySelectorAll(".drop-before, .drop-after").forEach((c) => { if (c !== card) c.classList.remove("drop-before", "drop-after"); });
+      card.classList.toggle("drop-after", after);
+      card.classList.toggle("drop-before", !after);
+    });
+    // odebrat až při skutečném opuštění karty (ne při přejezdu přes vnitřní prvky)
+    card.addEventListener("dragleave", (e) => {
+      if (!card.contains(e.relatedTarget)) card.classList.remove("drop-before", "drop-after");
+    });
     card.addEventListener("drop", (e) => {
       e.preventDefault();
-      card.classList.remove("drop-target");
+      card.classList.remove("drop-before", "drop-after");
       const from = Number(e.dataTransfer.getData("text/plain"));
-      if (!Number.isNaN(from)) moveTeam(from, i);
+      if (Number.isNaN(from)) return;
+      let to = afterHalf(e) ? i + 1 : i; // pozice vložení v původním poli
+      if (from < to) to -= 1; // po vyjmutí se indexy za ním posunou
+      moveTeam(from, to);
     });
 
     card.append(avatar, name, scoreRow, tools, move);

@@ -635,7 +635,13 @@ body.teams-big .team .move button:hover:not(:disabled) { color: var(--text); bor
 body.teams-big .team .move button:disabled { opacity: .3; cursor: default; }
 body.teams-big .team[draggable="true"] { cursor: grab; }
 body.teams-big .team.dragging { opacity: .45; }
-body.teams-big .team.drop-target { outline: 3px dashed var(--accent); outline-offset: 6px; }
+body.teams-big .team.drop-before::after, body.teams-big .team.drop-after::after {
+  content: ""; position: absolute; top: 4%; bottom: 4%; width: 6px; border-radius: 3px;
+  background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+  pointer-events: none;
+}
+body.teams-big .team.drop-before::after { left: -16px; }
+body.teams-big .team.drop-after::after { right: -16px; }
 body.teams-big .team .tools button { width: 32px; height: 32px; font-size: 1rem; border: 1px solid var(--border); }
 body.teams-big .team .float { font-size: 14cqmin; right: auto; left: 0; width: 100%; text-align: center; top: 35%; }
 body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při změně skóre nezvětšuje */
