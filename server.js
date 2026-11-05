@@ -122,7 +122,7 @@ app.post("/api/generate", async (req, res) => {
     const msg = await stream.finalMessage();
 
     if (msg.stop_reason === "refusal") {
-      return res.status(422).json({ error: "Claude odmítl k tomuto tématu otázky vytvořit. Zkus jiné téma." });
+      return res.status(422).json({ error: "K tomuto tématu se otázky nepodařilo vytvořit. Zkus jiné téma." });
     }
     if (msg.stop_reason === "max_tokens") {
       return res.status(502).json({ error: "Odpověď byla příliš dlouhá. Zkus menší počet otázek." });
@@ -144,7 +144,7 @@ app.post("/api/generate", async (req, res) => {
       return res.status(429).json({ error: "Překročen limit API. Zkus to za chvíli." });
     }
     if (err instanceof Anthropic.APIError) {
-      return res.status(502).json({ error: `Chyba Claude API (${err.status ?? "?"}). Zkus to znovu.` });
+      return res.status(502).json({ error: `Chyba při generování otázek (${err.status ?? "?"}). Zkus to znovu.` });
     }
     res.status(500).json({ error: "Generování selhalo. Zkus to znovu." });
   }
