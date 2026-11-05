@@ -15,14 +15,14 @@
   <header class="topbar">
     <a class="brand" href="#" id="brand"><span class="brand-logo">🦊</span> Kvíz</a>
     <div class="topbar-info" id="quizInfo"></div>
-    <h2 class="settings-title">Nastavení týmů</h2>
+    <h2 class="settings-title">Nastavení</h2>
     <div class="topbar-actions">
-      <button class="icon-btn" id="closeSettingsBtn" title="Zavřít nastavení týmů" aria-label="Zavřít nastavení týmů"><i class="ph ph-x"></i></button>
+      <button class="icon-btn" id="closeSettingsBtn" title="Zavřít nastavení" aria-label="Zavřít nastavení"><i class="ph ph-x"></i></button>
       <div class="menu">
         <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
         <div class="menu-panel" id="menuPanel" role="menu" hidden>
           <button role="menuitem" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
-          <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení týmů</span><kbd>T</kbd></button>
+          <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení</span><kbd>T</kbd></button>
           <button role="menuitem" id="menuFullscreen" class="desktop-only"><i class="ph ph-corners-out" id="fsIcon"></i><span id="fsLabel">Celá obrazovka</span><kbd>F</kbd></button>
           <button role="menuitem" id="menuHelp" class="desktop-only"><i class="ph ph-keyboard"></i><span>Klávesové zkratky</span><kbd>?</kbd></button>
           <div class="menu-sep" role="separator"></div>
@@ -104,6 +104,7 @@
           <span class="q-num" id="qCounter"></span>
           <span class="pill" id="qTopic" hidden></span>
           <span class="pill level-pill" id="qLevel"></span>
+          <span class="pill points-pill" id="qPoints" hidden></span>
         </div>
 
         <h2 class="q-text" id="qText"></h2>
@@ -122,7 +123,7 @@
 
     <!-- ===== Výsledky ===== -->
     <section id="resultsView" class="view view-results" hidden>
-      <h1 class="results-title">Konec kvízu! 🎉</h1>
+      <h1 class="results-title">Konec kvízu!</h1>
       <div class="podium" id="podium"></div>
       <ol class="rest" id="rest"></ol>
       <div class="results-actions">
@@ -137,9 +138,21 @@
     <div class="scoreboard-tools">
     </div>
     <div class="teams" id="teams"></div>
+    <div class="settings-options big-only">
+      <label class="toggle">
+        <input type="checkbox" id="adaptiveToggle">
+        <span class="switch" aria-hidden="true"></span>
+        <span class="toggle-text">Adaptivní bodování pro mix obtížností</span>
+      </label>
+      <div class="diff-points" id="diffPoints" hidden>
+        <label><span class="pill level-pill lehká">lehká</span><input type="number" min="1" max="10" data-diff="lehká" inputmode="numeric"></label>
+        <label><span class="pill level-pill střední">střední</span><input type="number" min="1" max="10" data-diff="střední" inputmode="numeric"></label>
+        <label><span class="pill level-pill těžká">těžká</span><input type="number" min="1" max="10" data-diff="těžká" inputmode="numeric"></label>
+      </div>
+    </div>
     <div class="team-actions big-only">
-      <button class="btn ghost small" id="resetScoresBtn"><i class="ph ph-arrow-counter-clockwise"></i> Vynulovat body</button>
-      <button class="btn ghost small" id="resetTeamsBtn"><i class="ph ph-shuffle"></i> Resetovat týmy</button>
+      <button class="btn" id="resetScoresBtn"><i class="ph ph-arrow-counter-clockwise"></i> Vynulovat body</button>
+      <button class="btn" id="resetTeamsBtn"><i class="ph ph-shuffle"></i> Resetovat týmy</button>
     </div>
   </footer>
 
@@ -150,14 +163,15 @@
       <tr><td><kbd>1</kbd> – <kbd>4</kbd></td><td>+1 bod týmu s daným číslem</td></tr>
       <tr><td><kbd>0</kbd></td><td>+1 bod všem týmům</td></tr>
       <tr><td><kbd>Shift</kbd> + číslo</td><td>−1 bod (oprava), <kbd>Shift</kbd>+<kbd>0</kbd> všem</td></tr>
+      <tr><td colspan="2" class="muted">S adaptivním bodováním (mix) se přičítá a odečítá počet bodů uvedený u otázky.</td></tr>
       <tr><td><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd></td><td>vybrat odpověď</td></tr>
       <tr><td><kbd>Mezerník</kbd></td><td>ukázat odpověď / další otázka</td></tr>
       <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>předchozí / další otázka</td></tr>
-      <tr><td><kbd>T</kbd></td><td>nastavení týmů</td></tr>
+      <tr><td><kbd>T</kbd></td><td>nastavení</td></tr>
       <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
     </table>
-    <p class="muted">Během hry se body mění klávesnicí, na tabletu a mobilu klepnutím na kartu týmu. V nastavení týmů (menu ☰ vpravo nahoře) jdou body upravit i tlačítky −/+ a dají se tam měnit názvy, ikony a týmy přidávat nebo odebírat.</p>
+    <p class="muted">Během hry se body mění klávesnicí, na tabletu a mobilu klepnutím na kartu týmu. V nastavení (menu ☰ vpravo nahoře) jdou body upravit i tlačítky −/+ a dají se tam měnit názvy, ikony a týmy přidávat nebo odebírat.</p>
     <form method="dialog"><button class="btn primary">Rozumím</button></form>
   </dialog>
 

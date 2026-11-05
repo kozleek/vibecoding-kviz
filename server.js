@@ -50,6 +50,15 @@ Uváděj jen fakta, kterými si jsi jistý. Otázky se neopakují a pokrývají 
 hardcore = pro kvízové mazáky a experty: méně známá a detailní fakta (přesná data, čísla, jména, souvislosti),
 špatné odpovědi jsou velmi blízko té správné (stejné období, obor nebo řád čísel). I tady jen ověřená fakta, žádné chytáky ani sporné otázky.`;
 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function shuffleAnswers(q) {
   const keys = ["a", "b", "c"];
   const items = keys.map((k) => ({ text: q.answers[k], correct: k === q.correct }));
@@ -75,7 +84,7 @@ app.post("/api/generate", async (req, res) => {
 
   const levelText =
     level === "mix"
-      ? "Namíchej obtížnosti: přibližně třetina lehkých, třetina středních a třetina těžkých, seřazeno od nejlehčí po nejtěžší. Obtížnost hardcore v mixu nepoužívej."
+      ? "Namíchej obtížnosti: přibližně třetina lehkých, třetina středních a třetina těžkých. Obtížnost hardcore v mixu nepoužívej."
       : `Všechny otázky mají obtížnost „${LEVELS[level]}“.`;
 
   const topics = [...new Set(topic.split(/[,;\n]+/).map((t) => t.trim()).filter(Boolean))];
@@ -113,7 +122,8 @@ app.post("/api/generate", async (req, res) => {
 
     const text = msg.content.filter((b) => b.type === "text").map((b) => b.text).join("");
     const data = JSON.parse(text);
-    const questions = data.questions.slice(0, count).map(shuffleAnswers);
+    let questions = data.questions.slice(0, count).map(shuffleAnswers);
+    if (level === "mix") questions = shuffle(questions); // mix: obtížnosti náhodně promíchané, ne popořadě
 
     res.json({ topic: topics.join(", "), level, questions });
   } catch (err) {

@@ -62,6 +62,18 @@ function save() {
 /* ---------- Přepínání obrazovek ---------- */
 let loadingTimer = null;
 
+/* ---------- Adaptivní bodování (jen pro mix) ---------- */
+const DEFAULT_DIFF_POINTS = { "lehká": 1, "střední": 2, "těžká": 3, "hardcore": 4 };
+// body za obtížnost – nastavitelné v Nastavení, výchozí 1 / 2 / 3
+const diffPoints = (d) => state.diffPoints?.[d] ?? DEFAULT_DIFF_POINTS[d] ?? 1;
+const adaptiveOn = () => !!state.adaptiveScoring && state.quiz?.level === "mix";
+// kolik bodů se přičte klávesou / klepnutím: u otázky v mixu podle obtížnosti, jinak 1
+function questionPoints() {
+  if (!adaptiveOn() || state.view !== "quiz") return 1;
+  return diffPoints(currentQ()?.difficulty);
+}
+const pointsLabel = (n) => (n === 1 ? "1 bod" : n < 5 ? `${n} body` : `${n} bodů`);
+
 const scoringActive = () => !!state.quiz && (state.view === "quiz" || state.view === "results");
 
 function show(view) {
@@ -216,6 +228,8 @@ function renderQuestion(animate = false) {
   $("qTopic").textContent = q.topic || "";
   $("qLevel").textContent = q.difficulty;
   $("qLevel").className = "pill level-pill " + q.difficulty;
+  $("qPoints").hidden = !adaptiveOn();
+  $("qPoints").textContent = adaptiveOn() ? pointsLabel(diffPoints(q.difficulty)) : "";
   $("qText").textContent = q.question;
 
   const wrap = $("answers");
@@ -340,8 +354,7 @@ function renderTeams() {
       const card = el(tapToScore ? "button" : "div", "team");
       card.style.setProperty("--team", t.color);
       if (max > 0 && leaders === 1 && t.score === max) card.classList.add("leader");
-      card.title = !scoringActive() ? "Upravit týmy" : tapToScore ? "Klepnutím přidáš bod" : `Bod přidáš klávesou ${i + 1}`;
-      if (tapToScore) card.addEventListener("click", () => addPoints(i, 1));
+      if (tapToScore) card.addEventListener("click", () => addPoints(i, questionPoints()));
       const avatar = el("div", "avatar", t.emoji);
       avatar.append(el("span", "key", String(i + 1)));
       const scoreRow = el("div", "score-row");
@@ -386,11 +399,11 @@ function renderTeams() {
     const minus = el("button", "pm", "−");
     minus.title = "Odebrat bod";
     minus.setAttribute("aria-label", `Odebrat bod týmu ${t.name}`);
-    minus.addEventListener("click", () => addPoints(i, -1));
+    minus.addEventListener("click", () => addPoints(i, -1, true));
     const plus = el("button", "pm", "+");
     plus.title = "Přidat bod";
     plus.setAttribute("aria-label", `Přidat bod týmu ${t.name}`);
-    plus.addEventListener("click", () => addPoints(i, 1));
+    plus.addEventListener("click", () => addPoints(i, 1, true));
     scoreRow.append(minus, el("span", "score", String(t.score)), plus);
 
     // odebrání týmu jen ve velkém zobrazení
@@ -422,8 +435,9 @@ function renderTeams() {
 }
 
 // i = index týmu, nebo "all" pro všechny týmy najednou
-function addPoints(i, delta) {
-  if (!scoringActive()) return;
+// force = ruční úprava v nastavení (−/+), ta jde vždy; klávesy a klepnutí jen během kvízu
+function addPoints(i, delta, force = false) {
+  if (!force && !scoringActive()) return;
   const idx = i === "all" ? state.teams.map((_, j) => j) : state.teams[i] ? [i] : [];
   if (!idx.length) return;
   idx.forEach((j) => (state.teams[j].score += delta));
@@ -481,6 +495,28 @@ $("resetTeamsBtn").addEventListener("click", async () => {
   renderTeams();
   save();
 });
+
+function renderAdaptive() {
+  $("adaptiveToggle").checked = !!state.adaptiveScoring;
+  $("diffPoints").hidden = !state.adaptiveScoring;
+  document.querySelectorAll("#diffPoints input").forEach((inp) => (inp.value = diffPoints(inp.dataset.diff)));
+}
+$("adaptiveToggle").addEventListener("change", (e) => {
+  state.adaptiveScoring = e.target.checked;
+  save();
+  renderAdaptive();
+  if (state.view === "quiz") renderQuestion();
+});
+document.querySelectorAll("#diffPoints input").forEach((inp) =>
+  inp.addEventListener("change", () => {
+    const n = Math.min(10, Math.max(1, parseInt(inp.value, 10) || DEFAULT_DIFF_POINTS[inp.dataset.diff]));
+    state.diffPoints = { ...state.diffPoints, [inp.dataset.diff]: n };
+    inp.value = n;
+    save();
+    if (state.view === "quiz") renderQuestion();
+  })
+);
+renderAdaptive();
 
 $("resetScoresBtn").addEventListener("click", async () => {
   const ok = await confirmDialog({
@@ -646,6 +682,15 @@ document.querySelectorAll("[data-demo]").forEach((b) =>
 );
 
 /* ---------- Ukázkový kvíz (bez Claude API) ---------- */
+function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 async function loadDemoQuiz(file) {
   if (state.quiz) {
     const ok = await confirmDialog({
@@ -663,7 +708,9 @@ async function loadDemoQuiz(file) {
     state.quiz = {
       topic: data.topic,
       level: data.level,
-      questions: data.questions.map((q) => ({ ...q, picked: null, revealed: false })),
+      // mix: otázky v náhodném pořadí, ať obtížnosti nejdou popořadě
+      questions: (data.level === "mix" ? shuffleArr(data.questions) : data.questions)
+        .map((q) => ({ ...q, picked: null, revealed: false })),
     };
     state.index = 0;
     if (state.bigTeams) { state.bigTeams = false; applyTeamsLayout(); }
@@ -678,7 +725,7 @@ async function loadDemoQuiz(file) {
 function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
-  $("menuTeamsLabel").textContent = big ? "Zavřít nastavení týmů" : "Nastavení týmů";
+  $("menuTeamsLabel").textContent = big ? "Zavřít nastavení" : "Nastavení";
   renderTeams();
 }
 function toggleTeamsLayout() {
@@ -711,7 +758,8 @@ document.addEventListener("keydown", (e) => {
   const m = e.code.match(/^(?:Digit|Numpad)([0-4])$/);
   if (m) {
     e.preventDefault();
-    addPoints(m[1] === "0" ? "all" : Number(m[1]) - 1, e.shiftKey ? -1 : 1);
+    const pts = questionPoints();
+    addPoints(m[1] === "0" ? "all" : Number(m[1]) - 1, e.shiftKey ? -pts : pts);
     return;
   }
   if (e.key === "?") return $("helpDialog").showModal();
