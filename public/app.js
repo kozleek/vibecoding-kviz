@@ -89,8 +89,9 @@ function show(view) {
 
   clearInterval(loadingTimer);
   if (view === "loading") startLoadingTips();
-  // barevné pozadí jen u otázek v mixu, jinde neutrální
-  if (view !== "quiz") delete document.body.dataset.diff;
+  // pozadí: na zadání a při načítání podle zvolené obtížnosti, u otázek jen v mixu, jinde neutrální
+  if (view === "setup" || view === "loading") applySetupGradient();
+  else if (view !== "quiz") delete document.body.dataset.diff;
   if (view === "quiz") renderQuestion(true);
   if (view === "results") renderResults();
   $("main").scrollTop = 0;
@@ -98,6 +99,15 @@ function show(view) {
 }
 
 /* ---------- Zadání ---------- */
+// gradient na zadání podle zvolené obtížnosti (mix má vlastní tyrkysový)
+const LEVEL_DIFF = { lehka: "lehká", stredni: "střední", tezka: "těžká", hardcore: "hardcore", mix: "mix" };
+function applySetupGradient() {
+  const level = document.querySelector('input[name="level"]:checked')?.value || "mix";
+  document.body.dataset.diff = LEVEL_DIFF[level];
+}
+document.querySelectorAll('input[name="level"]').forEach((r) =>
+  r.addEventListener("change", () => { if (state.view === "setup") applySetupGradient(); })
+);
 function topicList() {
   return $("topic").value.split(/[,;]+/).map((t) => t.trim()).filter(Boolean);
 }
