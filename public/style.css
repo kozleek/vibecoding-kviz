@@ -778,6 +778,12 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .confirm p { margin: 0; color: var(--muted); font-size: 1.05rem; line-height: 1.45; }
 .dialog .confirm-actions { display: flex; gap: 10px; margin-top: 20px; }
 .confirm-actions .btn { flex: 1; }
+/* tři volby pod sebou: hlavní, vedlejší (zahodit), zrušit */
+.dialog .confirm-actions.stack { flex-direction: column; }
+.confirm-actions.stack #confirmOk { order: -2; }
+.confirm-actions.stack #confirmAlt { order: -1; }
+.btn.danger-text { color: var(--bad); }
+.btn.danger-text:hover { border-color: var(--bad); }
 .btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
 
 /* ============ Responsive ============ */

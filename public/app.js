@@ -844,8 +844,15 @@ addEventListener("resize", closeEmojiPicker);
 $("teams").addEventListener("scroll", closeEmojiPicker);
 
 /* ---------- Potvrzovací dialog ---------- */
-function confirmDialog({ icon = "❓", title, text = "", ok = "Potvrdit", danger = false }) {
+function confirmDialog(opts) {
+  return askDialog(opts).then((v) => v === "ok");
+}
+// dialog s volitelnou třetí volbou (alt); vrací "ok", "alt", nebo "cancel"/""
+function askDialog({ icon = "❓", title, text = "", ok = "Potvrdit", alt = "", danger = false }) {
   const d = $("confirmDialog");
+  $("confirmAlt").hidden = !alt;
+  $("confirmAlt").textContent = alt;
+  d.querySelector(".confirm-actions").classList.toggle("stack", !!alt);
   $("confirmIcon").textContent = icon;
   $("confirmTitle").textContent = title;
   $("confirmText").textContent = text;
@@ -856,7 +863,7 @@ function confirmDialog({ icon = "❓", title, text = "", ok = "Potvrdit", danger
   d.showModal();
   $("confirmOk").focus();
   return new Promise((resolve) => {
-    d.addEventListener("close", () => resolve(d.returnValue === "ok"), { once: true });
+    d.addEventListener("close", () => resolve(d.returnValue), { once: true });
   });
 }
 // kliknutí na pozadí dialog zavře
@@ -1125,18 +1132,32 @@ function leaveCurrent() {
   state.quiz = null;
 }
 // křížek v hlavičce: po potvrzení odejít z kvízu a vynulovat body (v kvízu se dá pokračovat i s jeho body)
+// dokončený kvíz je v archivu automaticky; nedokončený jde uložit mezi rozehrané, nebo zahodit
 async function leaveQuiz() {
-  const finished = isFinished(liveEntry());
-  const ok = await confirmDialog({
-    icon: finished ? "🏆" : "⏸️",
-    title: "Opustit kvíz?",
-    text: finished
-      ? "Kvíz je dokončený a zůstane v archivu i s výsledky a průběhem. Body týmů se vynulují."
-      : "Kvíz se uloží mezi rozehrané v archivu – později v něm můžeš pokračovat i s body. Body týmů se teď vynulují.",
-    ok: "Opustit kvíz",
-  });
-  if (!ok) return;
+  const entry = liveEntry();
+  const finished = isFinished(entry);
+  const choice = await askDialog(
+    finished
+      ? {
+          icon: "🏆",
+          title: "Opustit kvíz?",
+          text: "Kvíz je dokončený a zůstane v archivu i s výsledky a průběhem. Body týmů se vynulují.",
+          ok: "Opustit kvíz",
+        }
+      : {
+          icon: "⏸️",
+          title: "Opustit nedokončený kvíz?",
+          text: "Ulož ho mezi rozehrané a později v něm pokračuj i s body, nebo ho opusť bez uložení – pak se smaže. Body týmů se v obou případech vynulují.",
+          ok: "Uložit do rozehraných",
+          alt: "Opustit bez uložení",
+        }
+  );
+  if (choice !== "ok" && choice !== "alt") return;
   leaveCurrent();
+  if (choice === "alt" && entry) {
+    archive = archive.filter((e) => e.id !== entry.id);
+    saveArchive();
+  }
   state.teams.forEach((t) => (t.score = 0));
   show("setup");
 }
