@@ -1,6 +1,6 @@
 # Kvíz
 
-Generátor kvízových otázek přes Claude API (model `claude-opus-5-5`) s bodováním týmů.
+Generátor kvízových otázek přes Claude API (model `claude-sonnet-5-5`) s bodováním týmů.
 
 ## Spuštění
 

@@ -2,7 +2,7 @@ import express from "express";
 import Anthropic from "@anthropic-ai/sdk";
 
 const PORT = process.env.PORT || 3000;
-const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5-5";
+const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5-5";
 const MIN_QUESTIONS = 3;
 const MAX_QUESTIONS = 100;
 // náhodné téma: oblast losuje server – se stále stejným promptem by model volil pořád totéž (např. kávu)
