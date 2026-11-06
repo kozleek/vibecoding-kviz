@@ -89,7 +89,10 @@ function show(view) {
   $("closeReviewBtn").setAttribute("aria-label", view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz");
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
-  $("backBtn").textContent = state.locked ? "Průběh kvízu" : "← Zpět na otázky";
+  // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
+  $("backBtn").innerHTML = state.locked ? '<i class="ph ph-play"></i> Průběh kvízu' : "← Zpět na otázky";
+  $("backBtn").classList.toggle("primary", !!state.locked);
+  $("backBtn").classList.toggle("ghost", !state.locked);
   $("reviewArchiveBtn").hidden = !state.locked;
   if (state.locked) syncReviewTeams();
 
