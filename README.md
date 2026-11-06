@@ -20,6 +20,7 @@ npm start              # http://localhost:3000  (npm run dev = s auto-reloadem)
 | `A` / `B` / `C` | vybrat odpověď (ukáže správnou + vysvětlení) |
 | `Mezerník` / `Enter` | ukázat správnou odpověď bez výběru |
 | `←` / `→` | předchozí / další otázka |
+| `A` | archiv (u otázky běžícího kvízu vybírá odpověď A) |
 
 Týmy (max. 4) jdou přidat, odebrat a přejmenovat kliknutím na název. Stav (otázky, body) se drží v `localStorage`, takže přežije reload.
 

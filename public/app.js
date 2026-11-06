@@ -981,6 +981,10 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "t" || e.key === "T") return toggleTeamsLayout();
   if (state.bigTeams) return;
 
+  // A = archiv; na obrazovce s otázkou běžícího kvízu zůstává A výběrem odpovědi
+  if ((e.key === "a" || e.key === "A") && (state.view !== "quiz" || state.locked)) {
+    return state.view === "archive" ? closeArchive() : openArchive();
+  }
   if (state.view === "results" && e.key === "ArrowLeft") return show("quiz");
   if (state.view !== "quiz") return;
 
