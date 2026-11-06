@@ -395,7 +395,8 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 /* ============ Results ============ */
 .view-results { text-align: center; padding-top: 0; margin-block: auto; }
 .results-title { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, min(4.6vw, 6vh), 4.6rem); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; margin: 0 0 clamp(14px, 2.4vh, 32px); }
-.results-sub { margin: 0 0 clamp(36px, 8vh, 110px); font-size: clamp(1.15rem, min(2.2vw, 3.2vh), 2.2rem); color: var(--muted); font-weight: 500; }
+.results-sub { margin: 0 0 clamp(36px, 8vh, 110px); }
+.results-sub .pill { font-size: clamp(.9rem, min(1.2vw, 1.9vh), 1.3rem); padding: .35em 1em; }
 .podium {
   display: flex; justify-content: center; align-items: flex-end; gap: clamp(12px, 1.6vw, 32px);
   /* základní linka pod stupni – „země“, ze které stupně vychází */

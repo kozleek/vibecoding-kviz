@@ -412,7 +412,14 @@ $("nextBtn").addEventListener("click", () => go(1));
 function renderResults() {
   // nadpis: název kvízu a obtížnost
   $("resultsTitle").textContent = state.quiz?.topic || "Výsledky";
-  $("resultsSub").textContent = state.quiz ? `Obtížnost: ${LEVEL_NAMES[state.quiz.level] || state.quiz.level}` : "";
+  // obtížnost jako pill v barvě úrovně (mix neutrálně)
+  $("resultsSub").innerHTML = "";
+  if (state.quiz) {
+    const lvl = state.quiz.level;
+    const pill = el("span", "pill level-pill " + (lvl === "mix" ? "" : LEVEL_DIFF[lvl] || ""), LEVEL_NAMES[lvl] || lvl);
+    pill.title = "Obtížnost";
+    $("resultsSub").append(pill);
+  }
   const podium = $("podium");
   const rest = $("rest");
   podium.innerHTML = "";
