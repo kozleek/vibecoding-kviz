@@ -106,6 +106,7 @@ function show(view) {
   if (view === "quiz") { renderQuestion(true); logEvent("question"); }
   if (view === "results") { renderResults(); logEvent("results"); }
   if (view === "archive") renderArchive();
+  renderHeader(); // znovu – po zápisu výsledků už je kvíz dokončený
   $("main").scrollTop = 0;
   save();
 }
@@ -274,18 +275,10 @@ function startLoadingTips() {
   }, 3500);
 }
 
-async function newQuiz() {
+// aktuální kvíz se nezahazuje – zůstane v archivu (nedokončený mezi rozehranými), proto bez potvrzení
+function newQuiz() {
   if (state.locked) exitReview();
-  if (state.quiz) {
-    const ok = await confirmDialog({
-      icon: "📝",
-      title: "Začít nový kvíz?",
-      text: "Aktuální kvíz zůstane uložený v archivu. Týmy a body zůstanou.",
-      ok: "Nový kvíz",
-    });
-    if (!ok) return;
-  }
-  state.quiz = null;
+  leaveCurrent();
   show("setup");
   $("topic").focus();
 }
@@ -919,19 +912,11 @@ function shuffleArr(arr) {
 
 async function loadDemoQuiz(file) {
   if (state.locked) exitReview();
-  if (state.quiz) {
-    const ok = await confirmDialog({
-      icon: "🏆",
-      title: "Spustit ukázkový kvíz?",
-      text: "Aktuální kvíz zůstane v archivu a nahradí ho ukázkový. Týmy a body zůstanou.",
-      ok: "Spustit",
-    });
-    if (!ok) return;
-  }
   try {
     const res = await fetch(file, { cache: "no-cache" });
     if (!res.ok) throw new Error();
     const data = await res.json();
+    leaveCurrent();
     state.quiz = {
       topic: data.topic,
       level: data.level,
@@ -958,19 +943,28 @@ function applyTeamsLayout() {
   renderTeams();
 }
 // hlavička jako v nastavení (název + zavírací křížek místo menu) pro nastavení, archiv a archivní kvíz
+// hlavička jako v nastavení (název + zavírací křížek místo hamburger menu):
+// běžící kvíz, archiv a archivní kvíz; hamburger menu jen na zadání a při načítání
 function renderHeader() {
   const big = !!state.bigTeams;
-  const archiveHead = !big && (!!state.locked || state.view === "archive");
-  document.body.classList.toggle("archive-head", archiveHead);
+  const liveQuiz = !state.locked && !!state.quiz && (state.view === "quiz" || state.view === "results");
+  const closeHead = !big && (!!state.locked || state.view === "archive" || liveQuiz);
+  document.body.classList.toggle("close-head", closeHead);
   const title = $("headerTitle");
   title.innerHTML = "";
-  if (!archiveHead) return (title.textContent = "Nastavení");
-  title.append("Archiv");
-  if (state.locked) {
-    title.append(el("span", "header-sub", `${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]} · ${fmtDate(state.entry.createdAt)}`));
+  if (!closeHead) return (title.textContent = "Nastavení");
+  let label;
+  if (liveQuiz) {
+    title.append(state.quiz.topic, el("span", "header-sub", LEVEL_NAMES[state.quiz.level]));
+    label = isFinished(liveEntry()) ? "Zavřít kvíz (zůstane v archivu)" : "Opustit kvíz (uloží se mezi rozehrané)";
+  } else {
+    title.append("Archiv");
+    if (state.locked) {
+      title.append(el("span", "header-sub", `${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]} · ${fmtDate(state.entry.createdAt)}`));
+    }
+    label = (!state.locked ? "Zavřít archiv" : state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz") + " (Esc)";
   }
-  const label = !state.locked ? "Zavřít archiv" : state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
-  $("closeReviewBtn").title = `${label} (Esc)`;
+  $("closeReviewBtn").title = label;
   $("closeReviewBtn").setAttribute("aria-label", label);
 }
 function toggleTeamsLayout() {
@@ -1111,6 +1105,50 @@ function updateEntry(persist = true) {
 const fmtDate = (ts) =>
   new Date(ts).toLocaleString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
 const plural = (n, one, few, many) => `${n} ${n === 1 ? one : n >= 2 && n <= 4 ? few : many}`;
+// dokončený = došlo se až na výsledky; ostatní jsou rozehrané a jde v nich pokračovat
+const isFinished = (entry) => !!entry?.events.some((e) => e.type === "results");
+const questionMarks = (entry) => {
+  const marks = entry.questions.map(() => ({ picked: null, revealed: false }));
+  for (const ev of entry.events) {
+    if (!marks[ev.q]) continue;
+    if (ev.type === "pick") { marks[ev.q].picked = ev.key; marks[ev.q].revealed = true; }
+    if (ev.type === "reveal") marks[ev.q].revealed = true;
+  }
+  return marks;
+};
+
+// odejít z běžícího kvízu – zůstává v archivu (rozehraný, nebo dokončený)
+function leaveCurrent() {
+  if (!state.quiz) return;
+  logEvent("leave", { q: null });
+  state.quiz = null;
+}
+function leaveQuiz() {
+  leaveCurrent();
+  show("setup");
+}
+// pokračovat v rozehraném kvízu: otázky, odpovědi, týmy a body tak, jak byly
+function resumeQuiz(id) {
+  const entry = archive.find((e) => e.id === id);
+  if (!entry) return;
+  leaveCurrent();
+  const marks = questionMarks(entry);
+  state.quiz = {
+    topic: entry.topic,
+    level: entry.level,
+    archiveId: entry.id,
+    questions: entry.questions.map((q, i) => ({ ...q, ...marks[i] })),
+  };
+  const lastQ = [...entry.events].reverse().find((e) => e.q != null)?.q;
+  state.index = lastQ != null && lastQ < entry.questions.length ? lastQ : 0;
+  state.teams = entry.teams.map((t) => ({ ...t }));
+  state.adaptiveScoring = entry.adaptive;
+  state.diffPoints = { ...entry.diffPoints };
+  renderAdaptive();
+  logEvent("resume", { q: null });
+  show("quiz");
+}
+
 const revealedCount = (entry) =>
   new Set(entry.events.filter((e) => e.type === "pick" || e.type === "reveal").map((e) => e.q)).size;
 
@@ -1148,9 +1186,26 @@ function renderArchive() {
     return;
   }
   const liveId = state.quiz?.archiveId;
-  for (const entry of archive) {
-    const item = el("button", "card archive-item");
-    item.addEventListener("click", () => openReview(entry.id));
+  const playing = archive.filter((e) => !isFinished(e));
+  const done = archive.filter(isFinished);
+  if (playing.length) {
+    list.appendChild(el("h2", "archive-section", "Rozehrané"));
+    playing.forEach((e) => list.appendChild(archiveItem(e, liveId)));
+  }
+  list.appendChild(el("h2", "archive-section", "Archiv"));
+  if (!done.length) list.appendChild(el("p", "card archive-empty", "Zatím žádný dokončený kvíz. Kvíz se sem přesune, až dojdeš na výsledky."));
+  done.forEach((e) => list.appendChild(archiveItem(e, liveId)));
+}
+
+// rozehraný kvíz = pokračovat ve hře, dokončený = zamčené prohlížení
+function archiveItem(entry, liveId) {
+    const finished = isFinished(entry);
+    const item = el("div", "card archive-item");
+    const open = el("button", "archive-open");
+    open.setAttribute("aria-label", `${finished ? "Zobrazit" : "Pokračovat v kvízu"} ${entry.topic}`);
+    open.addEventListener("click", () =>
+      entry.id === liveId ? openReview(entry.id) : finished ? openReview(entry.id) : resumeQuiz(entry.id)
+    );
 
     const main = el("div", "archive-main");
     main.append(el("div", "archive-topic", entry.topic));
@@ -1171,11 +1226,37 @@ function renderArchive() {
       teams.appendChild(chip);
     }
 
-    const go = el("i", "ph ph-" + (entry.id === liveId ? "play" : "lock-simple"));
+    const go = el("i", "ph ph-" + (entry.id === liveId || !finished ? "play" : "lock-simple"));
     go.setAttribute("aria-hidden", "true");
-    item.append(main, teams, go);
-    list.appendChild(item);
-  }
+    open.append(main, teams, go);
+    item.append(open);
+
+    // smazání (běžící kvíz ne – nejdřív ho zavři)
+    if (entry.id !== liveId) {
+      const del = el("button", "icon-btn archive-del");
+      del.innerHTML = '<i class="ph ph-trash" aria-hidden="true"></i>';
+      del.title = "Smazat kvíz";
+      del.setAttribute("aria-label", `Smazat kvíz ${entry.topic}`);
+      del.addEventListener("click", () => deleteEntry(entry.id));
+      item.append(del);
+    }
+    return item;
+}
+
+async function deleteEntry(id) {
+  const entry = archive.find((e) => e.id === id);
+  if (!entry || entry.id === state.quiz?.archiveId) return;
+  const ok = await confirmDialog({
+    icon: "🗑️",
+    title: "Smazat kvíz?",
+    text: `„${entry.topic}“ z ${fmtDate(entry.createdAt)} se i s průběhem a výsledky natrvalo smaže.`,
+    ok: "Smazat",
+    danger: true,
+  });
+  if (!ok) return;
+  archive = archive.filter((e) => e.id !== id);
+  saveArchive();
+  renderArchive();
 }
 
 /* --- zamčené prohlížení archivního kvízu --- */
@@ -1184,12 +1265,7 @@ function openReview(id, force = false) {
   const entry = archive.find((e) => e.id === id);
   if (!entry) return;
   if (!force && entry.id === state.quiz?.archiveId) return show(state.archiveFrom === "results" ? "results" : "quiz"); // běžící kvíz jde dál hrát
-  const marks = entry.questions.map(() => ({ picked: null, revealed: false }));
-  for (const ev of entry.events) {
-    if (!marks[ev.q]) continue;
-    if (ev.type === "pick") { marks[ev.q].picked = ev.key; marks[ev.q].revealed = true; }
-    if (ev.type === "reveal") marks[ev.q].revealed = true;
-  }
+  const marks = questionMarks(entry);
   liveState = state;
   state = {
     locked: true,
@@ -1226,7 +1302,9 @@ function closeReview() {
   if (state.view === "quiz") show("results");
   else exitReview();
 }
-$("closeReviewBtn").addEventListener("click", () => (state.locked ? closeReview() : closeArchive()));
+$("closeReviewBtn").addEventListener("click", () =>
+  state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()
+);
 
 // stav týmů v archivním kvízu: u otázky body po poslední akci u ní, ve výsledcích konečné
 function syncReviewTeams() {
@@ -1310,6 +1388,8 @@ function timelineText(ev, entry) {
     case "pick": return `Odpověď ${ev.key.toUpperCase()} – ${ev.correct ? "správně ✓" : "špatně ✗"}`;
     case "reveal": return "Ukázána správná odpověď";
     case "results": return "🏆 Výsledky";
+    case "leave": return "Kvíz zavřen";
+    case "resume": return "Pokračování kvízu";
     case "points": {
       const pts = ev.delta > 0 ? `+${ev.delta}` : String(ev.delta);
       const who = ev.all ? "Všem týmům" : ev.who.map((t) => `${t.emoji} ${t.name}`).join(", ");

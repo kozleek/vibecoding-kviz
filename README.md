@@ -26,7 +26,7 @@ Týmy (max. 4) jdou přidat, odebrat a přejmenovat kliknutím na název. Stav (
 
 ## Archiv
 
-Menu ☰ → **Archiv**: počet vygenerovaných kvízů a otázek a seznam všech odehraných kvízů. Každý kvíz se ukládá i s celým průběhem (timeline): přechody mezi otázkami, vybrané/ukázané odpovědi, každé přidání a odebrání bodů a změny týmů. Odehraný kvíz se otevře v zamčeném stavu – stejné obrazovky, ale nic nejde měnit; lišta týmů ukazuje body po dané otázce a výsledky obsahují časovou osu. Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlížeči.
+Menu ☰ → **Archiv**: počet vygenerovaných kvízů a otázek a seznam všech odehraných kvízů. Každý kvíz se ukládá i s celým průběhem (timeline): přechody mezi otázkami, vybrané/ukázané odpovědi, každé přidání a odebrání bodů a změny týmů. Archiv má dvě sekce: **Rozehrané** (kvíz opuštěný křížkem v hlavičce dřív, než došel na výsledky – kliknutím se v něm pokračuje i s body) a **Archiv** (dokončené kvízy). Kvízy jdou smazat ikonou koše. Dokončený kvíz se otevře v zamčeném stavu – stejné obrazovky, ale nic nejde měnit; lišta týmů ukazuje body po dané otázce a výsledky obsahují časovou osu. Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlížeči.
 
 ## Deploy (Coolify / Nixpacks)
 

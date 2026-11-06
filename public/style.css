@@ -564,9 +564,9 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
 body.teams-big .settings-title { display: block; }
 body.teams-big #closeSettingsBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
 /* archiv a archivní kvíz: stejná hlavička jako nastavení – křížek místo hamburger menu */
-body.archive-head .settings-title { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.archive-head #closeReviewBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
-body.archive-head .topbar-info, body.archive-head .menu { display: none; }
+body.close-head .settings-title { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.close-head #closeReviewBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
+body.close-head .topbar-info, body.close-head .menu { display: none; }
 .header-sub { margin-left: 14px; font-family: var(--font); font-weight: 500; font-size: 1rem; color: var(--muted); }
 body.teams-big .topbar-info, body.teams-big .menu { display: none; }
 body.teams-big .scoreboard-tools { display: none; }
@@ -877,13 +877,17 @@ body[data-view="archive"] { grid-template-rows: auto 1fr; }
 .stat span { color: var(--muted); font-weight: 600; }
 .archive-list { display: grid; gap: 10px; }
 .archive-empty { margin: 0; padding: 36px 24px; text-align: center; color: var(--muted); }
-.archive-item {
-  display: flex; align-items: center; gap: 18px; width: 100%; text-align: left;
-  padding: 16px 20px; cursor: pointer; transition: border-color .15s, transform .1s;
-}
+.archive-section { margin: 14px 0 2px; font-family: var(--display); font-weight: 800; font-size: 1.35rem; }
+.archive-item { display: flex; align-items: center; gap: 6px; padding-right: 10px; transition: border-color .15s; }
 .archive-item:hover { border-color: var(--accent); }
-.archive-item:active { transform: translateY(1px); }
-.archive-item > .ph { font-size: 1.3rem; color: var(--muted); flex: none; }
+.archive-open {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 18px; text-align: left;
+  padding: 16px 12px 16px 20px; border: 0; background: none; cursor: pointer; border-radius: inherit;
+}
+.archive-open:active { transform: translateY(1px); }
+.archive-open > .ph { font-size: 1.3rem; color: var(--muted); flex: none; }
+.archive-del { flex: none; }
+.archive-del:hover { color: var(--bad); }
 .archive-main { flex: 1; min-width: 0; }
 .archive-topic { font-weight: 700; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .archive-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px; color: var(--muted); font-size: .9rem; }
@@ -902,7 +906,7 @@ body[data-view="archive"] { grid-template-rows: auto 1fr; }
   .stat { padding: 12px 14px; }
   .stat b { font-size: 1.8rem; }
   .stat span { font-size: .8rem; }
-  .archive-item { flex-wrap: wrap; }
+  .archive-open { flex-wrap: wrap; }
   .archive-teams { order: 3; width: 100%; }
 }
 
