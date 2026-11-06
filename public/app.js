@@ -87,6 +87,7 @@ function show(view) {
   renderHeader();
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
+  $("replayBtn").hidden = !state.locked;
   // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
   // běžící kvíz: „Průběh kvízu“ (přepne do archivu), archivní kvíz: „Zobrazit kvíz“ (otázky od první)
   $("backBtn").innerHTML = `<i class="ph ph-play" aria-hidden="true"></i> ${state.locked ? "Zobrazit kvíz" : "Průběh kvízu"}`;
@@ -187,6 +188,12 @@ $("setupForm").addEventListener("submit", async (e) => {
     count: Number($("count").value),
     level: new FormData(e.target).get("level"),
   };
+  generateQuiz(body);
+});
+
+// vygenerovat kvíz přes API (ze zadání i „Hrát znovu“ v archivu) a spustit ho
+async function generateQuiz(body) {
+  const randomTopic = !!body.randomTopic;
   $("setupError").hidden = true;
   show("loading");
   if (randomTopic) startTopicDraw();
@@ -213,7 +220,7 @@ $("setupForm").addEventListener("submit", async (e) => {
     show("setup");
     showError(err.message);
   }
-});
+}
 
 /* ---------- Losování náhodného tématu (animace při načítání) ---------- */
 const DRAW_TOPICS = [
@@ -283,18 +290,25 @@ function newQuiz() {
   $("topic").focus();
 }
 $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
-$("againBtn").addEventListener("click", newQuiz);
+// výsledky: „Nový kvíz“ i „Průběh kvízu“ uzavřou dokončený kvíz do archivu a vynulují body
+$("againBtn").addEventListener("click", () => {
+  closeQuiz();
+  show("setup");
+  $("topic").focus();
+});
 // „Zobrazit kvíz“ / „Průběh kvízu“: v archivním kvízu otázky od první, u běžícího kvízu přepne do archivu na jeho průběh
 $("backBtn").addEventListener("click", () => {
   if (state.locked) {
     state.index = 0;
     return show("quiz");
   }
-  if (!archive.some((e) => e.id === state.quiz?.archiveId)) return show("quiz");
-  state.archiveFrom = "results"; // křížek v archivu vrátí zpět na výsledky
+  const id = state.quiz?.archiveId;
+  if (!archive.some((e) => e.id === id)) return show("quiz");
+  closeQuiz();
+  state.archiveFrom = "setup"; // kvíz je uzavřený – z archivu se křížkem jde na zadání
   state.view = "archive";
   save();
-  openReview(state.quiz.archiveId, true);
+  openReview(id);
 });
 $("brand").addEventListener("click", (e) => {
   e.preventDefault();
@@ -858,9 +872,10 @@ function confirmDialog(opts) {
   return askDialog(opts).then((v) => v === "ok");
 }
 // dialog s volitelnou třetí volbou (alt); vrací "ok", "alt", nebo "cancel"/""
-function askDialog({ icon = "❓", title, text = "", ok = "Potvrdit", alt = "", danger = false }) {
+function askDialog({ icon = "❓", title, text = "", ok = "Potvrdit", alt = "", altDanger = false, danger = false }) {
   const d = $("confirmDialog");
   $("confirmAlt").hidden = !alt;
+  $("confirmAlt").classList.toggle("danger-text", altDanger);
   $("confirmAlt").textContent = alt;
   d.querySelector(".confirm-actions").classList.toggle("stack", !!alt);
   $("confirmIcon").textContent = icon;
@@ -1160,16 +1175,21 @@ async function leaveQuiz() {
           text: "Ulož ho mezi rozehrané a později v něm pokračuj i s body, nebo ho opusť bez uložení – pak se smaže. Body týmů se v obou případech vynulují.",
           ok: "Uložit do rozehraných",
           alt: "Opustit bez uložení",
+          altDanger: true,
         }
   );
   if (choice !== "ok" && choice !== "alt") return;
-  leaveCurrent();
+  closeQuiz();
   if (choice === "alt" && entry) {
     archive = archive.filter((e) => e.id !== entry.id);
     saveArchive();
   }
-  state.teams.forEach((t) => (t.score = 0));
   show("setup");
+}
+// uzavřít běžící kvíz (zůstává v archivu) a vynulovat body týmů
+function closeQuiz() {
+  leaveCurrent();
+  state.teams.forEach((t) => (t.score = 0));
 }
 // pokračovat v rozehraném kvízu: otázky, odpovědi, týmy a body tak, jak byly
 function resumeQuiz(id) {
@@ -1258,6 +1278,7 @@ function archiveItem(entry, liveId) {
     meta.append(el("span", "pill", LEVEL_NAMES[entry.level] || entry.level));
     meta.append(el("span", null, `${revealedCount(entry)} / ${plural(entry.questions.length, "otázka", "otázky", "otázek")}`));
     if (entry.source === "demo") meta.append(el("span", "pill", "ukázka"));
+    if (entry.source === "remix") meta.append(el("span", "pill", "nové pořadí"));
     if (entry.id === liveId) meta.append(el("span", "pill live", "probíhá"));
     main.appendChild(meta);
 
@@ -1275,6 +1296,15 @@ function archiveItem(entry, liveId) {
     open.append(main, teams, go);
     item.append(open);
 
+    // hrát znovu (jen dokončené)
+    if (finished && entry.id !== liveId) {
+      const replay = el("button", "icon-btn archive-replay");
+      replay.innerHTML = '<i class="ph ph-arrows-clockwise" aria-hidden="true"></i>';
+      replay.title = "Hrát znovu";
+      replay.setAttribute("aria-label", `Hrát znovu kvíz ${entry.topic}`);
+      replay.addEventListener("click", () => replayEntry(entry.id));
+      item.append(replay);
+    }
     // smazání (běžící kvíz ne – nejdřív ho zavři)
     if (entry.id !== liveId) {
       const del = el("button", "icon-btn archive-del");
@@ -1286,6 +1316,41 @@ function archiveItem(entry, liveId) {
     }
     return item;
 }
+
+// hrát archivní kvíz znovu: nové otázky od AI na stejné téma, nebo stejné otázky v novém pořadí
+async function replayEntry(id) {
+  const entry = archive.find((e) => e.id === id);
+  if (!entry) return;
+  const topic = entry.topic.replace(/\s*\(ukázkový kvíz\)\s*$/, "");
+  const choice = await askDialog({
+    icon: "🔁",
+    title: "Hrát kvíz znovu?",
+    text: `„${topic}“ · ${LEVEL_NAMES[entry.level] || entry.level} · ${plural(entry.questions.length, "otázka", "otázky", "otázek")}. AI může vygenerovat nové otázky na stejné téma, nebo zahraj stejné otázky v jiném pořadí.`,
+    ok: "Nové otázky od AI",
+    alt: "Stejné otázky, nové pořadí",
+  });
+  if (choice !== "ok" && choice !== "alt") return;
+  if (state.locked) exitReview();
+  leaveCurrent();
+  if (choice === "ok") {
+    return generateQuiz({
+      topic,
+      randomTopic: false,
+      instructions: entry.request?.instructions || "",
+      count: entry.questions.length,
+      level: entry.level,
+    });
+  }
+  state.quiz = {
+    topic: entry.topic,
+    level: entry.level,
+    questions: shuffleArr(entry.questions).map((q) => ({ ...q, picked: null, revealed: false })),
+  };
+  state.index = 0;
+  archiveStart("remix", entry.request);
+  show("quiz");
+}
+$("replayBtn").addEventListener("click", () => state.locked && replayEntry(state.entry.id));
 
 async function deleteEntry(id) {
   const entry = archive.find((e) => e.id === id);
@@ -1427,7 +1492,7 @@ const TEAM_ACTIONS = {
 function timelineText(ev, entry) {
   const qn = ev.q != null ? `Otázka ${ev.q + 1}` : "";
   switch (ev.type) {
-    case "start": return entry.source === "demo" ? "Start ukázkového kvízu" : "Start kvízu";
+    case "start": return entry.source === "demo" ? "Start ukázkového kvízu" : entry.source === "remix" ? "Start kvízu (stejné otázky, nové pořadí)" : "Start kvízu";
     case "question": return `${qn}: ${entry.questions[ev.q]?.question ?? ""}`;
     case "pick": return `Odpověď ${ev.key.toUpperCase()} – ${ev.correct ? "správně ✓" : "špatně ✗"}`;
     case "reveal": return "Ukázána správná odpověď";

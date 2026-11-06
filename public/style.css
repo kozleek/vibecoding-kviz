@@ -896,7 +896,8 @@ body[data-view="archive"] { grid-template-rows: auto 1fr; }
 }
 .archive-open:active { transform: translateY(1px); }
 .archive-open > .ph { font-size: 1.3rem; color: var(--muted); flex: none; }
-.archive-del { flex: none; }
+.archive-del, .archive-replay { flex: none; }
+.archive-replay:hover { color: var(--accent); }
 .archive-del:hover { color: var(--bad); }
 .archive-main { flex: 1; min-width: 0; }
 .archive-topic { font-weight: 700; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
