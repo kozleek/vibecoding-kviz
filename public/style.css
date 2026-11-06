@@ -400,7 +400,17 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   display: flex; justify-content: center; align-items: flex-end; gap: clamp(12px, 1.6vw, 32px);
   /* základní linka pod stupni – „země“, ze které stupně vychází */
   width: fit-content; max-width: 100%; margin: 0 auto; padding: 0 clamp(16px, 2vw, 40px);
-  border-bottom: clamp(3px, .35vh, 5px) solid color-mix(in srgb, var(--text) 35%, transparent);
+  position: relative;
+}
+/* „země“ pod stupni: zaoblený pruh, který se ke krajům ztrácí */
+.podium::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(-1 * clamp(6px, .8vh, 10px));
+  height: clamp(6px, .8vh, 10px); border-radius: 99px;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in srgb, var(--text) 18%, transparent) 12%,
+    color-mix(in srgb, var(--text) 18%, transparent) 88%,
+    transparent);
 }
 .podium-place { width: min(380px, 22vw); display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vh, 14px); }
 .podium-emoji { font-size: clamp(2.6rem, min(6vw, 8vh), 7rem); line-height: 1; }
@@ -439,7 +449,9 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 body .scoreboard .bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
 body.teams-big .bar-actions { display: none; }
 /* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
-@media (hover: none) and (pointer: coarse), (max-width: 1100px) { .bar-actions { display: none; } }
+/* nastavení v liště jen tam, kde v hlavičce místo hamburger menu je křížek (i na dotyku – jinak by se do nastavení nedalo dostat) */
+#barSettings { display: none; }
+body.close-head #barSettings { display: grid; }
 .team-actions { display: none; }
 button.team { font: inherit; color: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 button.team:active { transform: scale(.97); }
@@ -549,10 +561,16 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
 .menu-panel button span { flex: 1; white-space: nowrap; }
 .menu-panel kbd { margin-left: auto; }
 /* nastavení týmů: nadpis a křížek v hlavičce místo tématu kvízu a menu */
-.settings-title, #closeSettingsBtn { display: none; }
+.settings-title, #closeSettingsBtn, #closeReviewBtn { display: none; }
 .settings-title { flex: 1; margin: 0; padding-left: 16px; border-left: 2px solid var(--border); font-family: var(--display); font-weight: 800; font-size: 1.35rem; line-height: 1.6; }
 body.teams-big .settings-title { display: block; }
 body.teams-big #closeSettingsBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
+/* archiv a archivní kvíz: stejná hlavička jako nastavení – křížek místo hamburger menu */
+body.close-head .settings-title { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.close-head #closeReviewBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
+body.close-head .topbar-info, body.close-head .menu { display: none; }
+body.close-head .brand, body.teams-big .brand { cursor: default; }
+.header-sub { margin-left: 14px; font-family: var(--font); font-weight: 500; font-size: 1rem; color: var(--muted); }
 body.teams-big .topbar-info, body.teams-big .menu { display: none; }
 body.teams-big .scoreboard-tools { display: none; }
 /* nastavení: přepínač adaptivního bodování */
@@ -605,7 +623,7 @@ body.teams-big .scoreboard {
   min-height: 0; flex-direction: column; align-items: stretch; gap: 14px;
   padding: 8px 24px 24px; border-top: 0; background: var(--bg);
 }
-#closeSettingsBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
+#closeSettingsBtn:hover, #closeReviewBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
 body.teams-big .team-actions { justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; margin-bottom: auto; }
 body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
 body.teams-big .teams {
@@ -760,6 +778,12 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .confirm p { margin: 0; color: var(--muted); font-size: 1.05rem; line-height: 1.45; }
 .dialog .confirm-actions { display: flex; gap: 10px; margin-top: 20px; }
 .confirm-actions .btn { flex: 1; }
+/* tři volby pod sebou: hlavní, vedlejší (zahodit), zrušit */
+.dialog .confirm-actions.stack { flex-direction: column; }
+.confirm-actions.stack #confirmOk { order: -2; }
+.confirm-actions.stack #confirmAlt { order: -1; }
+.btn.danger-text { color: var(--bad); }
+.btn.danger-text:hover { border-color: var(--bad); }
 .btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
 
 /* ============ Responsive ============ */
@@ -851,3 +875,88 @@ body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--te
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ============ Archiv ============ */
+.view-archive { max-width: 960px; padding-top: 3vh; }
+body[data-view="archive"] .scoreboard { display: none !important; }
+body[data-view="archive"] { grid-template-rows: auto 1fr; }
+.archive-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px; }
+.stat { padding: 18px 22px; display: grid; gap: 4px; }
+.stat b { font-family: var(--display); font-weight: 800; font-size: 2.6rem; line-height: 1; }
+.stat span { color: var(--muted); font-weight: 600; }
+.archive-list { display: grid; gap: 10px; }
+.archive-empty { margin: 0; padding: 36px 24px; text-align: center; color: var(--muted); }
+.archive-section { margin: 14px 0 2px; font-family: var(--display); font-weight: 800; font-size: 1.35rem; }
+.archive-item { display: flex; align-items: center; gap: 6px; padding-right: 10px; transition: border-color .15s; }
+.archive-item:hover { border-color: var(--accent); }
+.archive-open {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 18px; text-align: left;
+  padding: 16px 12px 16px 20px; border: 0; background: none; cursor: pointer; border-radius: inherit;
+}
+.archive-open:active { transform: translateY(1px); }
+.archive-open > .ph { font-size: 1.3rem; color: var(--muted); flex: none; }
+.archive-del { flex: none; }
+.archive-del:hover { color: var(--bad); }
+.archive-main { flex: 1; min-width: 0; }
+.archive-topic { font-weight: 700; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.archive-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px; color: var(--muted); font-size: .9rem; }
+.archive-meta .pill { padding: 2px 10px; font-size: .8rem; }
+.pill.live { background: var(--accent-soft); color: var(--accent); }
+.archive-teams { display: flex; flex-wrap: wrap; gap: 8px; flex: none; }
+.archive-team {
+  --team: var(--accent);
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  padding: 4px 10px; border-radius: 99px; font-weight: 700;
+  background: color-mix(in srgb, var(--team) 14%, var(--bg)); color: var(--text);
+}
+.archive-team.win { box-shadow: inset 0 0 0 2px var(--team); }
+@media (max-width: 720px) {
+  .archive-stats { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .stat { padding: 12px 14px; }
+  .stat b { font-size: 1.8rem; }
+  .stat span { font-size: .8rem; }
+  .archive-open { flex-wrap: wrap; }
+  .archive-teams { order: 3; width: 100%; }
+}
+
+/* ============ Zamčený (archivní) kvíz ============ */
+body.locked .bar-actions { display: none; }
+body.locked.no-scoring:not(.teams-big) .scoreboard { cursor: default; }
+body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
+.skipped-pill { background: var(--warn-soft); color: var(--warn); }
+.team .gain {
+  position: absolute; top: -12px; right: 12px; padding: 1px 9px; border-radius: 99px;
+  font-family: var(--display); font-weight: 800; font-size: .95rem;
+  background: var(--good); color: #fff;
+}
+.team .gain.minus { background: var(--bad); }
+.review-note {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+  margin-top: clamp(8px, 1.6vh, 22px); color: var(--muted); font-weight: 600;
+  font-size: clamp(.9rem, min(1.3vw, 2.1vh), 1.4rem);
+}
+.review-note .ph { font-size: 1.2em; }
+.review-note .archive-team.minus { color: var(--bad); }
+
+.timeline { max-width: 820px; margin: clamp(28px, 5vh, 56px) auto 0; text-align: left; }
+.timeline h3 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; margin: 0 0 12px; }
+.timeline ol { list-style: none; margin: 0 0 0 8px; padding: 0; border-left: 2px solid var(--border); }
+.timeline li { position: relative; display: flex; align-items: baseline; gap: 14px; padding: 6px 8px 6px 20px; border-radius: 10px; }
+.timeline li::before {
+  content: ""; position: absolute; left: -6px; top: 13px;
+  width: 10px; height: 10px; border-radius: 50%; background: var(--border);
+}
+.timeline li.tl-question { font-weight: 700; margin-top: 8px; }
+.timeline li.tl-question::before, .timeline li.tl-start::before, .timeline li.tl-results::before { background: var(--accent); }
+.timeline li.tl-points::before { background: var(--good); }
+.timeline li.tl-minus::before { background: var(--bad); }
+.timeline li.tl-pick, .timeline li.tl-reveal, .timeline li.tl-teams { color: var(--muted); }
+.timeline li[data-q] { cursor: pointer; }
+.timeline li[data-q]:hover { background: var(--surface); }
+.timeline time { flex: none; width: 3.6em; color: var(--muted); font-weight: 500; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.timeline .tl-text { flex: 1; min-width: 0; }
+.timeline .tl-scores { flex: none; color: var(--muted); font-size: .85rem; font-weight: 500; white-space: pre; }
+@media (max-width: 720px) { .timeline .tl-scores { display: none; } }
+/* výsledky: pořadí s body je na stupních, spodní lišta týmů by se jen opakovala (v nastavení zůstává) */
+body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important; }
+body[data-view="results"]:not(.teams-big) { grid-template-rows: auto 1fr; }

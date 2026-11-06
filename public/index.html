@@ -15,14 +15,16 @@
   <header class="topbar">
     <a class="brand" href="#" id="brand"><span class="brand-logo">🦊</span> Kvíz</a>
     <div class="topbar-info" id="quizInfo"></div>
-    <h2 class="settings-title">Nastavení</h2>
+    <h2 class="settings-title" id="headerTitle">Nastavení</h2>
     <div class="topbar-actions">
+      <button class="icon-btn" id="closeReviewBtn" title="Zavřít archivní kvíz (Esc)" aria-label="Zavřít archivní kvíz"><i class="ph ph-x"></i></button>
       <button class="icon-btn" id="closeSettingsBtn" title="Zavřít nastavení" aria-label="Zavřít nastavení"><i class="ph ph-x"></i></button>
       <div class="menu">
         <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
         <div class="menu-panel" id="menuPanel" role="menu" hidden>
           <div class="menu-box">
           <button role="menuitem" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
+          <button role="menuitem" id="menuArchive"><i class="ph ph-archive"></i><span>Archiv</span><kbd>A</kbd></button>
           <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení</span><kbd>T</kbd></button>
           <button role="menuitem" id="menuFullscreen" class="desktop-only"><i class="ph ph-corners-out" id="fsIcon"></i><span id="fsLabel">Celá obrazovka</span><kbd>F</kbd></button>
           <button role="menuitem" id="menuHelp" class="desktop-only"><i class="ph ph-keyboard"></i><span>Klávesové zkratky</span><kbd>?</kbd></button>
@@ -123,6 +125,7 @@
           <span class="pill" id="qTopic" hidden></span>
           <span class="pill level-pill" id="qLevel"></span>
           <span class="pill points-pill" id="qPoints" hidden></span>
+          <span class="pill skipped-pill" id="qSkipped" hidden>během kvízu neodhaleno</span>
         </div>
 
         <h2 class="q-text" id="qText"></h2>
@@ -134,6 +137,9 @@
           <div><strong id="exTitle"></strong><p id="exText"></p></div>
         </div>
 
+        <!-- archivní kvíz: body, které týmy dostaly u této otázky -->
+        <div class="review-note" id="reviewNote" hidden></div>
+
       </article>
       <button class="side-btn" id="nextBtn" aria-label="Další otázka" title="Další otázka (→)"><i class="ph ph-caret-right" aria-hidden="true"></i></button>
       </div>
@@ -144,19 +150,29 @@
       <div class="podium" id="podium"></div>
       <ol class="rest" id="rest"></ol>
       <div class="results-actions">
-        <button class="btn ghost big" id="backBtn">← Zpět na otázky</button>
+        <button class="btn ghost big" id="backBtn"><i class="ph ph-play" aria-hidden="true"></i> Průběh kvízu</button>
         <button class="btn primary big" id="againBtn">Nový kvíz</button>
       </div>
+      <!-- archivní kvíz: celý průběh (odpovědi, body, změny týmů) -->
+      <section class="timeline" id="timeline" hidden>
+        <h3>Průběh kvízu</h3>
+        <ol id="timelineList"></ol>
+      </section>
+    </section>
+
+    <!-- ===== Archiv ===== -->
+    <section id="archiveView" class="view view-archive" hidden>
+      <div class="archive-stats" id="archiveStats"></div>
+      <div class="archive-list" id="archiveList"></div>
     </section>
   </main>
 
   <!-- ===== Týmy ===== -->
   <footer class="scoreboard">
     <div class="teams" id="teams"></div>
-    <!-- malá lišta: vynulování bodů a náhodné týmy vedle sebe (stejné akce jako v nastavení) -->
+    <!-- malá lišta: nastavení (v kvízu není hamburger menu); vynulování bodů a reset týmů jsou v nastavení -->
     <div class="bar-actions">
-      <button class="icon-btn bar-btn" id="barResetScores" title="Vynulovat body" aria-label="Vynulovat body"><i class="ph ph-arrow-counter-clockwise"></i></button>
-      <button class="icon-btn bar-btn" id="barResetTeams" title="Resetovat týmy" aria-label="Resetovat týmy"><i class="ph ph-shuffle"></i></button>
+      <button class="icon-btn bar-btn" id="barSettings" title="Nastavení (T)" aria-label="Nastavení"><i class="ph ph-gear-six"></i></button>
     </div>
     <div class="settings-options big-only">
       <label class="toggle">
@@ -193,6 +209,8 @@
       <tr><td><kbd>T</kbd></td><td>nastavení</td></tr>
       <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
+      <tr><td><kbd>A</kbd></td><td>archiv (u otázky běžícího kvízu vybírá odpověď A)</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>zavřít archiv; v archivním kvízu z otázek na výsledky, odtud do archivu</td></tr>
     </table>
     <p class="muted">S adaptivním bodováním pro mix se místo 1 bodu přičítá počet bodů uvedený u otázky. V nastavení (menu ☰) jdou body upravit i tlačítky −/+.</p>
   </dialog>
@@ -223,6 +241,7 @@
       <p id="confirmText"></p>
       <div class="confirm-actions">
         <button class="btn ghost" value="cancel">Zrušit</button>
+        <button class="btn ghost danger-text" value="alt" id="confirmAlt" hidden></button>
         <button class="btn primary" value="ok" id="confirmOk"></button>
       </div>
     </form>
