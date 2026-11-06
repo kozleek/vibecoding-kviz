@@ -15,9 +15,9 @@
   <header class="topbar">
     <a class="brand" href="#" id="brand"><span class="brand-logo">🦊</span> Kvíz</a>
     <div class="topbar-info" id="quizInfo"></div>
-    <h2 class="settings-title">Nastavení</h2>
+    <h2 class="settings-title" id="headerTitle">Nastavení</h2>
     <div class="topbar-actions">
-      <button class="icon-btn" id="closeReviewBtn" title="Zavřít archivní kvíz (Esc)" aria-label="Zavřít archivní kvíz" hidden><i class="ph ph-x"></i></button>
+      <button class="icon-btn" id="closeReviewBtn" title="Zavřít archivní kvíz (Esc)" aria-label="Zavřít archivní kvíz"><i class="ph ph-x"></i></button>
       <button class="icon-btn" id="closeSettingsBtn" title="Zavřít nastavení" aria-label="Zavřít nastavení"><i class="ph ph-x"></i></button>
       <div class="menu">
         <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
@@ -162,10 +162,6 @@
 
     <!-- ===== Archiv ===== -->
     <section id="archiveView" class="view view-archive" hidden>
-      <div class="hero">
-        <h1>Archiv</h1>
-        <p>Všechny odehrané kvízy i s odpověďmi, body a průběhem.</p>
-      </div>
       <div class="archive-stats" id="archiveStats"></div>
       <div class="archive-list" id="archiveList"></div>
     </section>

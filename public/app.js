@@ -84,11 +84,7 @@ function show(view) {
   $("newQuizBtn").hidden = !state.quiz || view === "setup" || view === "loading";
   renderQuizInfo(view);
   // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
-  // křížek v horní liště: archiv a archivní kvíz (místo tlačítek zpět)
-  const closeLabel = !state.locked ? "Zavřít archiv" : view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
-  $("closeReviewBtn").hidden = !state.locked && view !== "archive";
-  $("closeReviewBtn").title = `${closeLabel} (Esc)`;
-  $("closeReviewBtn").setAttribute("aria-label", closeLabel);
+  renderHeader();
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
@@ -948,7 +944,24 @@ function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
   $("menuTeamsLabel").textContent = big ? "Zavřít nastavení" : "Nastavení";
+  renderHeader();
   renderTeams();
+}
+// hlavička jako v nastavení (název + zavírací křížek místo menu) pro nastavení, archiv a archivní kvíz
+function renderHeader() {
+  const big = !!state.bigTeams;
+  const archiveHead = !big && (!!state.locked || state.view === "archive");
+  document.body.classList.toggle("archive-head", archiveHead);
+  const title = $("headerTitle");
+  title.innerHTML = "";
+  if (!archiveHead) return (title.textContent = "Nastavení");
+  title.append("Archiv");
+  if (state.locked) {
+    title.append(el("span", "header-sub", `${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]} · ${fmtDate(state.entry.createdAt)}`));
+  }
+  const label = !state.locked ? "Zavřít archiv" : state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
+  $("closeReviewBtn").title = `${label} (Esc)`;
+  $("closeReviewBtn").setAttribute("aria-label", label);
 }
 function toggleTeamsLayout() {
   if (state.locked) return; // archivní kvíz nejde nastavovat
@@ -1264,12 +1277,7 @@ function renderReviewNote() {
 function renderQuizInfo(view) {
   const info = $("quizInfo");
   info.innerHTML = "";
-  if (!state.quiz || view === "setup" || view === "archive") return;
-  if (state.locked) {
-    const lock = el("i", "ph ph-lock-simple");
-    lock.setAttribute("aria-hidden", "true");
-    info.append(lock, ` Archiv · ${fmtDate(state.entry.createdAt)} · `);
-  }
+  if (!state.quiz || view === "setup" || view === "archive" || state.locked) return;
   info.append(`${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]}`);
 }
 

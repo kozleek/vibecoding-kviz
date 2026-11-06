@@ -559,10 +559,15 @@ span.name { display: block; padding: 2px 0; white-space: nowrap; overflow: hidde
 .menu-panel button span { flex: 1; white-space: nowrap; }
 .menu-panel kbd { margin-left: auto; }
 /* nastavení týmů: nadpis a křížek v hlavičce místo tématu kvízu a menu */
-.settings-title, #closeSettingsBtn { display: none; }
+.settings-title, #closeSettingsBtn, #closeReviewBtn { display: none; }
 .settings-title { flex: 1; margin: 0; padding-left: 16px; border-left: 2px solid var(--border); font-family: var(--display); font-weight: 800; font-size: 1.35rem; line-height: 1.6; }
 body.teams-big .settings-title { display: block; }
 body.teams-big #closeSettingsBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
+/* archiv a archivní kvíz: stejná hlavička jako nastavení – křížek místo hamburger menu */
+body.archive-head .settings-title { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.archive-head #closeReviewBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
+body.archive-head .topbar-info, body.archive-head .menu { display: none; }
+.header-sub { margin-left: 14px; font-family: var(--font); font-weight: 500; font-size: 1rem; color: var(--muted); }
 body.teams-big .topbar-info, body.teams-big .menu { display: none; }
 body.teams-big .scoreboard-tools { display: none; }
 /* nastavení: přepínač adaptivního bodování */
@@ -615,7 +620,7 @@ body.teams-big .scoreboard {
   min-height: 0; flex-direction: column; align-items: stretch; gap: 14px;
   padding: 8px 24px 24px; border-top: 0; background: var(--bg);
 }
-#closeSettingsBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
+#closeSettingsBtn:hover, #closeReviewBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
 body.teams-big .team-actions { justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; margin-bottom: auto; }
 body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
 body.teams-big .teams {
@@ -905,7 +910,6 @@ body[data-view="archive"] { grid-template-rows: auto 1fr; }
 body.locked .bar-actions { display: none; }
 body.locked.no-scoring:not(.teams-big) .scoreboard { cursor: default; }
 body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
-body.locked .topbar-info .ph { vertical-align: -2px; }
 .skipped-pill { background: var(--warn-soft); color: var(--warn); }
 .team .gain {
   position: absolute; top: -12px; right: 12px; padding: 1px 9px; border-radius: 99px;
