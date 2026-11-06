@@ -940,3 +940,6 @@ body.locked .topbar-info .ph { vertical-align: -2px; }
 .timeline .tl-text { flex: 1; min-width: 0; }
 .timeline .tl-scores { flex: none; color: var(--muted); font-size: .85rem; font-weight: 500; white-space: pre; }
 @media (max-width: 720px) { .timeline .tl-scores { display: none; } }
+/* výsledky archivního kvízu: pořadí s body je na stupních, spodní lišta týmů by se jen opakovala */
+body.locked[data-view="results"] .scoreboard { display: none !important; }
+body.locked[data-view="results"] { grid-template-rows: auto 1fr; }
