@@ -944,6 +944,6 @@ body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: c
 .timeline .tl-text { flex: 1; min-width: 0; }
 .timeline .tl-scores { flex: none; color: var(--muted); font-size: .85rem; font-weight: 500; white-space: pre; }
 @media (max-width: 720px) { .timeline .tl-scores { display: none; } }
-/* výsledky archivního kvízu: pořadí s body je na stupních, spodní lišta týmů by se jen opakovala */
-body.locked[data-view="results"] .scoreboard { display: none !important; }
-body.locked[data-view="results"] { grid-template-rows: auto 1fr; }
+/* výsledky: pořadí s body je na stupních, spodní lišta týmů by se jen opakovala (v nastavení zůstává) */
+body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important; }
+body[data-view="results"]:not(.teams-big) { grid-template-rows: auto 1fr; }
