@@ -851,3 +851,82 @@ body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--te
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ============ Archiv ============ */
+.view-archive { max-width: 960px; padding-top: 3vh; }
+body[data-view="archive"] .scoreboard { display: none !important; }
+body[data-view="archive"] { grid-template-rows: auto 1fr; }
+.archive-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px; }
+.stat { padding: 18px 22px; display: grid; gap: 4px; }
+.stat b { font-family: var(--display); font-weight: 800; font-size: 2.6rem; line-height: 1; }
+.stat span { color: var(--muted); font-weight: 600; }
+.archive-list { display: grid; gap: 10px; }
+.archive-empty { margin: 0; padding: 36px 24px; text-align: center; color: var(--muted); }
+.archive-item {
+  display: flex; align-items: center; gap: 18px; width: 100%; text-align: left;
+  padding: 16px 20px; cursor: pointer; transition: border-color .15s, transform .1s;
+}
+.archive-item:hover { border-color: var(--accent); }
+.archive-item:active { transform: translateY(1px); }
+.archive-item > .ph { font-size: 1.3rem; color: var(--muted); flex: none; }
+.archive-main { flex: 1; min-width: 0; }
+.archive-topic { font-weight: 700; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.archive-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 6px; color: var(--muted); font-size: .9rem; }
+.archive-meta .pill { padding: 2px 10px; font-size: .8rem; }
+.pill.live { background: var(--accent-soft); color: var(--accent); }
+.archive-teams { display: flex; flex-wrap: wrap; gap: 8px; flex: none; }
+.archive-team {
+  --team: var(--accent);
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  padding: 4px 10px; border-radius: 99px; font-weight: 700;
+  background: color-mix(in srgb, var(--team) 14%, var(--bg)); color: var(--text);
+}
+.archive-team.win { box-shadow: inset 0 0 0 2px var(--team); }
+@media (max-width: 720px) {
+  .archive-stats { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .stat { padding: 12px 14px; }
+  .stat b { font-size: 1.8rem; }
+  .stat span { font-size: .8rem; }
+  .archive-item { flex-wrap: wrap; }
+  .archive-teams { order: 3; width: 100%; }
+}
+
+/* ============ Zamčený (archivní) kvíz ============ */
+body.locked .bar-actions { display: none; }
+body.locked.no-scoring:not(.teams-big) .scoreboard { cursor: default; }
+body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
+body.locked .topbar-info .ph { vertical-align: -2px; }
+.skipped-pill { background: var(--warn-soft); color: var(--warn); }
+.team .gain {
+  position: absolute; top: -12px; right: 12px; padding: 1px 9px; border-radius: 99px;
+  font-family: var(--display); font-weight: 800; font-size: .95rem;
+  background: var(--good); color: #fff;
+}
+.team .gain.minus { background: var(--bad); }
+.review-note {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+  margin-top: clamp(8px, 1.6vh, 22px); color: var(--muted); font-weight: 600;
+  font-size: clamp(.9rem, min(1.3vw, 2.1vh), 1.4rem);
+}
+.review-note .ph { font-size: 1.2em; }
+.review-note .archive-team.minus { color: var(--bad); }
+
+.timeline { max-width: 820px; margin: clamp(28px, 5vh, 56px) auto 0; text-align: left; }
+.timeline h3 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; margin: 0 0 12px; }
+.timeline ol { list-style: none; margin: 0 0 0 8px; padding: 0; border-left: 2px solid var(--border); }
+.timeline li { position: relative; display: flex; align-items: baseline; gap: 14px; padding: 6px 8px 6px 20px; border-radius: 10px; }
+.timeline li::before {
+  content: ""; position: absolute; left: -6px; top: 13px;
+  width: 10px; height: 10px; border-radius: 50%; background: var(--border);
+}
+.timeline li.tl-question { font-weight: 700; margin-top: 8px; }
+.timeline li.tl-question::before, .timeline li.tl-start::before, .timeline li.tl-results::before { background: var(--accent); }
+.timeline li.tl-points::before { background: var(--good); }
+.timeline li.tl-minus::before { background: var(--bad); }
+.timeline li.tl-pick, .timeline li.tl-reveal, .timeline li.tl-teams { color: var(--muted); }
+.timeline li[data-q] { cursor: pointer; }
+.timeline li[data-q]:hover { background: var(--surface); }
+.timeline time { flex: none; width: 3.6em; color: var(--muted); font-weight: 500; font-size: .85rem; font-variant-numeric: tabular-nums; }
+.timeline .tl-text { flex: 1; min-width: 0; }
+.timeline .tl-scores { flex: none; color: var(--muted); font-size: .85rem; font-weight: 500; white-space: pre; }
+@media (max-width: 720px) { .timeline .tl-scores { display: none; } }

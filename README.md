@@ -23,6 +23,10 @@ npm start              # http://localhost:3000  (npm run dev = s auto-reloadem)
 
 Týmy (max. 4) jdou přidat, odebrat a přejmenovat kliknutím na název. Stav (otázky, body) se drží v `localStorage`, takže přežije reload.
 
+## Archiv
+
+Menu ☰ → **Archiv**: počet vygenerovaných kvízů a otázek a seznam všech odehraných kvízů. Každý kvíz se ukládá i s celým průběhem (timeline): přechody mezi otázkami, vybrané/ukázané odpovědi, každé přidání a odebrání bodů a změny týmů. Odehraný kvíz se otevře v zamčeném stavu – stejné obrazovky, ale nic nejde měnit; lišta týmů ukazuje body po dané otázce a výsledky obsahují časovou osu. Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlížeči.
+
 ## Deploy (Coolify / Nixpacks)
 
 Nixpacks pozná Node app a spustí `npm start`. V Coolify nastav env proměnnou `ANTHROPIC_API_KEY` (volitelně `CLAUDE_MODEL`, port bere z `PORT`).

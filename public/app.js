@@ -55,6 +55,7 @@ function load() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
 }
 function save() {
+  if (state.locked) return; // archivní kvíz se nikdy neukládá zpět
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
 }
 
@@ -73,14 +74,21 @@ function questionPoints() {
 }
 const pointsLabel = (n) => (n === 1 ? "1 bod" : n >= 2 && n <= 4 ? `${n} body` : `${n} bodů`);
 
-const scoringActive = () => !!state.quiz && (state.view === "quiz" || state.view === "results");
+const scoringActive = () => !state.locked && !!state.quiz && (state.view === "quiz" || state.view === "results");
 
 function show(view) {
   state.view = view;
-  for (const v of ["setup", "loading", "quiz", "results"]) $(v + "View").hidden = v !== view;
+  document.body.dataset.view = view;
+  document.body.classList.toggle("locked", !!state.locked);
+  for (const v of ["setup", "loading", "quiz", "results", "archive"]) $(v + "View").hidden = v !== view;
   $("newQuizBtn").hidden = !state.quiz || view === "setup" || view === "loading";
-  $("quizInfo").textContent =
-    state.quiz && view !== "setup" ? `${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]}` : "";
+  renderQuizInfo(view);
+  // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
+  $("closeReviewBtn").hidden = !state.locked;
+  $("menuTeams").hidden = !!state.locked;
+  $("againBtn").hidden = !!state.locked;
+  $("reviewArchiveBtn").hidden = !state.locked;
+  if (state.locked) syncReviewTeams();
 
   // body se počítají jen když kvíz běží (otázky a výsledky); jinak lišta týmů slouží k jejich úpravě
   document.body.classList.toggle("no-scoring", !scoringActive());
@@ -91,8 +99,9 @@ function show(view) {
   // gradient jen na zadání (podle zvolené obtížnosti); otázky a ostatní obrazovky neutrální – čitelnost na TV/projektoru
   if (view === "setup") applySetupGradient();
   else delete document.body.dataset.diff;
-  if (view === "quiz") renderQuestion(true);
-  if (view === "results") renderResults();
+  if (view === "quiz") { renderQuestion(true); logEvent("question"); }
+  if (view === "results") { renderResults(); logEvent("results"); }
+  if (view === "archive") renderArchive();
   $("main").scrollTop = 0;
   save();
 }
@@ -188,6 +197,7 @@ $("setupForm").addEventListener("submit", async (e) => {
       questions: data.questions.map((q) => ({ ...q, picked: null, revealed: false })),
     };
     state.index = 0;
+    archiveStart("ai", { count: body.count, instructions: body.instructions, randomTopic });
     // náhodné téma: nejdřív chvíli ukázat vylosované téma, pak kvíz
     if (randomTopic) await revealTopicDraw(data.topic);
     show("quiz");
@@ -259,11 +269,12 @@ function startLoadingTips() {
 }
 
 async function newQuiz() {
+  if (state.locked) exitReview();
   if (state.quiz) {
     const ok = await confirmDialog({
       icon: "📝",
       title: "Začít nový kvíz?",
-      text: "Aktuální otázky se zahodí. Týmy a body zůstanou.",
+      text: "Aktuální kvíz zůstane uložený v archivu. Týmy a body zůstanou.",
       ok: "Nový kvíz",
     });
     if (!ok) return;
@@ -275,7 +286,11 @@ async function newQuiz() {
 $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 $("againBtn").addEventListener("click", newQuiz);
 $("backBtn").addEventListener("click", () => show("quiz"));
-$("brand").addEventListener("click", (e) => { e.preventDefault(); if (state.view !== "setup") newQuiz(); });
+$("brand").addEventListener("click", (e) => {
+  e.preventDefault();
+  if (state.locked) exitReview();
+  if (state.view !== "setup") newQuiz();
+});
 
 /* ---------- Otázka ---------- */
 const currentQ = () => state.quiz?.questions[state.index];
@@ -284,6 +299,8 @@ function renderQuestion(animate = false) {
   const q = currentQ();
   if (!q) return;
   const total = state.quiz.questions.length;
+  // archivní kvíz: lišta týmů ukazuje body tak, jak byly po této otázce
+  if (state.locked) { syncReviewTeams(); renderTeams(); }
 
   $("qCounter").innerHTML = `Otázka <b>${state.index + 1}</b> z ${total}`;
   const multi = state.quiz.topic.includes(",");
@@ -303,7 +320,7 @@ function renderQuestion(animate = false) {
   for (const key of ["a", "b", "c"]) {
     const btn = el("button", "answer");
     btn.append(el("span", "letter", key.toUpperCase()), el("span", "text", q.answers[key]));
-    if (q.revealed) {
+    if (q.revealed || state.locked) {
       btn.disabled = true;
       if (key === q.correct) { btn.classList.add("correct"); btn.append(el("span", "mark", "✓")); }
       else if (key === q.picked) { btn.classList.add("wrong"); btn.append(el("span", "mark", "✗")); }
@@ -319,6 +336,8 @@ function renderQuestion(animate = false) {
     $("exTitle").textContent = `Správná odpověď: ${q.correct.toUpperCase()} – ${q.answers[q.correct]}`;
     $("exText").textContent = q.explanation;
   }
+  $("qSkipped").hidden = !(state.locked && q.skipped);
+  renderReviewNote();
 
   $("prevBtn").disabled = state.index === 0;
   const last = state.index === total - 1;
@@ -337,16 +356,18 @@ function renderQuestion(animate = false) {
 
 function pick(key) {
   const q = currentQ();
-  if (!q || q.revealed) return;
+  if (!q || q.revealed || state.locked) return;
   q.picked = key;
   q.revealed = true;
+  logEvent("pick", { q: state.index, key, correct: key === q.correct });
   renderQuestion();
   save();
 }
 function reveal() {
   const q = currentQ();
-  if (!q || q.revealed) return;
+  if (!q || q.revealed || state.locked) return;
   q.revealed = true;
+  logEvent("reveal", { q: state.index });
   renderQuestion();
   save();
 }
@@ -357,6 +378,7 @@ function goTo(i) {
   if (state.view !== "quiz") { state.index = i; return show("quiz"); }
   state.index = i;
   renderQuestion(true);
+  logEvent("question");
   save();
 }
 const go = (d) => goTo(state.index + d);
@@ -414,6 +436,8 @@ function renderResults() {
     li.append(el("span", "muted", `${t.rank}.`), el("span", null, `${t.emoji} ${t.name}`), el("b", null, `${t.score} b.`));
     rest.appendChild(li);
   });
+  $("timeline").hidden = !state.locked;
+  if (state.locked) renderTimeline();
 }
 
 /* ---------- Týmy ---------- */
@@ -440,6 +464,9 @@ function renderTeams() {
       const scoreRow = el("div", "score-row");
       scoreRow.append(el("span", "score", String(t.score)));
       card.append(avatar, el("span", "name", t.name), scoreRow);
+      // archivní kvíz: kolik bodů tým dostal u zobrazené otázky
+      const gain = state.locked && state.gains?.[t.emoji];
+      if (gain) card.append(el("span", "gain" + (gain < 0 ? " minus" : ""), gain > 0 ? `+${gain}` : String(gain)));
       wrap.appendChild(card);
       return;
     }
@@ -469,6 +496,7 @@ function renderTeams() {
         t.customName = true;
       }
       name.value = t.name;
+      logTeams("rename", t);
       save();
     });
     name.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === "Escape") name.blur(); });
@@ -540,10 +568,12 @@ function renderTeams() {
 // i = index týmu, nebo "all" pro všechny týmy najednou
 // force = ruční úprava v nastavení (−/+), ta jde vždy; klávesy a klepnutí jen během kvízu
 function addPoints(i, delta, force = false) {
+  if (state.locked) return;
   if (!force && !scoringActive()) return;
   const idx = i === "all" ? state.teams.map((_, j) => j) : state.teams[i] ? [i] : [];
   if (!idx.length) return;
   idx.forEach((j) => (state.teams[j].score += delta));
+  logEvent("points", { delta, all: i === "all" && idx.length > 1, manual: force, who: idx.map((j) => teamRef(state.teams[j])) });
   renderTeams();
   save();
   for (const j of idx) {
@@ -606,6 +636,7 @@ function moveTeam(from, to) {
   if (from === to || to < 0 || to >= state.teams.length) return;
   const [t] = state.teams.splice(from, 1);
   state.teams.splice(to, 0, t);
+  logTeams("move");
   closeEmojiPicker();
   renderTeams();
   save();
@@ -623,6 +654,7 @@ async function removeTeam(i) {
   });
   if (!ok) return;
   state.teams.splice(i, 1);
+  logTeams("remove", t);
   renderTeams();
   save();
 }
@@ -642,6 +674,7 @@ async function resetTeams() {
     const em = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
     return { name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 };
   });
+  logTeams("reset");
   closeEmojiPicker();
   renderTeams();
   save();
@@ -654,6 +687,7 @@ function renderAdaptive() {
 }
 $("adaptiveToggle").addEventListener("change", (e) => {
   state.adaptiveScoring = e.target.checked;
+  updateEntry();
   save();
   renderAdaptive();
   if (state.view === "quiz") renderQuestion();
@@ -663,6 +697,7 @@ document.querySelectorAll("#diffPoints input").forEach((inp) =>
     const n = Math.min(10, Math.max(1, parseInt(inp.value, 10) || DEFAULT_DIFF_POINTS[inp.dataset.diff]));
     state.diffPoints = { ...state.diffPoints, [inp.dataset.diff]: n };
     inp.value = n;
+    updateEntry();
     save();
     if (state.view === "quiz") renderQuestion();
   })
@@ -679,6 +714,7 @@ async function resetScores() {
   });
   if (!ok) return;
   state.teams.forEach((t) => (t.score = 0));
+  logTeams("resetScores");
   renderTeams();
   save();
 }
@@ -743,6 +779,7 @@ function openEmojiPicker(i, anchor) {
       if (isNew) {
         if (state.teams.length >= MAX_TEAMS) return closeEmojiPicker();
         state.teams.push({ name: EMOJI_NAMES[em], emoji: em, color: EMOJI_DATA[em][1], score: 0 });
+        logTeams("add", state.teams[state.teams.length - 1]);
         closeEmojiPicker();
         renderTeams();
         save();
@@ -752,6 +789,7 @@ function openEmojiPicker(i, anchor) {
       team.emoji = em;
       team.color = EMOJI_DATA[em][1];
       if (!team.customName) team.name = EMOJI_NAMES[em];
+      logTeams("icon", team);
       closeEmojiPicker();
       renderTeams();
       save();
@@ -845,6 +883,7 @@ document.addEventListener("click", (e) => {
 });
 const menuAction = (fn) => () => { closeMenu(); fn(); };
 $("menuTeams").addEventListener("click", menuAction(() => toggleTeamsLayout()));
+$("menuArchive").addEventListener("click", menuAction(openArchive));
 $("menuFullscreen").addEventListener("click", menuAction(toggleFullscreen));
 $("menuHelp").addEventListener("click", menuAction(() => $("helpDialog").showModal()));
 document.querySelectorAll("[data-demo]").forEach((b) =>
@@ -862,11 +901,12 @@ function shuffleArr(arr) {
 }
 
 async function loadDemoQuiz(file) {
+  if (state.locked) exitReview();
   if (state.quiz) {
     const ok = await confirmDialog({
       icon: "🏆",
       title: "Spustit ukázkový kvíz?",
-      text: "Aktuální otázky se nahradí ukázkovým kvízem. Týmy a body zůstanou.",
+      text: "Aktuální kvíz zůstane v archivu a nahradí ho ukázkový. Týmy a body zůstanou.",
       ok: "Spustit",
     });
     if (!ok) return;
@@ -883,6 +923,7 @@ async function loadDemoQuiz(file) {
         .map((q) => ({ ...q, picked: null, revealed: false })),
     };
     state.index = 0;
+    archiveStart("demo");
     if (state.bigTeams) { state.bigTeams = false; applyTeamsLayout(); }
     show("quiz");
   } catch {
@@ -899,6 +940,7 @@ function applyTeamsLayout() {
   renderTeams();
 }
 function toggleTeamsLayout() {
+  if (state.locked) return; // archivní kvíz nejde nastavovat
   state.bigTeams = !state.bigTeams;
   closeEmojiPicker();
   applyTeamsLayout();
@@ -907,7 +949,7 @@ function toggleTeamsLayout() {
 $("closeSettingsBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 // mimo běžící kvíz: kliknutí kamkoli do lišty týmů otevře nastavení týmů
 document.querySelector(".scoreboard").addEventListener("click", (e) => {
-  if (!state.bigTeams && !scoringActive()) { e.stopPropagation(); toggleTeamsLayout(); }
+  if (!state.bigTeams && !scoringActive() && !state.locked) { e.stopPropagation(); toggleTeamsLayout(); }
 });
 
 /* ---------- Klávesnice ---------- */
@@ -933,6 +975,8 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.key === "?") return $("helpDialog").showModal();
+  if (e.key === "Escape" && state.locked) return exitReview();
+  if (e.key === "Escape" && state.view === "archive") return closeArchive();
   if (e.key === "f" || e.key === "F") return toggleFullscreen();
   if (e.key === "t" || e.key === "T") return toggleTeamsLayout();
   if (state.bigTeams) return;
@@ -949,8 +993,323 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "ArrowLeft") { flashButton("prevBtn"); go(-1); }
 });
 
+/* ---------- Archiv ---------- */
+// každý kvíz se ukládá i s celým průběhem (timeline): navigace, odpovědi, body, změny týmů.
+// Archivní kvízy jsou jen ke čtení – otevírají se v zamčeném stavu (state.locked).
+const ARCHIVE_KEY = "kviz-archive-v1";
+let archive = (() => {
+  try { const a = JSON.parse(localStorage.getItem(ARCHIVE_KEY)); return Array.isArray(a) ? a : []; } catch { return []; }
+})();
+let liveState = null; // živý stav aplikace, zatímco je otevřený archivní kvíz
+
+function saveArchive() {
+  try { localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archive)); } catch {}
+}
+const teamRef = (t) => ({ name: t.name, emoji: t.emoji, color: t.color });
+const teamSnap = () => state.teams.map((t) => ({ ...teamRef(t), score: t.score }));
+const liveEntry = () =>
+  !state.locked && state.quiz?.archiveId ? archive.find((e) => e.id === state.quiz.archiveId) : null;
+
+// nový záznam v archivu pro právě spuštěný kvíz (legacy = kvíz rozehraný před zavedením archivu)
+function archiveStart(source, request = null, legacy = false) {
+  const now = Date.now();
+  const entry = {
+    id: crypto.randomUUID?.() || now.toString(36) + Math.random().toString(36).slice(2),
+    createdAt: now,
+    updatedAt: now,
+    source,
+    request,
+    topic: state.quiz.topic,
+    level: state.quiz.level,
+    questions: state.quiz.questions.map(({ picked, revealed, ...q }) => q),
+    adaptive: !!state.adaptiveScoring,
+    diffPoints: { ...state.diffPoints },
+    startTeams: teamSnap(),
+    teams: teamSnap(),
+    events: [{ t: now, type: "start", q: null, scores: teamSnap() }],
+  };
+  if (legacy) {
+    state.quiz.questions.forEach((q, i) => {
+      if (q.picked) entry.events.push({ t: now, type: "pick", q: i, key: q.picked, correct: q.picked === q.correct });
+      else if (q.revealed) entry.events.push({ t: now, type: "reveal", q: i });
+    });
+  }
+  archive.unshift(entry);
+  state.quiz.archiveId = entry.id;
+  saveArchive();
+  save();
+}
+
+// zápis události do timeline běžícího kvízu
+function logEvent(type, data = {}) {
+  const entry = liveEntry();
+  if (!entry) return;
+  const q = "q" in data ? data.q : state.view === "quiz" ? state.index : null;
+  const last = entry.events[entry.events.length - 1];
+  // navigace: nezapisovat znovu otázku, u které se už stojí (např. po reloadu)
+  if (type === "question" && last && last.type !== "results" && last.q === q) return;
+  if (type === "results" && last?.type === "results") return;
+  const ev = { t: Date.now(), type, ...data, q };
+  if (type === "points" || type === "teams") ev.scores = teamSnap();
+  entry.events.push(ev);
+  updateEntry(false);
+  saveArchive();
+}
+function logTeams(action, team) {
+  logEvent("teams", { action, ...(team ? { team: teamRef(team) } : {}) });
+}
+// průběžně aktualizovat výsledný stav týmů a bodování v záznamu
+function updateEntry(persist = true) {
+  const entry = liveEntry();
+  if (!entry) return;
+  entry.teams = teamSnap();
+  entry.adaptive = !!state.adaptiveScoring;
+  entry.diffPoints = { ...state.diffPoints };
+  entry.updatedAt = Date.now();
+  if (persist) saveArchive();
+}
+
+/* --- přehled archivu --- */
+const fmtDate = (ts) =>
+  new Date(ts).toLocaleString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const plural = (n, one, few, many) => `${n} ${n === 1 ? one : n >= 2 && n <= 4 ? few : many}`;
+const revealedCount = (entry) =>
+  new Set(entry.events.filter((e) => e.type === "pick" || e.type === "reveal").map((e) => e.q)).size;
+
+function openArchive() {
+  if (state.locked) return exitReview();
+  if (state.view === "loading") return; // během generování ne – výsledek by se zapsal jinam
+  closeEmojiPicker();
+  if (state.bigTeams) { state.bigTeams = false; applyTeamsLayout(); }
+  if (state.view !== "archive") state.archiveFrom = state.view;
+  show("archive");
+}
+function closeArchive() {
+  const from = state.archiveFrom;
+  show(state.quiz ? (from === "results" ? "results" : "quiz") : "setup");
+}
+$("archiveBackBtn").addEventListener("click", closeArchive);
+
+function renderArchive() {
+  const ai = archive.filter((e) => e.source === "ai");
+  const demo = archive.filter((e) => e.source === "demo");
+  const stats = $("archiveStats");
+  stats.innerHTML = "";
+  const tile = (value, label) => {
+    const d = el("div", "card stat");
+    d.append(el("b", null, String(value)), el("span", null, label));
+    stats.appendChild(d);
+  };
+  tile(ai.length, "vygenerovaných kvízů");
+  tile(ai.reduce((s, e) => s + e.questions.length, 0), "vygenerovaných otázek");
+  if (demo.length) tile(demo.length, "ukázkových kvízů");
+
+  const list = $("archiveList");
+  list.innerHTML = "";
+  if (!archive.length) {
+    list.appendChild(el("p", "card archive-empty", "Zatím tu žádný kvíz není. Každý nový kvíz se sem uloží automaticky."));
+    return;
+  }
+  const liveId = state.quiz?.archiveId;
+  for (const entry of archive) {
+    const item = el("button", "card archive-item");
+    item.addEventListener("click", () => openReview(entry.id));
+
+    const main = el("div", "archive-main");
+    main.append(el("div", "archive-topic", entry.topic));
+    const meta = el("div", "archive-meta");
+    meta.append(el("span", null, fmtDate(entry.createdAt)));
+    meta.append(el("span", "pill", LEVEL_NAMES[entry.level] || entry.level));
+    meta.append(el("span", null, `${revealedCount(entry)} / ${plural(entry.questions.length, "otázka", "otázky", "otázek")}`));
+    if (entry.source === "demo") meta.append(el("span", "pill", "ukázka"));
+    if (entry.id === liveId) meta.append(el("span", "pill live", "probíhá"));
+    main.appendChild(meta);
+
+    const teams = el("div", "archive-teams");
+    const max = Math.max(...entry.teams.map((t) => t.score));
+    for (const t of entry.teams) {
+      const chip = el("span", "archive-team" + (max > 0 && t.score === max ? " win" : ""), `${t.emoji} ${t.score}`);
+      chip.style.setProperty("--team", t.color);
+      chip.title = `${t.name}: ${t.score} b.`;
+      teams.appendChild(chip);
+    }
+
+    const go = el("i", "ph ph-" + (entry.id === liveId ? "play" : "lock-simple"));
+    go.setAttribute("aria-hidden", "true");
+    item.append(main, teams, go);
+    list.appendChild(item);
+  }
+}
+
+/* --- zamčené prohlížení archivního kvízu --- */
+function openReview(id) {
+  const entry = archive.find((e) => e.id === id);
+  if (!entry) return;
+  if (entry.id === state.quiz?.archiveId) return show(state.archiveFrom === "results" ? "results" : "quiz"); // běžící kvíz jde dál hrát
+  const marks = entry.questions.map(() => ({ picked: null, revealed: false }));
+  for (const ev of entry.events) {
+    if (!marks[ev.q]) continue;
+    if (ev.type === "pick") { marks[ev.q].picked = ev.key; marks[ev.q].revealed = true; }
+    if (ev.type === "reveal") marks[ev.q].revealed = true;
+  }
+  liveState = state;
+  state = {
+    locked: true,
+    entry,
+    view: "results",
+    index: 0,
+    quiz: {
+      topic: entry.topic,
+      level: entry.level,
+      // všechny odpovědi odhalené; neodhalené během kvízu jsou označené
+      questions: entry.questions.map((q, i) => ({ ...q, picked: marks[i].picked, revealed: true, skipped: !marks[i].revealed })),
+    },
+    teams: entry.teams.map((t) => ({ ...t })),
+    gains: null,
+    bigTeams: false,
+    adaptiveScoring: entry.adaptive,
+    diffPoints: entry.diffPoints,
+  };
+  closeMenu();
+  closeEmojiPicker();
+  applyTeamsLayout();
+  show("results"); // nejdřív přehled výsledků a průběhu, odtud šipkou na otázky
+}
+function exitReview() {
+  if (!state.locked) return;
+  state = liveState;
+  liveState = null;
+  applyTeamsLayout();
+  renderAdaptive();
+  show("archive");
+}
+$("closeReviewBtn").addEventListener("click", exitReview);
+$("reviewArchiveBtn").addEventListener("click", exitReview);
+
+// stav týmů v archivním kvízu: u otázky body po poslední akci u ní, ve výsledcích konečné
+function syncReviewTeams() {
+  const { entry } = state;
+  if (state.view !== "quiz") {
+    state.teams = entry.teams.map((t) => ({ ...t }));
+    state.gains = null;
+    return;
+  }
+  const i = state.index;
+  const snaps = new Map(); // otázka → stav týmů po poslední akci u ní
+  const acted = new Set();
+  let snap = entry.startTeams;
+  for (const ev of entry.events) {
+    if (ev.scores) snap = ev.scores;
+    if (ev.q == null) continue;
+    const isAction = ev.type !== "question";
+    if (isAction) acted.add(ev.q);
+    if (isAction || !acted.has(ev.q)) snaps.set(ev.q, snap);
+  }
+  let k = i;
+  while (k >= 0 && !snaps.has(k)) k--;
+  state.teams = (k >= 0 ? snaps.get(k) : entry.startTeams).map((t) => ({ ...t }));
+  state.gains = questionGains(entry, i);
+}
+// součet bodů, které týmy dostaly u otázky i (podle ikony – ta je mezi týmy jedinečná)
+function questionGains(entry, i) {
+  const gains = {};
+  for (const ev of entry.events) {
+    if (ev.type !== "points" || ev.q !== i) continue;
+    for (const t of ev.who) gains[t.emoji] = (gains[t.emoji] || 0) + ev.delta;
+  }
+  return gains;
+}
+
+function renderReviewNote() {
+  const note = $("reviewNote");
+  note.hidden = !state.locked || !state.entry?.startTeams.length;
+  if (note.hidden) return;
+  note.innerHTML = "";
+  const gains = questionGains(state.entry, state.index);
+  const teams = new Map();
+  for (const ev of state.entry.events)
+    if (ev.type === "points" && ev.q === state.index) ev.who.forEach((t) => teams.set(t.emoji, t));
+  const icon = el("i", "ph ph-trophy");
+  icon.setAttribute("aria-hidden", "true");
+  note.append(icon);
+  const scored = [...teams.values()].filter((t) => gains[t.emoji]);
+  if (!scored.length) return note.append(el("span", null, "U této otázky nikdo body nedostal."));
+  note.append(el("span", null, "Body za otázku:"));
+  for (const t of scored) {
+    const g = gains[t.emoji];
+    const chip = el("span", "archive-team" + (g < 0 ? " minus" : ""), `${t.emoji} ${t.name} ${g > 0 ? "+" : ""}${g}`);
+    chip.style.setProperty("--team", t.color);
+    note.append(chip);
+  }
+}
+
+function renderQuizInfo(view) {
+  const info = $("quizInfo");
+  info.innerHTML = "";
+  if (!state.quiz || view === "setup" || view === "archive") return;
+  if (state.locked) {
+    const lock = el("i", "ph ph-lock-simple");
+    lock.setAttribute("aria-hidden", "true");
+    info.append(lock, ` Archiv · ${fmtDate(state.entry.createdAt)} · `);
+  }
+  info.append(`${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]}`);
+}
+
+// celý průběh kvízu v časové ose; klik na řádek s otázkou ji otevře
+const TEAM_ACTIONS = {
+  add: (t) => `Přidán tým ${t.emoji} ${t.name}`,
+  remove: (t) => `Odebrán tým ${t.emoji} ${t.name}`,
+  rename: (t) => `Tým přejmenován na ${t.emoji} ${t.name}`,
+  icon: (t) => `Nová ikona týmu ${t.emoji} ${t.name}`,
+  move: () => "Změna pořadí týmů",
+  reset: () => "Týmy resetovány",
+  resetScores: () => "Body vynulovány",
+};
+function timelineText(ev, entry) {
+  const qn = ev.q != null ? `Otázka ${ev.q + 1}` : "";
+  switch (ev.type) {
+    case "start": return entry.source === "demo" ? "Start ukázkového kvízu" : "Start kvízu";
+    case "question": return `${qn}: ${entry.questions[ev.q]?.question ?? ""}`;
+    case "pick": return `Odpověď ${ev.key.toUpperCase()} – ${ev.correct ? "správně ✓" : "špatně ✗"}`;
+    case "reveal": return "Ukázána správná odpověď";
+    case "results": return "🏆 Výsledky";
+    case "points": {
+      const pts = ev.delta > 0 ? `+${ev.delta}` : String(ev.delta);
+      const who = ev.all ? "Všem týmům" : ev.who.map((t) => `${t.emoji} ${t.name}`).join(", ");
+      return `${who} ${pts}${ev.manual ? " (ručně)" : ""}`;
+    }
+    case "teams": return (TEAM_ACTIONS[ev.action] || (() => "Změna týmů"))(ev.team || {});
+    default: return ev.type;
+  }
+}
+function renderTimeline() {
+  const { entry } = state;
+  const list = $("timelineList");
+  list.innerHTML = "";
+  const start = entry.events[0]?.t ?? entry.createdAt;
+  for (const ev of entry.events) {
+    const li = el("li", "tl-" + ev.type + (ev.type === "points" && ev.delta < 0 ? " tl-minus" : ""));
+    const s = Math.max(0, Math.round((ev.t - start) / 1000));
+    const time = el("time", null, `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`);
+    time.dateTime = new Date(ev.t).toISOString();
+    time.title = fmtDate(ev.t);
+    li.append(time, el("span", "tl-text", timelineText(ev, entry)));
+    if (ev.scores?.length && ev.type !== "start") {
+      li.append(el("span", "tl-scores", ev.scores.map((t) => `${t.emoji} ${t.score}`).join("  ")));
+    }
+    if (ev.q != null) {
+      li.dataset.q = ev.q;
+      li.title = `Otevřít otázku ${ev.q + 1}`;
+      li.addEventListener("click", () => goTo(ev.q));
+    }
+    list.appendChild(li);
+  }
+}
+
 /* ---------- Start ---------- */
 setCount($("count").value);
 applyTeamsLayout();
-if (state.view === "loading" || (!state.quiz && state.view !== "setup")) state.view = state.quiz ? "quiz" : "setup";
+if (state.view === "loading" || (!state.quiz && !["setup", "archive"].includes(state.view))) state.view = state.quiz ? "quiz" : "setup";
+// kvíz rozehraný před zavedením archivu – uložit ho do archivu dodatečně
+if (state.quiz && !state.quiz.archiveId) archiveStart("ai", null, true);
 show(state.view);
