@@ -5,6 +5,20 @@ const PORT = process.env.PORT || 3000;
 const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5-5";
 const MIN_QUESTIONS = 3;
 const MAX_QUESTIONS = 100;
+// náhodné téma: oblast losuje server – se stále stejným promptem by model volil pořád totéž (např. kávu)
+const RANDOM_AREAS = [
+  "starověké civilizace", "středověk", "novověké dějiny", "české dějiny", "objevitelé a cestovatelé", "archeologie",
+  "savci", "ptáci", "hmyz a pavoukovci", "mořský život", "rostliny a houby", "pravěk a dinosauři",
+  "vesmír a astronomie", "fyzika", "chemie", "matematika", "geologie a nerosty", "počasí a klima",
+  "lidské tělo", "medicína", "vynálezy", "počítače a internet", "doprava a dopravní prostředky", "architektura a stavby",
+  "malířství a sochařství", "klasická hudba", "populární hudba", "film", "seriály", "divadlo a opera",
+  "literatura", "pohádky a pověsti", "komiksy a animované filmy", "videohry", "deskové a společenské hry",
+  "mytologie", "náboženství a svátky", "tradice a zvyky", "jazyky a slova", "písmo a knihy",
+  "kuchyně světa", "nápoje", "sladkosti a pečení", "móda a odívání", "řemesla",
+  "olympijské hry", "netradiční sporty", "státy a vlajky", "města a metropole", "řeky, hory a ostrovy",
+  "peníze a ekonomika", "rekordy a kuriozity", "kriminalistika a detektivky", "piráti a námořnictví", "rytíři a hrady",
+];
+const pickArea = () => RANDOM_AREAS[Math.floor(Math.random() * RANDOM_AREAS.length)];
 const LEVELS = { lehka: "lehká", stredni: "střední", tezka: "těžká", hardcore: "hardcore", mix: "mix" };
 
 const client = new Anthropic();
@@ -80,6 +94,9 @@ app.post("/api/generate", async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
   const randomTopic = req.body?.randomTopic === true;
   const instructions = String(req.body?.instructions || "").trim().slice(0, 1500);
+  // nedávná témata z archivu – u náhodného tématu se nemají opakovat
+  const avoidTopics = (Array.isArray(req.body?.avoidTopics) ? req.body.avoidTopics : [])
+    .map((t) => String(t).trim().slice(0, 80)).filter(Boolean).slice(0, 30);
   const count = Math.min(MAX_QUESTIONS, Math.max(MIN_QUESTIONS, parseInt(req.body?.count, 10) || 10));
   const level = LEVELS[req.body?.level] ? req.body.level : "mix";
 
@@ -92,7 +109,9 @@ app.post("/api/generate", async (req, res) => {
 
   const topics = [...new Set(topic.split(/[,;\n]+/).map((t) => t.trim()).filter(Boolean))];
   const topicText = randomTopic
-    ? "Téma si vyber sám: zvol jedno náhodné, zajímavé a dostatečně široké téma vhodné pro týmový kvíz (klidně netradiční, vyhni se nejobvyklejším jako sport nebo zeměpis). Krátký český název tématu napiš do pole quizTopic a do pole topic u každé otázky."
+    ? `Téma si vyber sám v oblasti „${pickArea()}“: zvol v ní jedno konkrétnější, zajímavé téma vhodné pro týmový kvíz (klidně netradiční), ale dost široké na ${count} různých otázek.` +
+      (avoidTopics.length ? ` Nevybírej žádné z těchto nedávných témat ani jejich obměny: ${avoidTopics.join("; ")}.` : "") +
+      " Krátký český název tématu napiš do pole quizTopic a do pole topic u každé otázky."
     : topics.length > 1
       ? `Témata: ${topics.join(", ")}\nRozděl otázky mezi témata co nejrovnoměrněji a promíchej je. Do pole topic napiš, ke kterému tématu otázka patří (přesně jeho název ze seznamu). Do pole quizTopic napiš témata oddělená čárkou.`
       : `Téma: ${topics[0]}\nDo pole topic i quizTopic napiš krátký název tématu.`;

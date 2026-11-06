@@ -180,6 +180,8 @@ $("setupForm").addEventListener("submit", async (e) => {
     topic: randomTopic ? "" : topics.join(", "),
     randomTopic,
     instructions: randomTopic ? "" : $("extra").value.trim(),
+    // náhodné téma: nedávná témata z archivu, ať se neopakují
+    avoidTopics: randomTopic ? [...new Set(archive.map((e) => e.topic))].slice(0, 30) : undefined,
     count: Number($("count").value),
     level: new FormData(e.target).get("level"),
   };
