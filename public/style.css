@@ -394,8 +394,8 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 
 /* ============ Results ============ */
 .view-results { text-align: center; padding-top: 0; margin-block: auto; }
-.results-title { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, min(4.6vw, 6vh), 4.6rem); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; margin: 0 0 clamp(10px, 2.4vh, 36px); }
-.results-sub { margin: clamp(-24px, -1.6vh, -10px) 0 clamp(14px, 3vh, 36px); font-size: clamp(1.15rem, min(2.2vw, 3.2vh), 2.2rem); color: var(--muted); font-weight: 500; }
+.results-title { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, min(4.6vw, 6vh), 4.6rem); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; margin: 0 0 clamp(14px, 2.4vh, 32px); }
+.results-sub { margin: 0 0 clamp(36px, 8vh, 110px); font-size: clamp(1.15rem, min(2.2vw, 3.2vh), 2.2rem); color: var(--muted); font-weight: 500; }
 .podium {
   display: flex; justify-content: center; align-items: flex-end; gap: clamp(12px, 1.6vw, 32px);
   /* základní linka pod stupni – „země“, ze které stupně vychází */
@@ -412,7 +412,7 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
     color-mix(in srgb, var(--text) 18%, transparent) 88%,
     transparent);
 }
-.podium-place { width: min(380px, 22vw); display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vh, 14px); }
+.podium-place { width: min(380px, 22vw); display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.8vh, 24px); }
 .podium-emoji { font-size: clamp(2.6rem, min(6vw, 8vh), 7rem); line-height: 1; }
 .podium-name { font-weight: 700; font-size: clamp(1.3rem, min(2.4vw, 3.6vh), 2.8rem); }
 .podium-score { font-family: var(--display); font-weight: 800; font-size: clamp(2.2rem, min(4.2vw, 6.4vh), 5rem); line-height: 1; }
@@ -432,7 +432,7 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   border-bottom: 1px solid var(--border); text-align: left;
 }
 .rest b { margin-left: auto; }
-.results-actions { display: flex; justify-content: center; gap: 14px; margin-top: clamp(16px, 3.4vh, 44px); }
+.results-actions { display: flex; justify-content: center; gap: 14px; margin-top: clamp(32px, 7vh, 96px); }
 .btn.big { padding: clamp(12px, 1.8vh, 22px) clamp(22px, 2.2vw, 40px); font-size: clamp(1.1rem, min(1.6vw, 2.4vh), 1.7rem); border-radius: 16px; }
 
 /* ============ Scoreboard ============ */
