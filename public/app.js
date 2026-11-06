@@ -736,6 +736,7 @@ $("resetScoresBtn").addEventListener("click", resetScores);
 // tlačítka v malé liště – zastavit klik, jinak by mimo kvíz otevřel nastavení
 $("barResetTeams").addEventListener("click", (e) => { e.stopPropagation(); resetTeams(); });
 $("barResetScores").addEventListener("click", (e) => { e.stopPropagation(); resetScores(); });
+$("barSettings").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 
 /* ---------- Výběr emoji ---------- */
 // emoji: [název týmu, barva týmu]
