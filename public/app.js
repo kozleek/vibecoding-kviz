@@ -85,11 +85,11 @@ function show(view) {
   renderQuizInfo(view);
   // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
   $("closeReviewBtn").hidden = !state.locked;
-  $("closeReviewBtn").title = view === "quiz" ? "Zpět na průběh kvízu (Esc)" : "Zavřít archivní kvíz (Esc)";
-  $("closeReviewBtn").setAttribute("aria-label", view === "quiz" ? "Zpět na průběh kvízu" : "Zavřít archivní kvíz");
+  $("closeReviewBtn").title = view === "quiz" ? "Zpět na výsledky (Esc)" : "Zavřít archivní kvíz (Esc)";
+  $("closeReviewBtn").setAttribute("aria-label", view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz");
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
-  $("backBtn").textContent = state.locked ? "Zobrazit otázky" : "← Zpět na otázky";
+  $("backBtn").textContent = state.locked ? "Průběh kvízu" : "← Zpět na otázky";
   $("reviewArchiveBtn").hidden = !state.locked;
   if (state.locked) syncReviewTeams();
 
@@ -288,7 +288,7 @@ async function newQuiz() {
 }
 $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 $("againBtn").addEventListener("click", newQuiz);
-// archivní kvíz: „Zobrazit otázky“ vždy od první otázky
+// archivní kvíz: „Průběh kvízu“ vždy od první otázky
 $("backBtn").addEventListener("click", () => {
   if (state.locked) state.index = 0;
   show("quiz");
