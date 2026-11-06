@@ -88,7 +88,7 @@ function show(view) {
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
-  $("backBtn").innerHTML = state.locked ? '<i class="ph ph-play"></i> Průběh kvízu' : '<i class="ph ph-arrow-left" aria-hidden="true"></i> Zpět na otázky';
+  $("backBtn").innerHTML = '<i class="ph ph-play" aria-hidden="true"></i> Průběh kvízu';
   $("backBtn").classList.toggle("primary", !!state.locked);
   $("backBtn").classList.toggle("ghost", !state.locked);
   if (state.locked) syncReviewTeams();
@@ -290,10 +290,17 @@ async function newQuiz() {
 }
 $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 $("againBtn").addEventListener("click", newQuiz);
-// archivní kvíz: „Průběh kvízu“ vždy od první otázky
+// „Průběh kvízu“: v archivním kvízu otázky od první, u běžícího kvízu přepne do archivu na jeho průběh
 $("backBtn").addEventListener("click", () => {
-  if (state.locked) state.index = 0;
-  show("quiz");
+  if (state.locked) {
+    state.index = 0;
+    return show("quiz");
+  }
+  if (!archive.some((e) => e.id === state.quiz?.archiveId)) return show("quiz");
+  state.archiveFrom = "results"; // křížek v archivu vrátí zpět na výsledky
+  state.view = "archive";
+  save();
+  openReview(state.quiz.archiveId, true);
 });
 $("brand").addEventListener("click", (e) => {
   e.preventDefault();
@@ -1171,10 +1178,11 @@ function renderArchive() {
 }
 
 /* --- zamčené prohlížení archivního kvízu --- */
-function openReview(id) {
+// force = otevřít zamčeně i běžící kvíz (z jeho výsledků)
+function openReview(id, force = false) {
   const entry = archive.find((e) => e.id === id);
   if (!entry) return;
-  if (entry.id === state.quiz?.archiveId) return show(state.archiveFrom === "results" ? "results" : "quiz"); // běžící kvíz jde dál hrát
+  if (!force && entry.id === state.quiz?.archiveId) return show(state.archiveFrom === "results" ? "results" : "quiz"); // běžící kvíz jde dál hrát
   const marks = entry.questions.map(() => ({ picked: null, revealed: false }));
   for (const ev of entry.events) {
     if (!marks[ev.q]) continue;
