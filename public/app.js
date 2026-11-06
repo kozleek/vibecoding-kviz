@@ -410,6 +410,9 @@ $("nextBtn").addEventListener("click", () => go(1));
 
 /* ---------- Výsledky ---------- */
 function renderResults() {
+  // nadpis: název kvízu a obtížnost
+  $("resultsTitle").textContent = state.quiz?.topic || "Výsledky";
+  $("resultsSub").textContent = state.quiz ? `Obtížnost: ${LEVEL_NAMES[state.quiz.level] || state.quiz.level}` : "";
   const podium = $("podium");
   const rest = $("rest");
   podium.innerHTML = "";
