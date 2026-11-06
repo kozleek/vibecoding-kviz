@@ -85,6 +85,8 @@ function show(view) {
   renderQuizInfo(view);
   // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
   $("closeReviewBtn").hidden = !state.locked;
+  $("closeReviewBtn").title = view === "quiz" ? "Zpět na průběh kvízu (Esc)" : "Zavřít archivní kvíz (Esc)";
+  $("closeReviewBtn").setAttribute("aria-label", view === "quiz" ? "Zpět na průběh kvízu" : "Zavřít archivní kvíz");
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   $("backBtn").textContent = state.locked ? "Zobrazit otázky" : "← Zpět na otázky";
@@ -980,7 +982,7 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.key === "?") return $("helpDialog").showModal();
-  if (e.key === "Escape" && state.locked) return exitReview();
+  if (e.key === "Escape" && state.locked) return closeReview();
   if (e.key === "Escape" && state.view === "archive") return closeArchive();
   if (e.key === "f" || e.key === "F") return toggleFullscreen();
   if (e.key === "t" || e.key === "T") return toggleTeamsLayout();
@@ -1192,7 +1194,12 @@ function exitReview() {
   renderAdaptive();
   show("archive");
 }
-$("closeReviewBtn").addEventListener("click", exitReview);
+// křížek / Esc: z otázek zpět na výsledky s průběhem kvízu, z výsledků do archivu
+function closeReview() {
+  if (state.view === "quiz") show("results");
+  else exitReview();
+}
+$("closeReviewBtn").addEventListener("click", closeReview);
 $("reviewArchiveBtn").addEventListener("click", exitReview);
 
 // stav týmů v archivním kvízu: u otázky body po poslední akci u ní, ve výsledcích konečné
