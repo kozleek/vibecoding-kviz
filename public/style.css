@@ -400,7 +400,17 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   display: flex; justify-content: center; align-items: flex-end; gap: clamp(12px, 1.6vw, 32px);
   /* základní linka pod stupni – „země“, ze které stupně vychází */
   width: fit-content; max-width: 100%; margin: 0 auto; padding: 0 clamp(16px, 2vw, 40px);
-  border-bottom: clamp(3px, .35vh, 5px) solid color-mix(in srgb, var(--text) 35%, transparent);
+  position: relative;
+}
+/* „země“ pod stupni: zaoblený pruh, který se ke krajům ztrácí */
+.podium::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(-1 * clamp(6px, .8vh, 10px));
+  height: clamp(6px, .8vh, 10px); border-radius: 99px;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in srgb, var(--text) 18%, transparent) 12%,
+    color-mix(in srgb, var(--text) 18%, transparent) 88%,
+    transparent);
 }
 .podium-place { width: min(380px, 22vw); display: flex; flex-direction: column; align-items: center; gap: clamp(4px, 1vh, 14px); }
 .podium-emoji { font-size: clamp(2.6rem, min(6vw, 8vh), 7rem); line-height: 1; }
