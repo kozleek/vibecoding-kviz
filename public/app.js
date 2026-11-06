@@ -88,7 +88,8 @@ function show(view) {
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
-  $("backBtn").innerHTML = '<i class="ph ph-play" aria-hidden="true"></i> Průběh kvízu';
+  // běžící kvíz: „Průběh kvízu“ (přepne do archivu), archivní kvíz: „Zobrazit kvíz“ (otázky od první)
+  $("backBtn").innerHTML = `<i class="ph ph-play" aria-hidden="true"></i> ${state.locked ? "Zobrazit kvíz" : "Průběh kvízu"}`;
   $("backBtn").classList.toggle("primary", !!state.locked);
   $("backBtn").classList.toggle("ghost", !state.locked);
   if (state.locked) syncReviewTeams();
@@ -290,7 +291,7 @@ async function newQuiz() {
 }
 $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 $("againBtn").addEventListener("click", newQuiz);
-// „Průběh kvízu“: v archivním kvízu otázky od první, u běžícího kvízu přepne do archivu na jeho průběh
+// „Zobrazit kvíz“ / „Průběh kvízu“: v archivním kvízu otázky od první, u běžícího kvízu přepne do archivu na jeho průběh
 $("backBtn").addEventListener("click", () => {
   if (state.locked) {
     state.index = 0;
