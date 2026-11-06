@@ -90,7 +90,7 @@ function show(view) {
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
-  $("backBtn").innerHTML = state.locked ? '<i class="ph ph-play"></i> Průběh kvízu' : "← Zpět na otázky";
+  $("backBtn").innerHTML = state.locked ? '<i class="ph ph-play"></i> Průběh kvízu' : '<i class="ph ph-arrow-left" aria-hidden="true"></i> Zpět na otázky';
   $("backBtn").classList.toggle("primary", !!state.locked);
   $("backBtn").classList.toggle("ghost", !state.locked);
   $("reviewArchiveBtn").hidden = !state.locked;
