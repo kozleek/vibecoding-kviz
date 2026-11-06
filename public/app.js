@@ -84,16 +84,17 @@ function show(view) {
   $("newQuizBtn").hidden = !state.quiz || view === "setup" || view === "loading";
   renderQuizInfo(view);
   // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
-  $("closeReviewBtn").hidden = !state.locked;
-  $("closeReviewBtn").title = view === "quiz" ? "Zpět na výsledky (Esc)" : "Zavřít archivní kvíz (Esc)";
-  $("closeReviewBtn").setAttribute("aria-label", view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz");
+  // křížek v horní liště: archiv a archivní kvíz (místo tlačítek zpět)
+  const closeLabel = !state.locked ? "Zavřít archiv" : view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
+  $("closeReviewBtn").hidden = !state.locked && view !== "archive";
+  $("closeReviewBtn").title = `${closeLabel} (Esc)`;
+  $("closeReviewBtn").setAttribute("aria-label", closeLabel);
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
   $("backBtn").innerHTML = state.locked ? '<i class="ph ph-play"></i> Průběh kvízu' : '<i class="ph ph-arrow-left" aria-hidden="true"></i> Zpět na otázky';
   $("backBtn").classList.toggle("primary", !!state.locked);
   $("backBtn").classList.toggle("ghost", !state.locked);
-  $("reviewArchiveBtn").hidden = !state.locked;
   if (state.locked) syncReviewTeams();
 
   // body se počítají jen když kvíz běží (otázky a výsledky); jinak lišta týmů slouží k jejich úpravě
@@ -1102,7 +1103,6 @@ function closeArchive() {
   const from = state.archiveFrom;
   show(state.quiz ? (from === "results" ? "results" : "quiz") : "setup");
 }
-$("archiveBackBtn").addEventListener("click", closeArchive);
 
 function renderArchive() {
   const ai = archive.filter((e) => e.source === "ai");
@@ -1202,8 +1202,7 @@ function closeReview() {
   if (state.view === "quiz") show("results");
   else exitReview();
 }
-$("closeReviewBtn").addEventListener("click", closeReview);
-$("reviewArchiveBtn").addEventListener("click", exitReview);
+$("closeReviewBtn").addEventListener("click", () => (state.locked ? closeReview() : closeArchive()));
 
 // stav týmů v archivním kvízu: u otázky body po poslední akci u ní, ve výsledcích konečné
 function syncReviewTeams() {
