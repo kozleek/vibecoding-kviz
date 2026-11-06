@@ -298,6 +298,8 @@ $("backBtn").addEventListener("click", () => {
 });
 $("brand").addEventListener("click", (e) => {
   e.preventDefault();
+  // s křížkem v hlavičce (kvíz, archiv, nastavení) logo nic nedělá – opouští se jen křížkem
+  if (document.body.classList.contains("close-head") || state.bigTeams) return;
   if (state.locked) exitReview();
   if (state.view !== "setup") newQuiz();
 });
@@ -1123,8 +1125,20 @@ function leaveCurrent() {
   logEvent("leave", { q: null });
   state.quiz = null;
 }
-function leaveQuiz() {
+// křížek v hlavičce: po potvrzení odejít z kvízu a vynulovat body (v kvízu se dá pokračovat i s jeho body)
+async function leaveQuiz() {
+  const finished = isFinished(liveEntry());
+  const ok = await confirmDialog({
+    icon: finished ? "🏆" : "⏸️",
+    title: "Opustit kvíz?",
+    text: finished
+      ? "Kvíz je dokončený a zůstane v archivu i s výsledky a průběhem. Body týmů se vynulují."
+      : "Kvíz se uloží mezi rozehrané v archivu – později v něm můžeš pokračovat i s body. Body týmů se teď vynulují.",
+    ok: "Opustit kvíz",
+  });
+  if (!ok) return;
   leaveCurrent();
+  state.teams.forEach((t) => (t.score = 0));
   show("setup");
 }
 // pokračovat v rozehraném kvízu: otázky, odpovědi, týmy a body tak, jak byly

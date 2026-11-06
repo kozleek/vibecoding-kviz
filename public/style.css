@@ -567,6 +567,7 @@ body.teams-big #closeSettingsBtn { display: grid; width: 44px; height: 44px; fon
 body.close-head .settings-title { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 body.close-head #closeReviewBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
 body.close-head .topbar-info, body.close-head .menu { display: none; }
+body.close-head .brand, body.teams-big .brand { cursor: default; }
 .header-sub { margin-left: 14px; font-family: var(--font); font-weight: 500; font-size: 1rem; color: var(--muted); }
 body.teams-big .topbar-info, body.teams-big .menu { display: none; }
 body.teams-big .scoreboard-tools { display: none; }
