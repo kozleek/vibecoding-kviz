@@ -87,6 +87,7 @@ function show(view) {
   $("closeReviewBtn").hidden = !state.locked;
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
+  $("backBtn").textContent = state.locked ? "Zobrazit otázky" : "← Zpět na otázky";
   $("reviewArchiveBtn").hidden = !state.locked;
   if (state.locked) syncReviewTeams();
 
@@ -285,7 +286,11 @@ async function newQuiz() {
 }
 $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 $("againBtn").addEventListener("click", newQuiz);
-$("backBtn").addEventListener("click", () => show("quiz"));
+// archivní kvíz: „Zobrazit otázky“ vždy od první otázky
+$("backBtn").addEventListener("click", () => {
+  if (state.locked) state.index = 0;
+  show("quiz");
+});
 $("brand").addEventListener("click", (e) => {
   e.preventDefault();
   if (state.locked) exitReview();
