@@ -449,7 +449,6 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 body .scoreboard .bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
 body.teams-big .bar-actions { display: none; }
 /* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
-@media (hover: none) and (pointer: coarse), (max-width: 1100px) { #barResetScores, #barResetTeams { display: none; } }
 /* nastavení v liště jen tam, kde v hlavičce místo hamburger menu je křížek (i na dotyku – jinak by se do nastavení nedalo dostat) */
 #barSettings { display: none; }
 body.close-head #barSettings { display: grid; }

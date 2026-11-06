@@ -733,9 +733,7 @@ async function resetScores() {
 
 $("resetTeamsBtn").addEventListener("click", resetTeams);
 $("resetScoresBtn").addEventListener("click", resetScores);
-// tlačítka v malé liště – zastavit klik, jinak by mimo kvíz otevřel nastavení
-$("barResetTeams").addEventListener("click", (e) => { e.stopPropagation(); resetTeams(); });
-$("barResetScores").addEventListener("click", (e) => { e.stopPropagation(); resetScores(); });
+// tlačítko v malé liště – zastavit klik, jinak by ho zachytil i klik na lištu
 $("barSettings").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 
 /* ---------- Výběr emoji ---------- */
