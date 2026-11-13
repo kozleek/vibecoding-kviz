@@ -432,6 +432,7 @@ async function generateQuiz(body) {
   $("setupError").hidden = true;
   show("loading");
   if (randomTopic) startTopicDraw();
+  else showLoadingTopic(body.topic);
   try {
     const res = await fetch("/api/generate", {
       method: "POST",
@@ -449,6 +450,7 @@ async function generateQuiz(body) {
     archiveStart("ai", { count: body.count, instructions: body.instructions, randomTopic });
     // náhodné téma: nejdřív chvíli ukázat vylosované téma, pak kvíz
     if (randomTopic) await revealTopicDraw(data.topic);
+    else stopTopicDraw();
     show("quiz");
   } catch (err) {
     stopTopicDraw();
@@ -472,6 +474,13 @@ function startTopicDraw() {
     last = t;
     $("topicDrawValue").textContent = t;
   }, 110);
+}
+// zadané téma: při načítání ukázat, na jaké téma se kvíz tvoří (více témat oddělených tečkou)
+function showLoadingTopic(topic) {
+  $("topicDraw").hidden = false;
+  $("topicDraw").classList.add("done");
+  $("topicDrawLabel").textContent = "Téma kvízu";
+  $("topicDrawValue").textContent = topic.split(/\s*[,;]\s*/).filter(Boolean).join(" · ");
 }
 function stopTopicDraw() {
   clearInterval(drawTimer);
