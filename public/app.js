@@ -88,7 +88,7 @@ let loadingTimer = null;
 
 /* ---------- Adaptivní bodování (jen pro mix) ---------- */
 const DEFAULT_DIFF_POINTS = { "lehká": 1, "střední": 2, "těžká": 3, "hardcore": 4 };
-// body za obtížnost – nastavitelné v Nastavení, výchozí 1 / 2 / 3
+// body za obtížnost – nastavitelné v nastavení týmů, výchozí 1 / 2 / 3
 const diffPoints = (d) => state.diffPoints?.[d] ?? DEFAULT_DIFF_POINTS[d] ?? 1;
 const adaptiveOn = () => !!state.adaptiveScoring && state.quiz?.level === "mix";
 // kolik bodů se přičte klávesou / klepnutím: u otázky v mixu podle obtížnosti, jinak 1
@@ -741,7 +741,7 @@ $("backBtn").addEventListener("click", () => {
 });
 $("brand").addEventListener("click", (e) => {
   e.preventDefault();
-  // s křížkem v hlavičce (kvíz, archiv, nastavení) logo nic nedělá – opouští se jen křížkem
+  // v kvízu, archivu a nastavení týmů logo nic nedělá – zavírá se položkou v menu nebo Esc
   if (document.body.classList.contains("close-head") || state.bigTeams) return;
   if (state.locked) exitReview();
   if (state.view !== "setup") newQuiz();
@@ -1495,8 +1495,6 @@ function applyTeamsLayout() {
   renderHeader();
   renderTeams();
 }
-// hlavička jako v nastavení (název + zavírací křížek místo menu) pro nastavení, archiv a archivní kvíz
-// hlavička jako v nastavení (název + zavírací křížek místo hamburger menu):
 // běžící kvíz, archiv a archivní kvíz; hamburger menu jen na zadání a při načítání
 // horní lišta: vlevo jen název, vpravo vždy menu; zavření podle kontextu je první položkou menu (a Esc)
 function renderHeader() {
@@ -1505,13 +1503,13 @@ function renderHeader() {
   const closeHead = !big && (!!state.locked || state.view === "archive" || liveQuiz);
   document.body.classList.toggle("close-head", closeHead); // brand v té chvíli neodvádí na zadání
   let label = "";
-  if (big) label = "Zavřít nastavení";
+  if (big) label = "Zavřít týmy";
   else if (closeHead) {
     if (liveQuiz) label = isFinished(liveEntry()) ? "Zavřít kvíz" : "Opustit kvíz";
     else if (!state.locked) label = "Zavřít archiv";
     else label = state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
   }
-  // zavření je vždy první položka menu (i pro nastavení – položka „Nastavení“ se pak skryje)
+  // zavření je vždy první položka menu (i pro nastavení týmů – položka „Týmy“ se pak skryje)
   $("menuClose").hidden = !label;
   $("menuTeams").hidden = big || !!state.locked;
   $("menuCloseLabel").textContent = label;
@@ -1553,7 +1551,7 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.key === "?") return $("helpDialog").showModal();
-  // Esc = stejně jako křížek v hlavičce: nastavení, archivní kvíz, archiv, běžící kvíz (s potvrzením)
+  // Esc = první položka menu (zavřít): nastavení týmů, archivní kvíz, archiv, běžící kvíz (s potvrzením)
   if (e.key === "Escape" && state.bigTeams) return toggleTeamsLayout();
   if (e.key === "Escape" && state.locked) return closeReview();
   if (e.key === "Escape" && state.view === "archive") return closeArchive();

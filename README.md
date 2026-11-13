@@ -23,7 +23,7 @@ Generování je chráněné tokenem z env proměnné `ACCESS_TOKEN` (dlouhý ná
 
 ## Rozložení
 
-Jedna horní lišta: vlevo logo, uprostřed týmy s body, vpravo menu ☰ (archiv, nastavení, celá obrazovka, zkratky, ukázkové kvízy a podle situace „Opustit kvíz“ / „Zavřít archiv“). Na užší obrazovce jsou týmy ve vlastním řádku pod hlavičkou.
+Jedna horní lišta: vlevo logo, uprostřed týmy s body, vpravo menu ☰ (archiv, týmy, celá obrazovka, zkratky, ukázkové kvízy a podle situace „Opustit kvíz“ / „Zavřít archiv“). Na užší obrazovce jsou týmy ve vlastním řádku pod hlavičkou.
 
 ## Zadání kvízu
 
@@ -60,9 +60,9 @@ Na plátně: otázka nahoře, pod ní obrázek (třetina šířky) a vedle odpov
 
 ## Týmy a bodování
 
-- Max. 4 týmy; přidávají se výběrem emoji (zvířata, postavy, sport – např. ⚽ Fotbalisti…), název i barva podle emoji, přejmenování kliknutím na název. Nastavení (`T` nebo menu ☰) obsahuje i vynulování bodů a reset týmů.
+- Max. 4 týmy; přidávají se výběrem emoji (zvířata, postavy, sport – např. ⚽ Fotbalisti…), název i barva podle emoji, přejmenování kliknutím na název. Nastavení týmů (`T` nebo menu ☰ → Týmy) obsahuje i vynulování bodů a reset týmů.
 - Na dotykovém zařízení se během kvízu přičítá bod klepnutím na kartu týmu.
-- **Adaptivní bodování pro mix**: místo 1 bodu se přičítá podle obtížnosti otázky (výchozí lehká 1, střední 2, těžká 3; upravitelné v nastavení).
+- **Adaptivní bodování pro mix**: místo 1 bodu se přičítá podle obtížnosti otázky (výchozí lehká 1, střední 2, těžká 3; upravitelné v nastavení týmů).
 - **Výsledky**: karty týmů seřazené podle bodů, první tři místa s body mají medaili.
 
 ## Ovládání
@@ -76,10 +76,10 @@ Na plátně: otázka nahoře, pod ní obrázek (třetina šířky) a vedle odpov
 | `Mezerník` / `Enter` | ukázat správnou odpověď / další otázka |
 | `←` / `→` | předchozí / další otázka |
 | `O` | obrázek otázky přes celou obrazovku (zavře `Esc`, `O` nebo klik) |
-| `T` | nastavení (týmy, bodování) |
+| `T` | týmy (nastavení týmů a bodování) |
 | `F` | celá obrazovka |
 | `A` | archiv (u otázky běžícího kvízu vybírá odpověď A) |
-| `Esc` | zavřít nastavení, archiv nebo archivní kvíz; opustit kvíz (s potvrzením) |
+| `Esc` | zavřít týmy, archiv nebo archivní kvíz; opustit kvíz (s potvrzením) |
 | `?` | nápověda s klávesovými zkratkami |
 
 S adaptivním bodováním se místo 1 bodu přičítá počet bodů uvedený u otázky.
