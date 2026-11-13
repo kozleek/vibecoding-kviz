@@ -432,7 +432,7 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 /* ============ Scoreboard ============ */
 .scoreboard {
   background: var(--surface); border-top: 1px solid var(--border); /* bílá lišta kvůli kontrastu týmů */
-  padding: 12px 24px 28px; display: grid; align-items: center; gap: 20px; /* odsazení od spodního okraje */
+  padding: 20px 24px; display: grid; align-items: center; gap: 20px; /* stejná mezera nahoře i dole */
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
@@ -800,7 +800,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   .levels { grid-template-columns: repeat(2, 1fr); }
   .level:last-child { grid-column: 1 / -1; }
   .topbar-info { display: none; }
-  .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 8px; padding-bottom: 18px; }
+  .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 12px; padding-bottom: 12px; }
   .scoreboard-tools { justify-content: flex-end; }
   .answer { gap: 14px; padding: 12px 14px; }
   .q-stage { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -835,7 +835,7 @@ body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--te
   body.teams-big .team .key { min-width: 32px; height: 32px; font-size: 1.05rem; border-radius: 10px; }
 
   /* lišta týmů: menší karty, ať se 4 týmy vejdou vedle sebe */
-  .scoreboard { padding: 10px 16px 22px; gap: 12px; }
+  .scoreboard { padding: 16px; gap: 12px; }
   .teams { gap: 8px; }
   /* ikona vlevo, vpravo název a pod ním skóre – název má celou šířku */
   .scoreboard .team {
