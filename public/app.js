@@ -768,7 +768,6 @@ function renderQuestion(animate = false) {
     $("exText").textContent = q.explanation;
   }
   $("qSkipped").hidden = !(state.locked && q.skipped);
-  renderReviewNote();
 
   $("prevBtn").disabled = state.index === 0;
   const last = state.index === total - 1;
@@ -1928,29 +1927,6 @@ function questionGains(entry, i) {
     for (const t of ev.who) gains[t.emoji] = (gains[t.emoji] || 0) + ev.delta;
   }
   return gains;
-}
-
-function renderReviewNote() {
-  const note = $("reviewNote");
-  note.hidden = !state.locked || !state.entry?.startTeams.length;
-  if (note.hidden) return;
-  note.innerHTML = "";
-  const gains = questionGains(state.entry, state.index);
-  const teams = new Map();
-  for (const ev of state.entry.events)
-    if (ev.type === "points" && ev.q === state.index) ev.who.forEach((t) => teams.set(t.emoji, t));
-  const icon = el("i", "ph ph-trophy");
-  icon.setAttribute("aria-hidden", "true");
-  note.append(icon);
-  const scored = [...teams.values()].filter((t) => gains[t.emoji]);
-  if (!scored.length) return note.append(el("span", null, "U této otázky nikdo body nedostal."));
-  note.append(el("span", null, "Body za otázku:"));
-  for (const t of scored) {
-    const g = gains[t.emoji];
-    const chip = el("span", "archive-team" + (g < 0 ? " minus" : ""), `${t.emoji} ${t.name} ${g > 0 ? "+" : ""}${g}`);
-    chip.style.setProperty("--team", t.color);
-    note.append(chip);
-  }
 }
 
 function renderQuizInfo(view) {
