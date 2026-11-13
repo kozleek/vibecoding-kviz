@@ -108,7 +108,6 @@ function show(view) {
   $("newQuizBtn").hidden = !state.quiz || view === "setup" || view === "loading";
   // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
   renderHeader();
-  $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   $("replayBtn").hidden = !state.locked;
   // běžící kvíz: „Průběh kvízu“ (přepne do archivu); archivní kvíz: bez „Zobrazit kvíz“ – otázky se otevírají kliknutím v průběhu; „Hrát znovu“ je hlavní akce
@@ -1493,7 +1492,6 @@ async function loadDemoQuiz(file) {
 function applyTeamsLayout() {
   const big = !!state.bigTeams;
   document.body.classList.toggle("teams-big", big);
-  $("menuTeamsLabel").textContent = big ? "Zavřít nastavení" : "Nastavení";
   renderHeader();
   renderTeams();
 }
@@ -1507,12 +1505,15 @@ function renderHeader() {
   const closeHead = !big && (!!state.locked || state.view === "archive" || liveQuiz);
   document.body.classList.toggle("close-head", closeHead); // brand v té chvíli neodvádí na zadání
   let label = "";
-  if (closeHead) {
+  if (big) label = "Zavřít nastavení";
+  else if (closeHead) {
     if (liveQuiz) label = isFinished(liveEntry()) ? "Zavřít kvíz" : "Opustit kvíz";
     else if (!state.locked) label = "Zavřít archiv";
     else label = state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
   }
-  $("menuClose").hidden = !closeHead;
+  // zavření je vždy první položka menu (i pro nastavení – položka „Nastavení“ se pak skryje)
+  $("menuClose").hidden = !label;
+  $("menuTeams").hidden = big || !!state.locked;
   $("menuCloseLabel").textContent = label;
   // běžící kvíz: „Nový kvíz“ by dělal totéž co „Opustit kvíz“
   if (liveQuiz) $("newQuizBtn").hidden = true;
@@ -1937,7 +1938,7 @@ function closeReview() {
   else exitReview();
 }
 $("menuClose").addEventListener("click", menuAction(() =>
-  state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()
+  state.bigTeams ? toggleTeamsLayout() : state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()
 ));
 
 // stav týmů v archivním kvízu: u otázky body po poslední akci u ní, ve výsledcích konečné
