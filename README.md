@@ -18,6 +18,8 @@ Generování přes API je chráněné tokenem z env proměnné `ACCESS_TOKEN` (n
 
 V aplikaci se token zadá při prvním generování a prohlížeč si ho zapamatuje (`localStorage`, klíč `kviz-token`). Lze ho předat i odkazem `https://…/?token=…` – uloží se a z adresy se hned odstraní. Ukázkové kvízy a archiv token nepotřebují.
 
+**Rate limit** (pojistka, kdyby token unikl, a proti hádání tokenu): `POST /api/generate` max. 20 požadavků za hodinu z jedné IP (`GENERATE_LIMIT`), proxy obrázků `/api/img` max. 600 za 15 minut. Aplikace bere IP z `X-Forwarded-For` přes jednu proxy (Traefik v Coolify, `TRUST_PROXY=1`).
+
 ## Zadání kvízu
 
 - **Jednoduchý režim** (výchozí): jen pole s tématem, kolem kterého poletují bubliny se 100 tématy pro inspiraci, a našeptávač při psaní.

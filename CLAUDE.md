@@ -21,6 +21,7 @@ Kvízová aplikace pro týmové kvízy promítané na plátno: otázky generuje 
 - **Přístupový token:** generování chrání `ACCESS_TOKEN`. Klient posílá hlavičku **`X-Access-Token`**, ne `Authorization` – ta patří basic auth proxy v Coolify a přepsání by vyvolalo přihlašovací okno prohlížeče. Bez `ACCESS_TOKEN` je generování vypnuté (503).
 - **Stav v `localStorage`:** `kviz-state-v1` (běžící kvíz), `kviz-archive-v1` (archiv), `kviz-token`. Při změně tvaru dat zachovat kompatibilitu se starším uloženým stavem (viz normalizace po načtení stavu v `app.js`), případně zvýšit verzi klíče.
 - **Archivní kvíz** je jen ke čtení (`state.locked`) – nové akce musí zamčený stav respektovat; akce běžícího kvízu se zapisují do timeline (`logEvent`).
+- **Rate limit** (`express-rate-limit` v `server.js`): generování 20/h na IP (`GENERATE_LIMIT`), `/api/img` 600/15 min. Limiter generování je před `requireToken`, takže počítá i pokusy se špatným tokenem. `trust proxy` = `TRUST_PROXY` (výchozí 1 – Traefik v Coolify).
 - **Obrázkové otázky:** obrázek se zobrazuje jen přes proxy `/api/img` (povolené hosty `IMAGE_HOSTS`), nikdy přímou URL – název souboru prozrazuje odpověď. Autor/licence (`q.image.credit`) se ukazuje až po odhalení. Nesvobodné (NonFree) obrázky nepoužívat. Pole `imageWiki` a `questionNoImage` server před odesláním klientovi maže.
 - Max. 4 týmy (`MAX_TEAMS`), 3–100 otázek, tři odpovědi a/b/c.
 - Klávesové zkratky jsou v `keydown` handleru v `app.js` **a** v dialogu nápovědy v `index.html` a v tabulce v README – měnit všude.

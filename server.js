@@ -2,6 +2,7 @@ import express from "express";
 import Anthropic from "@anthropic-ai/sdk";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { attachImages, imageProxy } from "./images.js";
+import { rateLimit } from "express-rate-limit";
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5-5";
@@ -29,6 +30,8 @@ const LEVELS = { lehka: "lehká", stredni: "střední", tezka: "těžká", hardc
 
 const client = new Anthropic();
 const app = express();
+// za proxy (Coolify/Traefik): IP návštěvníka z X-Forwarded-For, ne IP proxy – jinak by limit sdíleli všichni
+app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 1));
 app.use(express.json({ limit: "20kb" }));
 app.use(express.static("public"));
 
@@ -112,9 +115,25 @@ function requireToken(req, res, next) {
   next();
 }
 
-app.get("/api/img", imageProxy);
+// omezení počtu požadavků z jedné IP – pojistka, kdyby token unikl (a proti hádání tokenu)
+const GENERATE_LIMIT = Number(process.env.GENERATE_LIMIT) || 20; // vygenerovaných kvízů za hodinu
+const generateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: GENERATE_LIMIT,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Příliš mnoho kvízů za hodinu z této sítě. Zkus to později." },
+});
+const imageLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 600, // obrázků za 15 min (kvíz má max. 100 obrázků + lightbox, přednačtení, opakování)
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
 
-app.post("/api/generate", requireToken, async (req, res) => {
+app.get("/api/img", imageLimiter, imageProxy);
+
+app.post("/api/generate", generateLimiter, requireToken, async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
   const randomTopic = req.body?.randomTopic === true;
   const instructions = String(req.body?.instructions || "").trim().slice(0, 3000);
