@@ -101,7 +101,8 @@ kbd {
   width: 40px; height: 40px; border-radius: 12px;
   border: 1px solid transparent; background: transparent;
   font-size: 1.35rem; cursor: pointer; color: var(--muted);
-  display: grid; place-items: center;
+  display: grid; place-items: center; padding: 0; /* Safari přidává tlačítkům vlastní padding – ikona by nebyla na středu */
+  -webkit-appearance: none; appearance: none;
 }
 .icon-btn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
 
@@ -1157,4 +1158,8 @@ body.teams-big .scoreboard { grid-row: 2; z-index: 1; }
     background: var(--surface); border-bottom: 1px solid var(--border);
   }
   body.teams-big .scoreboard { grid-row: 2 / 4; }
+  /* týmy mají vlastní řádek: karty rozdělí šířku (max. 260 px), ať se názvy nezkracují */
+  body:not(.teams-big) .scoreboard .team { flex: 1 1 0; width: auto; max-width: 260px; }
+  body:not(.teams-big) .scoreboard { grid-template-columns: minmax(0, 1fr); }
+  body:not(.teams-big) .scoreboard .teams { grid-column: 1; }
 }
