@@ -368,13 +368,22 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 .question.has-image > .q-image { grid-column: 1; grid-row: 3; align-self: center; }
 .question.has-image > .answers { grid-column: 2; grid-row: 3; align-self: center; }
 .question.has-image > .q-text { text-wrap: pretty; } /* plná šířka řádku, ne vyvážené půlky */
-.q-image { margin: 0; display: grid; gap: 8px; }
+.q-image { margin: 0; position: relative; width: fit-content; max-width: 100%; }
 .q-image img {
   display: block; width: auto; height: auto; max-width: 100%; max-height: 40vh; /* ve skutečném poměru, bez pruhů */
   border-radius: clamp(14px, 1.4vw, 24px);
   border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0, 0, 0, .06); /* světlý obrázek nesplyne s bílou kartou */
 }
-.q-image figcaption { font-size: clamp(.75rem, .9vw, 1rem); color: var(--muted); text-align: center; animation: enter .35s ease both; }
+/* autor a licence: malým písmem dole přes fotku (nerozšiřuje sloupec) */
+.q-image figcaption {
+  position: absolute; left: 1px; right: 1px; bottom: 1px;
+  padding: 18px 12px 7px; border-radius: 0 0 clamp(14px, 1.4vw, 24px) clamp(14px, 1.4vw, 24px);
+  background: linear-gradient(transparent, rgba(0, 0, 0, .6));
+  color: #fff; font-size: clamp(.7rem, .75vw, .9rem); line-height: 1.3; text-align: right;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  animation: fadeIn .35s ease both;
+}
+@keyframes fadeIn { from { opacity: 0; } }
 #imageModes .chip { display: inline-flex; align-items: center; gap: 6px; }
 
 .answers { display: grid; gap: clamp(8px, 1.4vh, 18px); }
