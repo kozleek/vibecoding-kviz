@@ -72,7 +72,7 @@ Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlí
 
 ## Struktura
 
-- `server.js` – Express server, statické soubory z `public/` a endpoint `POST /api/generate` (hlavička `Authorization: Bearer <ACCESS_TOKEN>`, strukturovaný výstup přes JSON schema).
+- `server.js` – Express server, statické soubory z `public/` a endpoint `POST /api/generate` (hlavička `X-Access-Token: <ACCESS_TOKEN>` – `Authorization` zůstává volná pro basic auth v Coolify; strukturovaný výstup přes JSON schema).
 - `public/index.html`, `public/app.js`, `public/style.css` – celá aplikace na klientu, bez buildu.
 
 ## Deploy (Coolify / Nixpacks)

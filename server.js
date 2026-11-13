@@ -97,8 +97,9 @@ function shuffleAnswers(q) {
 const sha = (v) => createHash("sha256").update(String(v)).digest();
 function requireToken(req, res, next) {
   if (!ACCESS_TOKEN) return res.status(503).json({ error: "Generování není povolené: na serveru chybí ACCESS_TOKEN." });
-  const header = req.get("authorization") || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  // vlastní hlavička – Authorization nechat volné pro basic auth proxy (Coolify), jinak by ji přepsala
+  const auth = req.get("authorization") || "";
+  const token = (req.get("x-access-token") || (auth.startsWith("Bearer ") ? auth.slice(7) : "")).trim();
   if (!token || !timingSafeEqual(sha(token), sha(ACCESS_TOKEN))) {
     return res.status(401).json({ error: "Neplatný nebo chybějící přístupový token.", code: "token" });
   }

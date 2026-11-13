@@ -469,7 +469,7 @@ async function generateQuiz(body) {
       if (!token) { stopTopicDraw(); show("setup"); return; }
       res = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", "X-Access-Token": token },
         body: JSON.stringify(body),
       });
       data = await res.json().catch(() => ({}));
