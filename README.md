@@ -90,7 +90,7 @@ Menu ☰ → **Archiv**: statistiky (počet kvízů a otázek) a seznam kvízů.
 
 - **Rozehrané** (ikona ▶) – kvíz opuštěný před výsledky; kliknutím se v něm pokračuje i s body.
 - **Dokončené** – otevřou se jen ke čtení: výsledky a pod nimi **průběh kvízu** jako osa s kartou pro každou otázku (štítky odpovědí a bodů týmů); kliknutím na kartu se otázka otevře.
-- **Hrát znovu** (ikona ↻ v seznamu nebo tlačítko u výsledků): nové otázky od AI na stejné téma, nebo stejné otázky v novém pořadí.
+- **Hrát znovu** (ikona ↻ v seznamu nebo tlačítko u výsledků): otevře pokročilé zadání s předvyplněným tématem a týmy z daného kvízu (body vynulované); ostatní nastavení se zvolí a kvíz se vygeneruje znovu.
 - Kvízy jdou smazat ikonou koše.
 
 ## Data v prohlížeči
