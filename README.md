@@ -78,3 +78,7 @@ Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlí
 ## Deploy (Coolify / Nixpacks)
 
 Nixpacks pozná Node app a spustí `npm start`. V Coolify nastav env proměnné `ANTHROPIC_API_KEY` a `ACCESS_TOKEN` (volitelně `CLAUDE_MODEL`, port bere z `PORT`).
+
+## Licence
+
+[MIT](LICENSE)
