@@ -130,7 +130,7 @@ function show(view) {
   else delete document.body.dataset.diff;
   if (view === "setup" && state.setupMode !== "advanced") startBubbles();
   else stopBubbles();
-  if (view === "quiz") { renderQuestion(true); logEvent("question"); }
+  if (view === "quiz") { preloadImages(); renderQuestion(true); logEvent("question"); }
   if (view === "results") { renderResults(); logEvent("results"); }
   if (view === "archive") renderArchive();
   renderHeader(); // znovu – po zápisu výsledků už je kvíz dokončený
@@ -589,8 +589,8 @@ async function generateQuiz(body) {
     };
     state.index = 0;
     archiveStart("ai", { count: body.count, instructions: body.instructions, randomTopic, images: body.images });
-    // obrázky přednačíst hned, ať se pak při kvízu nečeká (slabá wifi)
-    for (const q of state.quiz.questions) if (q.image) new Image().src = q.image.src;
+    // obrázky přednačíst hned (slabá wifi); na první počkat ještě na načítací obrazovce
+    await imageReady(state.quiz.questions[0], 3000);
     // náhodné téma: nejdřív chvíli ukázat vylosované téma, pak kvíz
     if (randomTopic) await revealTopicDraw(data.topic);
     else stopTopicDraw();
@@ -797,17 +797,41 @@ function reveal() {
   renderQuestion();
   save();
 }
-function goTo(i) {
+/* --- obrázky otázek: přednačíst a dekódovat, ať přechod na další otázku neproblikne --- */
+const imgCache = new Map(); // src → Promise (hotovo po načtení a dekódování)
+function preloadImages() {
+  for (const q of state.quiz?.questions || []) {
+    const src = q.image?.src;
+    if (!src || imgCache.has(src)) continue;
+    const im = new Image();
+    im.src = src;
+    imgCache.set(src, (im.decode ? im.decode() : new Promise((r) => { im.onload = r; })).catch(() => {}));
+  }
+}
+// počkat na obrázek otázky (nejdéle timeout – pomalá síť nesmí kvíz zablokovat)
+function imageReady(q, timeout = 2000) {
+  if (!q?.image?.src) return Promise.resolve();
+  preloadImages();
+  return Promise.race([imgCache.get(q.image.src), new Promise((r) => setTimeout(r, timeout))]);
+}
+
+let navTarget = null; // cílová otázka, na jejíž obrázek se čeká (rychlé opakované šipky)
+async function goTo(i) {
   if (!state.quiz) return;
   if (i < 0) return;
-  if (i >= state.quiz.questions.length) return show("results");
+  if (i >= state.quiz.questions.length) { navTarget = null; return show("results"); }
   if (state.view !== "quiz") { state.index = i; return show("quiz"); }
+  // stará otázka zůstane vidět, dokud nový obrázek není připravený
+  navTarget = i;
+  await imageReady(state.quiz.questions[i]);
+  if (navTarget !== i || state.view !== "quiz") return;
+  navTarget = null;
   state.index = i;
   renderQuestion(true);
   logEvent("question");
   save();
 }
-const go = (d) => goTo(state.index + d);
+const go = (d) => goTo((navTarget ?? state.index) + d);
 
 function flashButton(id) {
   const btn = $(id);
@@ -1369,6 +1393,7 @@ async function loadDemoQuiz(file) {
     state.index = 0;
     archiveStart("demo");
     if (state.bigTeams) { state.bigTeams = false; applyTeamsLayout(); }
+    await imageReady(state.quiz.questions[0]);
     show("quiz");
   } catch {
     show("setup");
