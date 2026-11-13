@@ -609,10 +609,10 @@ body:not(.teams-big) .scoreboard .team .score { font-size: clamp(1.7rem, 1.8vw, 
   color: var(--text); box-shadow: 0 1px 2px rgba(30, 40, 30, .06);
   transition: background .15s, border-color .15s, color .15s;
 }
-/* archivní kvíz (detail): místo menu jen křížek */
+/* kvíz (běžící i archivní) a jeho výsledky: místo menu jen křížek */
 #closeDetailBtn { display: none; }
-body.locked #closeDetailBtn { display: grid; }
-body.locked .menu { display: none; }
+body.quiz-head #closeDetailBtn { display: grid; }
+body.quiz-head .menu { display: none; }
 #menuBtn:hover, #menuBtn[aria-expanded="true"], #closeDetailBtn:hover {
   background: var(--surface); border-color: var(--accent); color: var(--accent);
   box-shadow: 0 1px 2px rgba(30, 40, 30, .08);
