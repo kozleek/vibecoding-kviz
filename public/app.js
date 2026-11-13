@@ -128,7 +128,7 @@ function show(view) {
   // gradient jen na zadání (podle zvolené obtížnosti); otázky a ostatní obrazovky neutrální – čitelnost na TV/projektoru
   if (view === "setup") applySetupGradient();
   else delete document.body.dataset.diff;
-  if (view === "setup" && state.setupMode !== "advanced") startBubbles();
+  if (view === "setup") startBubbles(); // bubliny s tématy v jednoduchém i pokročilém zadání
   else stopBubbles();
   if (view === "quiz") { preloadImages(); renderQuestion(true); logEvent("question"); }
   if (view === "results") { renderResults(); logEvent("results"); }
@@ -272,7 +272,7 @@ function setSetupMode(mode, focus = true) {
   if (simple && $("randomTopic").checked) { $("randomTopic").checked = false; applyRandomTopic(); }
   updateTopicPlaceholder();
   closeSuggest();
-  if (simple && state.view === "setup") startBubbles();
+  if (state.view === "setup") startBubbles(); // znovu rozmístit – pokročilý formulář je větší
   else stopBubbles();
   save();
   if (focus) $("topic").focus();
@@ -375,7 +375,7 @@ function startBubbles() {
   stopBubbles();
   // rozmístit až po vykreslení, ať je známa poloha pole
   requestAnimationFrame(() => {
-    if (state.view !== "setup" || state.setupMode === "advanced") return;
+    if (state.view !== "setup") return;
     const box = $("topicBubbles");
     const area = box.getBoundingClientRect();
     bubbleTarget = Math.round(Math.min(24, Math.max(7, (area.width * area.height) / 36000)));
@@ -388,7 +388,7 @@ function startBubbles() {
 // doplnit bubliny do cílového počtu (postupné „vyplutí“ jedna po druhé)
 let bubbleTarget = 0;
 function fillBubbles() {
-  if (state.view !== "setup" || state.setupMode === "advanced") return;
+  if (state.view !== "setup") return;
   const box = $("topicBubbles");
   const start = box.children.length;
   for (let i = 0; i < bubbleTarget * 6 && box.children.length < bubbleTarget; i++) spawnBubble((box.children.length - start) * 160);
@@ -468,6 +468,8 @@ function swapBubble() {
 }
 // kliknutí na bublinu: téma do pole (za čárku se přidá k dalším tématům, jinak nahradí obsah)
 function pickBubble(b) {
+  // pokročilé zadání s náhodným tématem: bublina ho vypne (pole s tématem je jinak zamčené)
+  if ($("randomTopic").checked) { $("randomTopic").checked = false; applyRandomTopic(); }
   const v = $("topic").value.trim();
   $("topic").value = /[,;]$/.test(v) ? `${v} ${b.dataset.topic}` : b.dataset.topic;
   $("topic").classList.remove("invalid");

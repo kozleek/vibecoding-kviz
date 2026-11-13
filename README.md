@@ -22,7 +22,7 @@ V aplikaci se token zadá při prvním generování a prohlížeč si ho zapamat
 
 ## Zadání kvízu
 
-- **Jednoduchý režim** (výchozí): jen pole s tématem, kolem kterého poletují bubliny se 100 tématy pro inspiraci, a našeptávač při psaní.
+- **Jednoduchý režim** (výchozí): jen pole s tématem a našeptávač při psaní. Kolem formuláře (v jednoduchém i pokročilém režimu) poletují bubliny se 100 tématy pro inspiraci – kliknutím se téma vloží do pole.
 - **Pokročilé nastavení**:
   - více témat oddělených čárkou (otázky se rovnoměrně rozdělí a promíchají),
   - **náhodné téma** – oblast losuje server, AI v ní zvolí konkrétní téma; nedávná témata z archivu se neopakují,

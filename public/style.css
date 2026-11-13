@@ -130,6 +130,7 @@ main { overflow-y: auto; padding: 14px 24px; display: flex; flex-direction: colu
 
 /* ============ Setup ============ */
 .view-setup { max-width: 760px; padding-top: 3vh; }
+.view-setup .setup { position: relative; z-index: 1; } /* karta nad bublinami */
 /* pokročilé zadání svisle na střed (na nízké obrazovce okraje spadnou na 0 a formulář se posouvá) */
 .view-setup:not(.simple) { margin-block: auto; padding-top: 0; padding-bottom: 2vh; }
 
@@ -916,7 +917,6 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 
 /* bubliny s tématy kolem pole */
 .bubbles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-.view-setup:not(.simple) .bubbles { display: none; }
 .bubble {
   position: absolute; pointer-events: auto; cursor: pointer; white-space: nowrap;
   display: inline-flex; align-items: center; gap: .45em;
