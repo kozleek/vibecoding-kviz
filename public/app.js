@@ -371,9 +371,9 @@ let bubbleTimer = null;
 let bubbleResize = null;
 const BUBBLE_TINTS = ANIMALS.map((a) => a.color);
 const BUBBLE_DEPTHS = [
-  { size: [1.45, 1.85], drift: 20, dur: [13, 17], opacity: 1 },
-  { size: [1.15, 1.4], drift: 14, dur: [16, 21], opacity: .92 },
-  { size: [0.95, 1.1], drift: 10, dur: [20, 28], opacity: .7 },
+  { size: [1.15, 1.35], drift: 20, dur: [13, 17], opacity: 1 }, // max. velikost menší, ať bubliny nepřebíjí zadání
+  { size: [1, 1.12], drift: 14, dur: [16, 21], opacity: .92 },
+  { size: [0.86, 0.96], drift: 10, dur: [20, 28], opacity: .7 },
 ];
 const rand = (min, max) => min + Math.random() * (max - min);
 function startBubbles() {
