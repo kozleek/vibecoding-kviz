@@ -112,11 +112,10 @@ function show(view) {
   $("menuTeams").hidden = !!state.locked;
   $("againBtn").hidden = !!state.locked;
   $("replayBtn").hidden = !state.locked;
-  // archivní kvíz: „Průběh kvízu“ je hlavní akce (s ikonou play), návrat do archivu vedlejší
-  // běžící kvíz: „Průběh kvízu“ (přepne do archivu), archivní kvíz: „Zobrazit kvíz“ (otázky od první)
-  $("backBtn").innerHTML = `<i class="ph ph-play" aria-hidden="true"></i> ${state.locked ? "Zobrazit kvíz" : "Průběh kvízu"}`;
-  $("backBtn").classList.toggle("primary", !!state.locked);
-  $("backBtn").classList.toggle("ghost", !state.locked);
+  // běžící kvíz: „Průběh kvízu“ (přepne do archivu); archivní kvíz: bez „Zobrazit kvíz“ – otázky se otevírají kliknutím v průběhu; „Hrát znovu“ je hlavní akce
+  $("backBtn").hidden = !!state.locked;
+  $("replayBtn").classList.toggle("primary", !!state.locked);
+  $("replayBtn").classList.toggle("ghost", !state.locked);
   if (state.locked) syncReviewTeams();
 
   // body se počítají jen když kvíz běží (otázky a výsledky); jinak lišta týmů slouží k jejich úpravě
