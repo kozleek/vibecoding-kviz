@@ -341,7 +341,9 @@ function spawnBubble(delay = 0) {
   box.appendChild(b);
   const w = b.offsetWidth + Math.abs(dx) * 2 + 10, h = b.offsetHeight + Math.abs(dy) * 2 + 10;
   const form = $("setupForm").getBoundingClientRect();
-  const avoid = [{ l: form.left - 28, t: form.top - 30, r: form.right + 28, b: form.bottom + 24 }];
+  // ochranná zóna kolem pole: na velké obrazovce víc volného místa, na mobilu méně (není kam bubliny dát)
+  const padX = Math.min(110, area.width * 0.08), padY = Math.min(90, area.height * 0.11);
+  const avoid = [{ l: form.left - padX, t: form.top - padY, r: form.right + padX, b: form.bottom + padY }];
   for (const o of box.children) {
     if (o === b) continue;
     const r = o.getBoundingClientRect();
