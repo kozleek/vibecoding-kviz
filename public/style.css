@@ -471,9 +471,9 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 
 /* ============ Results ============ */
 .view-results { text-align: center; padding-top: 0; margin-block: auto; }
-.results-title { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, min(4.6vw, 6vh), 4.6rem); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; margin: 0 0 clamp(14px, 2.4vh, 32px); }
-.results-sub { margin: 0 0 clamp(36px, 8vh, 110px); }
-.results-sub .pill { font-size: clamp(.9rem, min(1.2vw, 1.9vh), 1.3rem); padding: .35em 1em; }
+.results-title { font-family: var(--display); font-weight: 800; font-size: clamp(2.2rem, min(5.5vw, 8vh), 4.6rem); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; margin: clamp(14px, 2.4vh, 26px) 0 clamp(36px, 8vh, 110px); }
+.results-sub { margin: 0; }
+.results-sub .pill { font-size: clamp(.95rem, 1.3vw, 1.2rem); padding: .35em 1em; } /* jako štítek na načítání */
 /* výsledky: karty týmů jako v nastavení (bez −/+), seřazené podle pořadí */
 .result-cards {
   display: grid; gap: clamp(14px, 1.6vw, 28px); justify-content: center;
