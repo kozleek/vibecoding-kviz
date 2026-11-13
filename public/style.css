@@ -146,7 +146,7 @@ legend.label { margin-bottom: 10px; }
 .input-xl {
   font: inherit; font-size: 1.4rem; font-weight: 500;
   padding: 16px 18px; border-radius: 14px;
-  border: 2px solid var(--border); background: var(--bg);
+  border: 2px solid var(--border); background: var(--surface);
   color: var(--text); width: 100%;
   transition: border-color .15s, background .15s;
 }
@@ -163,7 +163,7 @@ legend.label { margin-bottom: 10px; }
 .extra-btn {
   flex: none; aspect-ratio: 1; border-radius: 14px; cursor: pointer; position: relative;
   display: grid; place-items: center; font-size: 1.6rem;
-  border: 2px solid var(--border); background: var(--bg); color: var(--muted);
+  border: 2px solid var(--border); background: var(--surface); color: var(--muted);
   transition: border-color .15s, color .15s, background .15s;
 }
 .extra-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
@@ -197,10 +197,11 @@ textarea.extra-input { resize: vertical; }
 .extra-input, .token-input {
   width: 100%; display: block;
   font: inherit; font-size: 1.05rem; line-height: 1.45; resize: vertical; min-height: 80px;
-  padding: 12px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--bg); color: var(--text);
+  padding: 12px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--surface); color: var(--text);
 }
 .extra-input:focus, .token-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
-.input-xl:disabled { opacity: .55; cursor: not-allowed; }
+/* šedé pozadí jen u vypnutého pole (jinak působí jako disabled) */
+.input-xl:disabled { opacity: .55; cursor: not-allowed; background: var(--bg); }
 .chip {
   border: 1px solid var(--border); background: var(--bg);
   padding: 7px 14px; border-radius: 99px; cursor: pointer;
@@ -254,7 +255,7 @@ textarea.extra-input { resize: vertical; }
 .level span {
   display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%;
   padding: 16px 10px 14px; border-radius: 16px; cursor: pointer; text-align: center;
-  border: 2px solid var(--border); background: var(--bg);
+  border: 2px solid var(--border); background: var(--surface);
   transition: border-color .15s, background .15s, transform .1s;
 }
 .level i { font-style: normal; font-size: 1.8rem; line-height: 1; margin-bottom: 4px; }
@@ -624,7 +625,7 @@ body.teams-big .settings-options { flex-direction: column; align-items: center; 
 .diff-points .pill { padding: 4px 10px; font-size: .85rem; }
 .diff-points input {
   width: 56px; padding: 6px 4px; text-align: center; font: inherit; font-weight: 700; font-size: 1.1rem;
-  border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text);
 }
 .diff-points input:focus { outline: none; border-color: var(--accent); }
 .diff-points input { -moz-appearance: textfield; appearance: textfield; }
