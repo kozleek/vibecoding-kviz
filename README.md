@@ -49,7 +49,7 @@ V menu ☰ jsou i **ukázkové kvízy** (Sport, Příroda, Vesmír a Obrázky s 
 - Max. 4 týmy; přidávají se výběrem emoji (název i barva podle zvířete), přejmenovávají kliknutím na název. Nastavení (`T` nebo ozubené kolo ve spodní liště) obsahuje i vynulování bodů a reset týmů.
 - Na dotykovém zařízení se během kvízu přičítá bod klepnutím na kartu týmu.
 - **Adaptivní bodování pro mix**: místo 1 bodu se přičítá podle obtížnosti otázky (výchozí lehká 1, střední 2, těžká 3; upravitelné v nastavení).
-- Na konci kvízu výsledky se stupni vítězů.
+- Na konci kvízu výsledky: karty týmů seřazené podle bodů, první tři místa s body mají medaili.
 
 ## Ovládání
 

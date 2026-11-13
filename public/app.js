@@ -904,44 +904,21 @@ function renderResults() {
     pill.title = "Obtížnost";
     $("resultsSub").append(pill);
   }
-  const podium = $("podium");
-  const rest = $("rest");
-  podium.innerHTML = "";
-  rest.innerHTML = "";
-
-  // pořadí se shodami: stejný počet bodů = stejné místo (1, 1, 3, …)
+  // karty týmů seřazené podle pořadí; shoda bodů = stejné místo (1, 1, 3, …), medaile jen pro týmy s body
+  const cards = $("resultCards");
+  cards.innerHTML = "";
   const ranked = state.teams
     .map((t) => ({ ...t, rank: 1 + state.teams.filter((o) => o.score > t.score).length }))
     .sort((a, b) => a.rank - b.rank);
-  const allTied = ranked.every((t) => t.rank === 1);
-
-
-  // na stupních místa 1–3; při remíze všech jsou všechny týmy na stejné výšce bez medailí
-  const onPodium = ranked.filter((t) => t.rank <= 3);
-  const byRank = (r) => onPodium.filter((t) => t.rank === r);
-  // vítěz(ové) uprostřed, ostatní střídavě vlevo a vpravo (2. místo blíž středu)
-  let order = onPodium;
-  if (!allTied) {
-    const left = [], right = [];
-    [...byRank(2), ...byRank(3)].forEach((t, i) => (i % 2 === 0 ? left.unshift(t) : right.push(t)));
-    order = [...left, ...byRank(1), ...right];
+  cards.style.setProperty("--cols", Math.min(4, ranked.length) || 1);
+  for (const t of ranked) {
+    const card = el("div", "result-card");
+    card.style.setProperty("--team", t.color);
+    const avatar = el("div", "avatar", t.emoji);
+    if (t.score > 0 && t.rank <= 3) avatar.append(el("span", "medal", ["🥇", "🥈", "🥉"][t.rank - 1]));
+    card.append(avatar, el("div", "name", t.name), el("div", "score", String(t.score)));
+    cards.appendChild(card);
   }
-  for (const t of order) {
-    const place = el("div", (allTied ? "podium-place tie" : `podium-place p${t.rank}`) + (t.score <= 0 ? " zero" : "")); // 0 bodů = bez sloupce
-    place.style.setProperty("--team", t.color);
-    place.append(
-      el("div", "podium-emoji", t.emoji),
-      el("div", "podium-name", t.name),
-      el("div", "podium-score", `${t.score} b.`),
-      el("div", "podium-block", allTied ? "" : ["🥇", "🥈", "🥉"][t.rank - 1])
-    );
-    podium.appendChild(place);
-  }
-  ranked.filter((t) => t.rank > 3).forEach((t) => {
-    const li = el("li");
-    li.append(el("span", "muted", `${t.rank}.`), el("span", null, `${t.emoji} ${t.name}`), el("b", null, `${t.score} b.`));
-    rest.appendChild(li);
-  });
   $("timeline").hidden = !state.locked;
   if (state.locked) renderTimeline();
 }
