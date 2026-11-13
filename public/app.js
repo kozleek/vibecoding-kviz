@@ -20,6 +20,17 @@ const LOADING_TIPS = [
   "Ještě chvilku, ladím formulace…",
 ];
 const STORAGE_KEY = "kviz-state-v1";
+// předgenerovaná témata: našeptávač, bubliny pro inspiraci na zadání a losování náhodného tématu
+const TOPIC_IDEAS = [
+  "Vesmír", "Dinosauři", "Starověký Egypt", "Antické Řecko", "Římská říše", "Středověk", "Druhá světová válka",
+  "Čeští panovníci", "Hrady a zámky", "Hlavní města", "Vlajky světa", "Sopky", "Oceány", "Řeky a jezera",
+  "Počasí", "Lidské tělo", "Medicína", "Chemické prvky", "Fyzika kolem nás", "Matematika", "Vynálezy",
+  "Internet a technologie", "Videohry", "Filmy", "Filmové hlášky", "Pohádky", "Seriály", "Hudba 80. let",
+  "Česká hudba", "Klasická hudba", "Malíři", "Architektura", "Světová literatura", "Česká literatura",
+  "Mytologie", "České pověsti", "Fotbal", "Hokej", "Olympijské hry", "Formule 1", "Kuchyně světa",
+  "Česká kuchyně", "Zvířata", "Ptáci", "Hmyz", "Rostliny", "Psi a kočky", "Piráti", "Rekordy",
+  "Dopravní prostředky", "Komiksy", "Superhrdinové",
+];
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -104,6 +115,8 @@ function show(view) {
   // gradient jen na zadání (podle zvolené obtížnosti); otázky a ostatní obrazovky neutrální – čitelnost na TV/projektoru
   if (view === "setup") applySetupGradient();
   else delete document.body.dataset.diff;
+  if (view === "setup" && state.setupMode !== "advanced") startBubbles();
+  else stopBubbles();
   if (view === "quiz") { renderQuestion(true); logEvent("question"); }
   if (view === "results") { renderResults(); logEvent("results"); }
   if (view === "archive") renderArchive();
@@ -132,7 +145,7 @@ $("topic").addEventListener("input", () => $("topic").classList.remove("invalid"
 function applyRandomTopic() {
   const on = $("randomTopic").checked;
   $("topic").disabled = on;
-  $("topic").placeholder = on ? "Téma vybere AI" : "např. sport, vesmír";
+  updateTopicPlaceholder();
   $("topic").classList.remove("invalid");
   $("extraBtn").disabled = on;
 }
@@ -158,10 +171,208 @@ $("extraClear").addEventListener("click", () => {
 $("extraDialog").addEventListener("close", renderExtraBtn);
 $("extraDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 
+/* ---------- Jednoduché / pokročilé zadání ---------- */
+// jednoduché: jen velké pole s tématem a tlačítko; počet otázek, obtížnost a upřesnění se berou z pokročilého
+function setSetupMode(mode, focus = true) {
+  const simple = mode !== "advanced";
+  state.setupMode = simple ? "simple" : "advanced";
+  $("setupForm").dataset.mode = state.setupMode;
+  $("setupView").classList.toggle("simple", simple);
+  // náhodné téma jde zapnout jen v pokročilém – v jednoduchém by pole zůstalo zamčené
+  if (simple && $("randomTopic").checked) { $("randomTopic").checked = false; applyRandomTopic(); }
+  updateTopicPlaceholder();
+  renderAdvSummary();
+  closeSuggest();
+  if (simple && state.view === "setup") startBubbles();
+  else stopBubbles();
+  save();
+  if (focus) $("topic").focus();
+}
+function updateTopicPlaceholder() {
+  $("topic").placeholder = $("randomTopic").checked ? "Téma vybere AI"
+    : state.setupMode === "advanced" ? "např. sport, vesmír" : "O čem bude kvíz?";
+}
+// vedle odkazu na pokročilé nastavení: s jakými parametry se kvíz vygeneruje
+function renderAdvSummary() {
+  const level = document.querySelector('input[name="level"]:checked')?.value || "mix";
+  const n = Number($("count").value) || 10;
+  const parts = [plural(n, "otázka", "otázky", "otázek"), LEVEL_NAMES[level].toLowerCase()];
+  if ($("extra").value.trim()) parts.push("upřesněno");
+  $("advSummary").textContent = "· " + parts.join(", ");
+}
+$("advancedModeBtn").addEventListener("click", () => setSetupMode("advanced"));
+$("simpleModeBtn").addEventListener("click", () => setSetupMode("simple"));
+document.querySelectorAll('input[name="level"]').forEach((r) => r.addEventListener("change", renderAdvSummary));
+$("extraDialog").addEventListener("close", renderAdvSummary);
+
+/* ---------- Našeptávač témat ---------- */
+// porovnání bez diakritiky; u více témat (oddělených čárkou) se našeptává poslední rozepsané
+const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+let suggestItems = [];
+let suggestIndex = -1;
+function topicSegment() {
+  const v = $("topic").value;
+  const i = Math.max(v.lastIndexOf(","), v.lastIndexOf(";"));
+  return { head: v.slice(0, i + 1), query: v.slice(i + 1).trim() };
+}
+function updateSuggest() {
+  const { query } = topicSegment();
+  const q = norm(query);
+  if (!q || $("topic").disabled) return closeSuggest();
+  const used = new Set(topicList().map(norm));
+  suggestItems = TOPIC_IDEAS
+    .map((t) => {
+      const n = norm(t);
+      // shoda na začátku tématu má přednost před shodou na začátku dalšího slova
+      const at = n.startsWith(q) ? 0 : n.indexOf(" " + q) + 1 || -1;
+      return { t, at, len: q.length };
+    })
+    .filter((m) => m.at >= 0 && !used.has(norm(m.t)))
+    .sort((a, b) => (a.at > 0) - (b.at > 0))
+    .slice(0, 6);
+  if (!suggestItems.length) return closeSuggest();
+  suggestIndex = -1;
+  const list = $("topicSuggest");
+  list.innerHTML = "";
+  suggestItems.forEach((m, i) => {
+    const li = el("li", "suggest-item");
+    li.id = "sg-" + i;
+    li.setAttribute("role", "option");
+    li.setAttribute("aria-selected", "false");
+    li.append(m.t.slice(0, m.at), el("mark", null, m.t.slice(m.at, m.at + m.len)), m.t.slice(m.at + m.len));
+    li.addEventListener("mousedown", (e) => e.preventDefault()); // pole neztratí fokus
+    li.addEventListener("click", () => pickSuggest(m.t));
+    list.appendChild(li);
+  });
+  list.hidden = false;
+  $("topic").setAttribute("aria-expanded", "true");
+}
+function closeSuggest() {
+  $("topicSuggest").hidden = true;
+  $("topicSuggest").innerHTML = "";
+  suggestItems = [];
+  suggestIndex = -1;
+  $("topic").setAttribute("aria-expanded", "false");
+  $("topic").removeAttribute("aria-activedescendant");
+}
+function moveSuggest(d) {
+  const n = suggestItems.length + 1; // pozice -1 = nic nevybráno
+  suggestIndex = ((suggestIndex + 1 + d) % n + n) % n - 1;
+  document.querySelectorAll("#topicSuggest .suggest-item").forEach((li, i) => {
+    li.classList.toggle("active", i === suggestIndex);
+    li.setAttribute("aria-selected", String(i === suggestIndex));
+  });
+  if (suggestIndex >= 0) $("topic").setAttribute("aria-activedescendant", "sg-" + suggestIndex);
+  else $("topic").removeAttribute("aria-activedescendant");
+}
+function pickSuggest(topic) {
+  const { head } = topicSegment();
+  $("topic").value = (head ? head.replace(/\s*$/, " ") : "") + topic;
+  $("topic").classList.remove("invalid");
+  closeSuggest();
+  $("topic").focus();
+}
+$("topic").addEventListener("input", updateSuggest);
+$("topic").addEventListener("blur", closeSuggest);
+$("topic").addEventListener("keydown", (e) => {
+  if ($("topicSuggest").hidden) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); moveSuggest(e.key === "ArrowDown" ? 1 : -1); }
+  else if (e.key === "Enter" && suggestIndex >= 0) { e.preventDefault(); pickSuggest(suggestItems[suggestIndex].t); }
+  else if (e.key === "Escape") { e.preventDefault(); closeSuggest(); }
+});
+
+/* ---------- Bubliny s tématy (inspirace na jednoduchém zadání) ---------- */
+let bubbleTimer = null;
+let bubbleResize = null;
+const BUBBLE_TINTS = ANIMALS.map((a) => a.color);
+function startBubbles() {
+  stopBubbles();
+  // rozmístit až po vykreslení, ať je známa poloha pole
+  requestAnimationFrame(() => {
+    if (state.view !== "setup" || state.setupMode === "advanced") return;
+    const box = $("topicBubbles");
+    const area = box.getBoundingClientRect();
+    const target = Math.round(Math.min(14, Math.max(5, (area.width * area.height) / 70000)));
+    for (let i = 0; i < target * 3 && box.children.length < target; i++) spawnBubble(i * 70);
+    bubbleTimer = setInterval(swapBubble, 2600);
+  });
+}
+function stopBubbles() {
+  clearInterval(bubbleTimer);
+  bubbleTimer = null;
+  $("topicBubbles").innerHTML = "";
+}
+// nová bublina na náhodném volném místě (mimo pole se zadáním a ostatní bubliny); vrací false, když se nevejde
+function spawnBubble(delay = 0) {
+  const box = $("topicBubbles");
+  const area = box.getBoundingClientRect();
+  const shown = new Set([...box.children].map((b) => b.textContent));
+  const free = TOPIC_IDEAS.filter((t) => !shown.has(t));
+  if (!free.length || !area.width) return false;
+  const topic = free[Math.floor(Math.random() * free.length)];
+  const b = el("button", "bubble out", topic);
+  b.type = "button";
+  b.tabIndex = -1;
+  b.style.setProperty("--tint", BUBBLE_TINTS[Math.floor(Math.random() * BUBBLE_TINTS.length)]);
+  b.style.fontSize = (0.95 + Math.random() * 0.35).toFixed(2) + "rem";
+  const dx = (Math.random() * 2 - 1) * 26, dy = (Math.random() * 2 - 1) * 20;
+  b.style.setProperty("--dx", dx.toFixed(0) + "px");
+  b.style.setProperty("--dy", dy.toFixed(0) + "px");
+  b.style.setProperty("--dur", (5 + Math.random() * 5).toFixed(1) + "s");
+  b.style.visibility = "hidden";
+  box.appendChild(b);
+  const w = b.offsetWidth + Math.abs(dx) * 2 + 16, h = b.offsetHeight + Math.abs(dy) * 2 + 16;
+  const form = $("setupForm").getBoundingClientRect();
+  const avoid = [{ l: form.left - 24, t: form.top - 28, r: form.right + 24, b: form.bottom + 28 }];
+  for (const o of box.children) {
+    if (o === b) continue;
+    const r = o.getBoundingClientRect();
+    avoid.push({ l: r.left - 12, t: r.top - 12, r: r.right + 12, b: r.bottom + 12 });
+  }
+  for (let tries = 0; tries < 40; tries++) {
+    const x = area.left + w / 2 + Math.random() * Math.max(0, area.width - w);
+    const y = area.top + h / 2 + Math.random() * Math.max(0, area.height - h);
+    const r = { l: x - w / 2, t: y - h / 2, r: x + w / 2, b: y + h / 2 };
+    if (avoid.some((a) => r.l < a.r && r.r > a.l && r.t < a.b && r.b > a.t)) continue;
+    b.style.left = (x - area.left) + "px";
+    b.style.top = (y - area.top) + "px";
+    b.style.visibility = "";
+    b.addEventListener("click", () => pickBubble(b));
+    setTimeout(() => b.classList.remove("out"), 30 + delay);
+    return true;
+  }
+  b.remove();
+  return false;
+}
+// jedna bublina zmizí a jinde se objeví nová
+function swapBubble() {
+  const live = [...$("topicBubbles").children].filter((b) => !b.classList.contains("out"));
+  if (!live.length) return;
+  const old = live[Math.floor(Math.random() * live.length)];
+  old.classList.add("out");
+  setTimeout(() => { old.remove(); spawnBubble(); }, 600);
+}
+// kliknutí na bublinu: téma do pole (za čárku se přidá k dalším tématům, jinak nahradí obsah)
+function pickBubble(b) {
+  const v = $("topic").value.trim();
+  $("topic").value = /[,;]$/.test(v) ? `${v} ${b.textContent}` : b.textContent;
+  $("topic").classList.remove("invalid");
+  $("topic").focus();
+  closeSuggest();
+  b.classList.add("out", "picked");
+  setTimeout(() => { b.remove(); spawnBubble(); }, 600);
+}
+window.addEventListener("resize", () => {
+  if (!bubbleTimer) return;
+  clearTimeout(bubbleResize);
+  bubbleResize = setTimeout(startBubbles, 250);
+});
+
 function setCount(n) {
   n = Math.min(100, Math.max(3, Number(n) || 10));
   $("count").value = n;
   document.querySelectorAll("#countChips .chip").forEach((c) => c.classList.toggle("active", Number(c.dataset.count) === n));
+  renderAdvSummary();
 }
 document.querySelectorAll(".stepper button").forEach((b) =>
   b.addEventListener("click", () => setCount(Number($("count").value) + Number(b.dataset.step)))
@@ -223,12 +434,7 @@ async function generateQuiz(body) {
 }
 
 /* ---------- Losování náhodného tématu (animace při načítání) ---------- */
-const DRAW_TOPICS = [
-  "Sopky", "Dinosauři", "Hudba 80. let", "Starověký Egypt", "Vesmír", "Olympijské hry", "Oceány",
-  "Vynálezy", "Pohádky", "Čeští panovníci", "Hmyz", "Filmové hlášky", "Hlavní města", "Lidské tělo",
-  "Mytologie", "Počasí", "Hrady a zámky", "Kuchyně světa", "Videohry", "Ptáci", "Malíři", "Fotbal",
-  "Chemické prvky", "Rekordy", "Piráti", "Rostliny", "Dopravní prostředky", "Komiksy",
-];
+const DRAW_TOPICS = TOPIC_IDEAS;
 let drawTimer = null;
 function startTopicDraw() {
   $("topicDraw").hidden = false;
@@ -1533,6 +1739,7 @@ function renderTimeline() {
 }
 
 /* ---------- Start ---------- */
+setSetupMode(state.setupMode, false);
 setCount($("count").value);
 applyTeamsLayout();
 if (state.view === "loading" || (!state.quiz && !["setup", "archive"].includes(state.view))) state.view = state.quiz ? "quiz" : "setup";

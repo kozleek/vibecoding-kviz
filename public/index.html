@@ -44,23 +44,34 @@
   <main id="main">
     <!-- ===== Zadání ===== -->
     <section id="setupView" class="view view-setup">
-      <form id="setupForm" class="card setup" novalidate>
+      <!-- jednoduché zadání: kolem pole poletují bubliny s tématy pro inspiraci -->
+      <div class="bubbles" id="topicBubbles" aria-hidden="true"></div>
+      <form id="setupForm" class="card setup" data-mode="simple" novalidate>
         <div class="field">
-          <label for="topic" class="label">Téma <span class="muted">· více témat odděl čárkou</span></label>
-          <div class="topic-row">
-            <input id="topic" name="topic" type="text" class="input-xl" placeholder="např. sport, vesmír" autocomplete="off" required>
-            <button type="button" class="extra-btn" id="extraBtn" aria-haspopup="dialog" aria-label="Upřesnit zadání" title="Upřesnit zadání"><i class="ph ph-sliders-horizontal"></i></button>
+          <div class="label-row adv-only">
+            <label for="topic" class="label">Téma <span class="muted">· více témat odděl čárkou</span></label>
+            <button type="button" class="mode-btn" id="simpleModeBtn"><i class="ph ph-arrows-in-simple" aria-hidden="true"></i> Jednoduché zadání</button>
           </div>
-          <div class="topic-tools">
+          <div class="topic-row">
+            <div class="topic-box">
+              <input id="topic" name="topic" type="text" class="input-xl" placeholder="např. sport, vesmír" autocomplete="off" required
+                aria-label="Téma kvízu" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="topicSuggest">
+              <ul class="suggest" id="topicSuggest" role="listbox" aria-label="Návrhy témat" hidden></ul>
+            </div>
+            <button type="button" class="extra-btn adv-only" id="extraBtn" aria-haspopup="dialog" aria-label="Upřesnit zadání" title="Upřesnit zadání"><i class="ph ph-sliders-horizontal"></i></button>
+            <button type="submit" class="go-btn simple-only" aria-label="Vygenerovat kvíz" title="Vygenerovat kvíz"><i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+          </div>
+          <div class="topic-tools adv-only">
             <label class="toggle">
               <input type="checkbox" id="randomTopic">
               <span class="switch" aria-hidden="true"></span>
               <span class="toggle-text">Náhodné téma <small>vybere AI</small></span>
             </label>
           </div>
+          <button type="button" class="mode-btn simple-only" id="advancedModeBtn"><i class="ph ph-sliders-horizontal" aria-hidden="true"></i> Pokročilé nastavení <small id="advSummary"></small></button>
         </div>
 
-        <div class="field">
+        <div class="field adv-only">
           <span class="label">Počet otázek</span>
           <div class="count-row">
             <div class="stepper">
@@ -77,7 +88,7 @@
           </div>
         </div>
 
-        <fieldset class="field">
+        <fieldset class="field adv-only">
           <legend class="label">Obtížnost</legend>
           <div class="levels">
             <label class="level"><input type="radio" name="level" value="lehka"><span><i>🌱</i><b>Lehká</b><small>zná skoro každý</small></span></label>
@@ -90,7 +101,7 @@
 
         <p class="error" id="setupError" role="alert" hidden></p>
 
-        <button class="btn primary xl" type="submit" id="generateBtn">Vygenerovat kvíz <span aria-hidden="true">→</span></button>
+        <button class="btn primary xl adv-only" type="submit" id="generateBtn">Vygenerovat kvíz <span aria-hidden="true">→</span></button>
       </form>
     </section>
 
