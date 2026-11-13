@@ -607,6 +607,7 @@ async function generateQuiz(body) {
   const randomTopic = !!body.randomTopic;
   $("setupError").hidden = true;
   show("loading");
+  setLoadingLevel(body.level);
   if (randomTopic) startTopicDraw();
   else showLoadingTopic(body.topic);
   try {
@@ -646,41 +647,40 @@ async function generateQuiz(body) {
   }
 }
 
-/* ---------- Losování náhodného tématu (animace při načítání) ---------- */
+/* ---------- Načítání: obtížnost, téma (u náhodného „losovací buben“), hlášky ---------- */
 const DRAW_TOPICS = TOPIC_IDEAS;
 let drawTimer = null;
+function setLoadingLevel(level) {
+  const pill = $("loadingLevel");
+  pill.textContent = LEVEL_NAMES[level] || LEVEL_NAMES.mix;
+  pill.className = "pill level-pill loading-level " + (level === "mix" ? "" : LEVEL_DIFF[level] || "");
+}
 function startTopicDraw() {
-  $("topicDraw").hidden = false;
-  $("topicDraw").classList.remove("done");
-  $("topicDrawLabel").textContent = "Losuji téma…";
-  $("loadingText").hidden = true;
+  $("loadingTopic").classList.add("drawing");
   let last = "";
   drawTimer = setInterval(() => {
     let t;
     do t = DRAW_TOPICS[Math.floor(Math.random() * DRAW_TOPICS.length)]; while (t === last);
     last = t;
-    $("topicDrawValue").textContent = t;
+    $("loadingTopic").textContent = t;
   }, 110);
 }
-// zadané téma: při načítání ukázat, na jaké téma se kvíz tvoří (více témat oddělených tečkou)
+// zadané téma (více témat oddělených tečkou)
 function showLoadingTopic(topic) {
-  $("topicDraw").hidden = false;
-  $("topicDraw").classList.add("done");
-  $("topicDrawLabel").textContent = "Téma kvízu";
-  $("topicDrawValue").textContent = topic.split(/\s*[,;]\s*/).filter(Boolean).join(" · ");
+  $("loadingTopic").classList.remove("drawing");
+  $("loadingTopic").textContent = topic.split(/\s*[,;]\s*/).filter(Boolean).join(" · ");
 }
 function stopTopicDraw() {
   clearInterval(drawTimer);
   drawTimer = null;
-  $("topicDraw").hidden = true;
-  $("loadingText").hidden = false;
 }
+// náhodné téma: buben se zastaví na vylosovaném tématu, chvíli ho ukázat
 function revealTopicDraw(topic) {
-  clearInterval(drawTimer);
-  $("topicDrawLabel").textContent = "Téma kvízu";
-  $("topicDrawValue").textContent = topic;
-  $("topicDraw").classList.add("done");
-  return new Promise((resolve) => setTimeout(() => { stopTopicDraw(); resolve(); }, 2200));
+  stopTopicDraw();
+  $("loadingTopic").classList.remove("drawing");
+  $("loadingTopic").textContent = topic;
+  $("loadingTopic").classList.add("revealed");
+  return new Promise((resolve) => setTimeout(() => { $("loadingTopic").classList.remove("revealed"); resolve(); }, 1600));
 }
 
 let errorTimer = null;
@@ -692,17 +692,6 @@ function showError(msg) {
 }
 
 function startLoadingTips() {
-  // při načítání poskakují ikony zvolených týmů
-  const animals = $("loaderAnimals");
-  animals.innerHTML = "";
-  // bez týmů (nesoutěžní režim) poskakují výchozí zvířátka
-  const loaderTeams = state.teams.length ? state.teams : ANIMALS.slice(0, 3);
-  loaderTeams.forEach((t, j) => {
-    const s = el("span", null, t.emoji);
-    s.style.setProperty("--team", t.color);
-    s.style.animationDelay = `${j * 0.15}s`;
-    animals.appendChild(s);
-  });
   let i = 0;
   $("loadingSub").textContent = LOADING_TIPS[0];
   loadingTimer = setInterval(() => {
