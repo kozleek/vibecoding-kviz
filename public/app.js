@@ -1507,8 +1507,8 @@ function renderHeader() {
   }
   // zavření je vždy první položka menu (i pro nastavení týmů – položka „Týmy“ se pak skryje)
   $("menuClose").hidden = !label;
-  // kvíz (běžící i archivní) a jeho výsledky: místo menu jen křížek
-  document.body.classList.toggle("quiz-head", !big && (liveQuiz || !!state.locked));
+  // kvíz (běžící i archivní), jeho výsledky a nastavení týmů: místo menu jen křížek
+  document.body.classList.toggle("quiz-head", big || liveQuiz || !!state.locked);
   $("closeDetailBtn").title = `${label} (Esc)`;
   $("closeDetailBtn").setAttribute("aria-label", label);
   $("menuTeams").hidden = big || !!state.locked;
@@ -1951,7 +1951,7 @@ function closeReview() {
   if (state.view === "quiz") show("results");
   else exitReview();
 }
-$("closeDetailBtn").addEventListener("click", () => (state.locked ? closeReview() : leaveQuiz()));
+$("closeDetailBtn").addEventListener("click", () => (state.bigTeams ? toggleTeamsLayout() : state.locked ? closeReview() : leaveQuiz()));
 $("menuClose").addEventListener("click", menuAction(() =>
   state.bigTeams ? toggleTeamsLayout() : state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()
 ));
