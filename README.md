@@ -62,7 +62,7 @@ V menu ☰ jsou i **ukázkové kvízy** (Sport, Příroda, Vesmír) z `public/sa
 | `T` | nastavení (týmy, bodování) |
 | `F` | celá obrazovka |
 | `A` | archiv (u otázky běžícího kvízu vybírá odpověď A) |
-| `Esc` | zavřít archiv / archivní kvíz |
+| `Esc` | zavřít jako křížek: nastavení, archiv, archivní kvíz, opustit kvíz (s potvrzením) |
 | `?` | nápověda s klávesovými zkratkami |
 
 S adaptivním bodováním se místo 1 bodu přičítá počet bodů uvedený u otázky.

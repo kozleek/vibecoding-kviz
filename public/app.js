@@ -1377,7 +1377,7 @@ function renderHeader() {
   let label;
   if (liveQuiz) {
     title.append(state.quiz.topic, el("span", "header-sub", LEVEL_NAMES[state.quiz.level]));
-    label = isFinished(liveEntry()) ? "Zavřít kvíz (zůstane v archivu)" : "Opustit kvíz (uloží se mezi rozehrané)";
+    label = (isFinished(liveEntry()) ? "Zavřít kvíz (zůstane v archivu)" : "Opustit kvíz (uloží se mezi rozehrané)") + " (Esc)";
   } else {
     title.append("Archiv");
     if (state.locked) {
@@ -1424,8 +1424,11 @@ document.addEventListener("keydown", (e) => {
     return;
   }
   if (e.key === "?") return $("helpDialog").showModal();
+  // Esc = stejně jako křížek v hlavičce: nastavení, archivní kvíz, archiv, běžící kvíz (s potvrzením)
+  if (e.key === "Escape" && state.bigTeams) return toggleTeamsLayout();
   if (e.key === "Escape" && state.locked) return closeReview();
   if (e.key === "Escape" && state.view === "archive") return closeArchive();
+  if (e.key === "Escape" && document.body.classList.contains("close-head")) return leaveQuiz();
   if (e.key === "f" || e.key === "F") return toggleFullscreen();
   if (e.key === "t" || e.key === "T") return toggleTeamsLayout();
   if (state.bigTeams) return;
