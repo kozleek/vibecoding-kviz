@@ -826,20 +826,41 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .view-setup:not(.simple) .bubbles { display: none; }
 .bubble {
   position: absolute; pointer-events: auto; cursor: pointer; white-space: nowrap;
-  padding: 9px 18px; border-radius: 99px; font-weight: 600; color: var(--text);
-  background: color-mix(in srgb, var(--tint) 14%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--tint) 35%, var(--surface));
-  box-shadow: 0 4px 14px rgba(30, 40, 30, .07);
+  display: inline-flex; align-items: center; gap: .45em;
+  padding: .5em 1.05em .5em .8em; border-radius: 99px;
+  font-family: var(--display); font-weight: 600; color: var(--text); line-height: 1.1;
+  /* lesklá bublina: světlo vlevo nahoře, barva týmu do okraje */
+  background:
+    radial-gradient(120% 140% at 25% 15%, color-mix(in srgb, #fff 70%, transparent) 0%, transparent 45%),
+    color-mix(in srgb, var(--tint) 16%, var(--surface));
+  border: 1.5px solid color-mix(in srgb, var(--tint) 38%, var(--surface));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--tint) 18%, transparent), inset 0 -3px 8px color-mix(in srgb, var(--tint) 10%, transparent);
+  opacity: var(--o, 1);
   translate: -50% -50%;
-  animation: bubble-float var(--dur, 7s) ease-in-out infinite alternate;
-  transition: opacity .6s ease, scale .6s ease, border-color .15s;
+  animation:
+    bubble-float var(--dur, 8s) ease-in-out infinite alternate,
+    bubble-wobble var(--wob, 4s) ease-in-out infinite alternate;
+  transition: opacity 1.1s ease, scale 1.3s cubic-bezier(.34, 1.4, .64, 1), border-color .2s, box-shadow .2s;
 }
-.bubble:hover { scale: 1.08; border-color: var(--tint); }
-.bubble.out { opacity: 0; scale: .6; pointer-events: none; }
-.bubble.picked { scale: 1.3; }
+.bubble-emoji { font-size: 1.15em; line-height: 1; }
+.bubble:hover {
+  scale: 1.1; opacity: 1; z-index: 5 !important; border-color: var(--tint);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--tint) 32%, transparent);
+}
+.bubble.out { opacity: 0; scale: .3; pointer-events: none; }
+/* prasknutí: krátce se nafoukne a zmizí */
+.bubble.pop { scale: 1.35; transition: opacity .8s ease, scale .8s ease-out; }
 @keyframes bubble-float {
-  from { translate: -50% -50%; }
-  to { translate: calc(-50% + var(--dx, 0px)) calc(-50% + var(--dy, 0px)); }
+  0% { translate: -50% -50%; }
+  50% { translate: calc(-50% + var(--dx, 0px) * .5) calc(-50% - var(--dy, 0px)); }
+  100% { translate: calc(-50% + var(--dx, 0px)) calc(-50% + var(--dy, 0px) * .4); }
+}
+@keyframes bubble-wobble {
+  from { rotate: calc(var(--rot, 2deg) * -1); }
+  to { rotate: var(--rot, 2deg); }
+}
+@media (prefers-color-scheme: dark) {
+  .bubble { background: color-mix(in srgb, var(--tint) 22%, var(--surface)); }
 }
 
 /* ============ Responsive ============ */
