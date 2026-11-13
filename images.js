@@ -109,6 +109,9 @@ Vrať pro každý index ok=true/false.`,
   return new Set(JSON.parse(text).checks.filter((c) => c.ok).map((c) => c.index));
 }
 
+const VISION_BATCH = 20;
+// náhled Wikimedia v menší šířce pro kontrolu (…/1280px-Soubor.jpg → …/500px-Soubor.jpg)
+const visionSrc = (src) => src.replace(/\/\d+px-([^/]+)$/, "/500px-$1");
 const proxyUrl = (src) => "/api/img?u=" + Buffer.from(src).toString("base64url");
 
 // doplní otázkám obrázky; otázky, u kterých obrázek nevyšel, přepne na textovou verzi
@@ -127,12 +130,20 @@ export async function attachImages(client, model, questions) {
       const p = pages.get(q.imageWiki.trim());
       const info = p && infos.get(p.file);
       if (!p || !info || info.nonFree) return; // nesvobodné obrázky (fair use) nepoužívat
-      const img = await download(p.src).catch(() => null);
+      // na kontrolu stačí menší náhled (rychlejší, menší požadavek); na plátně se ukáže velký
+      const img = await download(visionSrc(p.src)).catch(() => null);
       if (img) candidates.push({ index: i, q, p, info, img, question: q.question, answer: q.answers[q.correct] });
     }));
     if (!candidates.length) return;
 
-    const okSet = await checkImages(client, model, candidates);
+    // po dávkách (limit velikosti požadavku), dávky souběžně
+    const batches = [];
+    for (let i = 0; i < candidates.length; i += VISION_BATCH) batches.push(candidates.slice(i, i + VISION_BATCH));
+    const results = await Promise.all(batches.map((b) => checkImages(client, model, b).catch((err) => {
+      console.error("Kontrola obrázků selhala:", err.message);
+      return new Set(); // dávka bez kontroly → otázky radši textově
+    })));
+    const okSet = new Set(results.flatMap((r) => [...r]));
     for (const c of candidates) {
       if (!okSet.has(c.index)) continue;
       c.q.image = {
