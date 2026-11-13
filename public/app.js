@@ -1541,6 +1541,12 @@ document.querySelector(".scoreboard").addEventListener("click", (e) => {
 
 /* ---------- Klávesnice ---------- */
 document.addEventListener("keydown", (e) => {
+  // pokročilé zadání: Esc zpět na jednoduché (i z pole; ne když Esc zavírá našeptávač, dialog nebo menu)
+  if (e.key === "Escape" && !e.defaultPrevented && state.view === "setup" && state.setupMode === "advanced" && !state.bigTeams &&
+      !document.querySelector("dialog[open]") && $("menuPanel").hidden && $("emojiPicker").hidden) {
+    e.preventDefault();
+    return setSetupMode("simple");
+  }
   const tag = e.target.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || e.ctrlKey || e.metaKey || e.altKey) return;
   if (document.querySelector("dialog[open]")) return;

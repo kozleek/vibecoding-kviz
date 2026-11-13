@@ -79,7 +79,7 @@ Na plátně: otázka nahoře, pod ní obrázek (třetina šířky) a vedle odpov
 | `T` | týmy (nastavení týmů a bodování) |
 | `F` | celá obrazovka |
 | `A` | archiv (u otázky běžícího kvízu vybírá odpověď A) |
-| `Esc` | zavřít týmy, archiv nebo archivní kvíz; opustit kvíz (s potvrzením) |
+| `Esc` | zavřít týmy, archiv nebo archivní kvíz; opustit kvíz (s potvrzením); z pokročilého zadání zpět na jednoduché |
 | `?` | nápověda s klávesovými zkratkami |
 
 S adaptivním bodováním se místo 1 bodu přičítá počet bodů uvedený u otázky.
