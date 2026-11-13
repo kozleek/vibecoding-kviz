@@ -750,7 +750,7 @@ function renderQuestion(animate = false) {
     btn.append(el("span", "letter", key.toUpperCase()), el("span", "text", q.answers[key]));
     if (q.revealed || state.locked) {
       btn.disabled = true;
-      if (key === q.correct) { btn.classList.add("correct"); btn.append(el("span", "mark", "✓")); }
+      if (key === q.correct) btn.classList.add("correct"); // správná jen barvou, bez ikony
       else if (key === q.picked) { btn.classList.add("wrong"); btn.append(el("span", "mark", "✗")); }
       else btn.classList.add("dim");
     }
