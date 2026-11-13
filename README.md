@@ -28,6 +28,7 @@ V aplikaci se token zadá při prvním generování a prohlížeč si ho zapamat
   - **náhodné téma** – oblast losuje server, AI v ní zvolí konkrétní téma; nedávná témata z archivu se neopakují,
   - **upřesnění zadání** (ikona vedle pole) – oddíly Pro koho, Otázky, Odpovědi, Vysvětlení, Zakázáno (závazné) a Další přání, každý s rychlými volbami na kliknutí,
   - počet otázek 3–100,
+  - **čas na odpověď** v sekundách (0 = bez odpočtu): u každé neodhalené otázky běží odpočet jako progressbar nad lištou týmů, posledních 5 s červeně, po vypršení „Čas vypršel“ (odpověď se neodhalí sama). Po odhalení odpovědi odpočet zmizí,
   - obtížnost: lehká, střední, těžká, hardcore, nebo mix (třetina lehkých/středních/těžkých).
 
 ### Obrázkové otázky

@@ -90,6 +90,23 @@
             </div>
           </div>
         </div>
+        <div class="field adv-only">
+          <span class="label">Čas na odpověď <span class="muted">· v sekundách, 0 = bez odpočtu</span></span>
+          <div class="count-row">
+            <div class="stepper">
+              <button type="button" data-tstep="-5" aria-label="Méně času">−</button>
+              <input id="answerTime" type="number" min="0" max="600" step="5" value="0" inputmode="numeric" aria-label="Čas na odpověď v sekundách">
+              <button type="button" data-tstep="5" aria-label="Více času">+</button>
+            </div>
+            <div class="chips" id="timeChips">
+              <button type="button" class="chip" data-time="0">bez</button>
+              <button type="button" class="chip" data-time="10">10 s</button>
+              <button type="button" class="chip" data-time="20">20 s</button>
+              <button type="button" class="chip" data-time="30">30 s</button>
+              <button type="button" class="chip" data-time="60">60 s</button>
+            </div>
+          </div>
+        </div>
 
         <fieldset class="field adv-only">
           <legend class="label">Obtížnost</legend>
@@ -188,6 +205,11 @@
   <footer class="scoreboard">
     <!-- chyby a hlášky: proužek nad lištou týmů -->
     <p class="error toast" id="setupError" role="alert" hidden></p>
+    <!-- odpočet času na odpověď: progressbar nad lištou týmů -->
+    <div class="answer-timer" id="answerTimer" hidden>
+      <span class="answer-timer-text" id="timerText" aria-live="off"></span>
+      <div class="answer-timer-track"><div class="answer-timer-fill" id="timerFill"></div></div>
+    </div>
     <div class="teams" id="teams"></div>
     <!-- malá lišta: nastavení (v kvízu není hamburger menu); vynulování bodů a reset týmů jsou v nastavení -->
     <div class="bar-actions">

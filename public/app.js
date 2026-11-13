@@ -130,6 +130,7 @@ function show(view) {
   if (view === "setup") startBubbles(); // bubliny s tématy v jednoduchém i pokročilém zadání
   else stopBubbles();
   if (view === "quiz") { preloadImages(); renderQuestion(true); logEvent("question"); }
+  if (view === "quiz") startTimer(); else stopTimer();
   if (view === "results") { renderResults(); logEvent("results"); }
   if (view === "archive") renderArchive();
   renderHeader(); // znovu – po zápisu výsledků už je kvíz dokončený
@@ -491,11 +492,25 @@ function setCount(n) {
   $("count").value = n;
   document.querySelectorAll("#countChips .chip").forEach((c) => c.classList.toggle("active", Number(c.dataset.count) === n));
 }
-document.querySelectorAll(".stepper button").forEach((b) =>
+document.querySelectorAll(".stepper button[data-step]").forEach((b) =>
   b.addEventListener("click", () => setCount(Number($("count").value) + Number(b.dataset.step)))
 );
 document.querySelectorAll("#countChips .chip").forEach((c) => c.addEventListener("click", () => setCount(c.dataset.count)));
 $("count").addEventListener("change", () => setCount($("count").value));
+
+// čas na odpověď v sekundách (0 = bez odpočtu), pamatuje se ve state.answerTime
+function setAnswerTime(n) {
+  n = Math.min(600, Math.max(0, Math.round(Number(n) || 0)));
+  $("answerTime").value = n;
+  document.querySelectorAll("#timeChips .chip").forEach((c) => c.classList.toggle("active", Number(c.dataset.time) === n));
+  state.answerTime = n;
+  save();
+}
+document.querySelectorAll(".stepper button[data-tstep]").forEach((b) =>
+  b.addEventListener("click", () => setAnswerTime(Number($("answerTime").value) + Number(b.dataset.tstep)))
+);
+document.querySelectorAll("#timeChips .chip").forEach((c) => c.addEventListener("click", () => setAnswerTime(c.dataset.time)));
+$("answerTime").addEventListener("change", () => setAnswerTime($("answerTime").value));
 
 // obrázkové otázky: none / some / all (pamatuje se ve state.images)
 function setImageMode(mode) {
@@ -788,12 +803,43 @@ function renderQuestion(animate = false) {
   }
 }
 
+/* --- odpočet času na odpověď (progressbar nad lištou týmů) --- */
+let timerEnd = 0, timerTotal = 0, timerInt = null;
+function startTimer() {
+  stopTimer();
+  const q = currentQ();
+  timerTotal = (state.answerTime || 0) * 1000;
+  // jen u neodhalené otázky běžícího kvízu; 0 = bez odpočtu
+  if (!timerTotal || state.locked || state.view !== "quiz" || !q || q.revealed) return;
+  timerEnd = Date.now() + timerTotal;
+  $("answerTimer").hidden = false;
+  $("answerTimer").classList.remove("warn", "done");
+  tickTimer();
+  timerInt = setInterval(tickTimer, 100);
+}
+function tickTimer() {
+  const left = Math.max(0, timerEnd - Date.now());
+  $("timerFill").style.width = (left / timerTotal) * 100 + "%";
+  $("answerTimer").classList.toggle("warn", left <= 5000);
+  if (left > 0) return void ($("timerText").textContent = `${Math.ceil(left / 1000)} s`);
+  clearInterval(timerInt);
+  timerInt = null;
+  $("answerTimer").classList.add("done");
+  $("timerText").textContent = "Čas vypršel";
+}
+function stopTimer() {
+  clearInterval(timerInt);
+  timerInt = null;
+  $("answerTimer").hidden = true;
+}
+
 function pick(key) {
   const q = currentQ();
   if (!q || q.revealed || state.locked) return;
   q.picked = key;
   q.revealed = true;
   logEvent("pick", { q: state.index, key, correct: key === q.correct });
+  stopTimer();
   renderQuestion();
   save();
 }
@@ -802,6 +848,7 @@ function reveal() {
   if (!q || q.revealed || state.locked) return;
   q.revealed = true;
   logEvent("reveal", { q: state.index });
+  stopTimer();
   renderQuestion();
   save();
 }
@@ -874,6 +921,7 @@ async function goTo(i) {
   navTarget = null;
   state.index = i;
   renderQuestion(true);
+  startTimer();
   logEvent("question");
   save();
 }
@@ -2012,6 +2060,7 @@ function renderTimeline() {
 /* ---------- Start ---------- */
 setSetupMode(state.setupMode, false);
 setImageMode(state.images);
+setAnswerTime(state.answerTime);
 setCount($("count").value);
 applyTeamsLayout();
 if (state.view === "loading" || (!state.quiz && !["setup", "archive"].includes(state.view))) state.view = state.quiz ? "quiz" : "setup";

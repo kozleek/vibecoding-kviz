@@ -287,6 +287,20 @@ textarea.extra-input { resize: vertical; }
 }
 @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 6px); } }
 body.teams-big .toast { display: none; }
+/* odpočet času na odpověď: tenký progressbar přes celou šířku nad lištou týmů, sekundy nad ním */
+.answer-timer { position: absolute; left: 0; right: 0; bottom: 100%; z-index: 6; pointer-events: none; }
+.answer-timer-track { height: 8px; background: color-mix(in srgb, var(--text) 10%, transparent); }
+.answer-timer-fill { height: 100%; width: 100%; background: var(--accent); transition: width .1s linear, background-color .3s; }
+.answer-timer-text {
+  position: absolute; left: 50%; bottom: 18px; translate: -50% 0; white-space: nowrap;
+  padding: 4px 14px; border-radius: 99px; background: var(--surface); box-shadow: var(--shadow);
+  font-family: var(--display); font-weight: 800; font-size: clamp(1rem, 1.4vw, 1.6rem); font-variant-numeric: tabular-nums;
+}
+.answer-timer.warn .answer-timer-fill { background: var(--bad); }
+.answer-timer.warn .answer-timer-text { color: var(--bad); }
+.answer-timer.done .answer-timer-text { animation: timerPulse .9s ease-in-out infinite alternate; }
+@keyframes timerPulse { to { scale: 1.08; } }
+body.teams-big .answer-timer { display: none; }
 
 /* ============ Loading ============ */
 .view-loading { display: grid; place-items: center; min-height: 100%; }
