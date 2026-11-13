@@ -1937,6 +1937,7 @@ function closeReview() {
   if (state.view === "quiz") show("results");
   else exitReview();
 }
+$("teamsBtn").addEventListener("click", () => toggleTeamsLayout());
 $("closeDetailBtn").addEventListener("click", () => (state.bigTeams ? toggleTeamsLayout() : state.locked ? closeReview() : leaveQuiz()));
 $("menuClose").addEventListener("click", menuAction(() =>
   state.bigTeams ? toggleTeamsLayout() : state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()

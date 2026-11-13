@@ -23,7 +23,7 @@ Generování je chráněné tokenem z env proměnné `ACCESS_TOKEN` (dlouhý ná
 
 ## Rozložení
 
-Jedna horní lišta: vlevo logo, uprostřed týmy s body, vpravo menu ☰ (archiv, týmy, celá obrazovka, zkratky, ukázkové kvízy, podle situace „Zavřít archiv“ / „Zavřít týmy“). V kvízu, na jeho výsledcích a v nastavení týmů je místo menu jen křížek (opustit kvíz, zavřít detail archivního kvízu, zavřít týmy). Na užší obrazovce jsou týmy ve vlastním řádku pod hlavičkou.
+Jedna horní lišta: vlevo logo, uprostřed týmy s body, vpravo menu ☰ (archiv, týmy, celá obrazovka, zkratky, ukázkové kvízy, podle situace „Zavřít archiv“ / „Zavřít týmy“). V kvízu, na jeho výsledcích a v nastavení týmů je místo menu jen křížek (opustit kvíz, zavřít detail archivního kvízu, zavřít týmy). V běžícím kvízu je vedle křížku i tlačítko **Týmy** (nastavení týmů a oprava bodů, klávesa `T`). Na užší obrazovce jsou týmy ve vlastním řádku pod hlavičkou.
 
 ## Zadání kvízu
 
