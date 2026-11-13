@@ -59,6 +59,7 @@ V menu ☰ jsou i **ukázkové kvízy** (Sport, Příroda, Vesmír a Obrázky s 
 | `A` / `B` / `C` | vybrat odpověď (ukáže správnou + vysvětlení) |
 | `Mezerník` / `Enter` | ukázat správnou odpověď / další otázka |
 | `←` / `→` | předchozí / další otázka |
+| `O` | obrázek otázky přes celou obrazovku (nebo klik na obrázek; zavře `Esc`, `O` nebo klik) |
 | `T` | nastavení (týmy, bodování) |
 | `F` | celá obrazovka |
 | `A` | archiv (u otázky běžícího kvízu vybírá odpověď A) |

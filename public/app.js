@@ -815,6 +815,21 @@ function imageReady(q, timeout = 2000) {
   return Promise.race([imgCache.get(q.image.src), new Promise((r) => setTimeout(r, timeout))]);
 }
 
+/* --- lightbox: obrázek otázky přes celou obrazovku --- */
+function openLightbox() {
+  const q = currentQ();
+  if (!q?.image || state.view !== "quiz") return;
+  $("lightboxImg").src = q.image.src;
+  // autor až po odhalení odpovědi (stejně jako u malého obrázku)
+  $("lightboxCredit").hidden = !q.revealed;
+  $("lightboxCredit").textContent = $("qImgCredit").textContent;
+  $("lightbox").showModal();
+}
+$("qImg").addEventListener("click", openLightbox);
+$("lightbox").addEventListener("click", () => $("lightbox").close());
+// O znovu zavře (stopPropagation – jinak by hlavní handler lightbox hned zase otevřel)
+$("lightbox").addEventListener("keydown", (e) => { if (e.key === "o" || e.key === "O") { e.stopPropagation(); $("lightbox").close(); } });
+
 let navTarget = null; // cílová otázka, na jejíž obrázek se čeká (rychlé opakované šipky)
 async function goTo(i) {
   if (!state.quiz) return;
@@ -1477,6 +1492,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && document.body.classList.contains("close-head")) return leaveQuiz();
   if (e.key === "f" || e.key === "F") return toggleFullscreen();
   if (e.key === "t" || e.key === "T") return toggleTeamsLayout();
+  if ((e.key === "o" || e.key === "O") && state.view === "quiz") return openLightbox();
   if (state.bigTeams) return;
 
   // A = archiv; na obrazovce s otázkou běžícího kvízu zůstává A výběrem odpovědi

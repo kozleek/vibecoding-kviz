@@ -387,6 +387,16 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   animation: fadeIn .35s ease both;
 }
 @keyframes fadeIn { from { opacity: 0; } }
+.q-image img { cursor: zoom-in; }
+/* lightbox: obrázek přes celou obrazovku na tmavém pozadí */
+.lightbox {
+  max-width: 100vw; max-height: 100dvh; width: 100vw; height: 100dvh; margin: 0; padding: 0; border: 0;
+  background: transparent; cursor: zoom-out; outline: none;
+}
+.lightbox[open] { display: grid; place-items: center; animation: fadeIn .2s ease both; }
+.lightbox::backdrop { background: rgba(10, 14, 11, .92); }
+.lightbox img { max-width: calc(100vw - 48px); max-height: calc(100dvh - 72px); object-fit: contain; border-radius: 12px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
+.lightbox-credit { position: fixed; bottom: 14px; left: 0; right: 0; margin: 0; text-align: center; color: rgba(255, 255, 255, .75); font-size: .9rem; }
 #imageModes .chip { display: inline-flex; align-items: center; gap: 6px; }
 
 .answers { display: grid; gap: clamp(8px, 1.4vh, 18px); }

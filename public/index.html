@@ -144,7 +144,7 @@
         <h2 class="q-text" id="qText"></h2>
         <!-- obrázková otázka: obrázek z Wikipedie, autor a licence až po odhalení odpovědi -->
         <figure class="q-image" id="qImage" hidden>
-          <img id="qImg" alt="Obrázek k otázce">
+          <img id="qImg" alt="Obrázek k otázce" title="Zvětšit (O)">
           <figcaption id="qImgCredit" hidden></figcaption>
         </figure>
 
@@ -228,6 +228,7 @@
       <tr><td><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd></td><td>vybrat odpověď</td></tr>
       <tr><td><kbd>Mezerník</kbd></td><td>ukázat odpověď / další otázka</td></tr>
       <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>předchozí / další otázka</td></tr>
+      <tr><td><kbd>O</kbd></td><td>obrázek otázky přes celou obrazovku</td></tr>
       <tr><td><kbd>T</kbd></td><td>nastavení</td></tr>
       <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
@@ -254,6 +255,12 @@
       <button type="button" class="btn ghost" id="extraClear">Vymazat vše</button>
       <button type="button" class="btn primary" id="extraSave">Hotovo</button>
     </div>
+  </dialog>
+
+  <!-- ===== Lightbox: obrázek otázky přes celou obrazovku (klik na obrázek / klávesa O) ===== -->
+  <dialog id="lightbox" class="lightbox" aria-label="Obrázek k otázce">
+    <img id="lightboxImg" alt="Obrázek k otázce">
+    <p class="lightbox-credit" id="lightboxCredit" hidden></p>
   </dialog>
 
   <!-- ===== Přístupový token ===== -->
