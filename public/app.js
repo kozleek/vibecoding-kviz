@@ -525,6 +525,14 @@ function startLoadingTips() {
 function newQuiz() {
   if (state.locked) exitReview();
   leaveCurrent();
+  openNewSetup();
+}
+// zadání nového kvízu vždy s prázdným polem pro téma
+function openNewSetup() {
+  $("topic").value = "";
+  $("topic").classList.remove("invalid");
+  $("setupError").hidden = true;
+  closeSuggest();
   show("setup");
   $("topic").focus();
 }
@@ -532,8 +540,7 @@ $("newQuizBtn").addEventListener("click", () => { closeMenu(); newQuiz(); });
 // výsledky: „Nový kvíz“ i „Průběh kvízu“ uzavřou dokončený kvíz do archivu a vynulují body
 $("againBtn").addEventListener("click", () => {
   closeQuiz();
-  show("setup");
-  $("topic").focus();
+  openNewSetup();
 });
 // „Zobrazit kvíz“ / „Průběh kvízu“: v archivním kvízu otázky od první, u běžícího kvízu přepne do archivu na jeho průběh
 $("backBtn").addEventListener("click", () => {
@@ -1423,7 +1430,7 @@ async function leaveQuiz() {
     archive = archive.filter((e) => e.id !== entry.id);
     saveArchive();
   }
-  show("setup");
+  openNewSetup();
 }
 // uzavřít běžící kvíz (zůstává v archivu) a vynulovat body týmů
 function closeQuiz() {
