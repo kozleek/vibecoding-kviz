@@ -748,7 +748,6 @@ function renderQuestion(animate = false) {
   $("explanation").hidden = !q.revealed;
   if (q.revealed) {
     requestAnimationFrame(() => $("explanation").scrollIntoView({ block: "nearest", behavior: "smooth" }));
-    $("exTitle").textContent = `Správná odpověď: ${q.correct.toUpperCase()} – ${q.answers[q.correct]}`;
     $("exText").textContent = q.explanation;
   }
   $("qSkipped").hidden = !(state.locked && q.skipped);
