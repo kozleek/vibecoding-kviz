@@ -1751,9 +1751,13 @@ function archiveItem(entry, liveId) {
       teams.appendChild(chip);
     }
 
-    const go = el("i", "ph ph-" + (entry.id === liveId || !finished ? "play" : "lock-simple"));
-    go.setAttribute("aria-hidden", "true");
-    open.append(main, teams, go);
+    open.append(main, teams);
+    // rozehraný (nebo právě běžící) kvíz: ikona pokračování; dokončený má vedle tlačítko „Hrát znovu“
+    if (entry.id === liveId || !finished) {
+      const go = el("i", "ph ph-play");
+      go.setAttribute("aria-hidden", "true");
+      open.append(go);
+    }
     item.append(open);
 
     // hrát znovu (jen dokončené)
