@@ -737,6 +737,8 @@ function renderQuestion(animate = false) {
   const card = $("questionCard");
   card.classList.toggle("has-image", !!q.image);
   $("qImage").hidden = !q.image;
+  // vlajky a kresby (SVG z Wikimedia) se neořezávají
+  $("qImage").classList.toggle("contain", isDrawing(q.image?.src));
   if (q.image) {
     if ($("qImg").getAttribute("src") !== q.image.src) $("qImg").src = q.image.src;
     $("qImgCredit").hidden = !q.revealed;
@@ -813,6 +815,15 @@ function imageReady(q, timeout = 2000) {
   if (!q?.image?.src) return Promise.resolve();
   preloadImages();
   return Promise.race([imgCache.get(q.image.src), new Promise((r) => setTimeout(r, timeout))]);
+}
+
+// obrázek je kresba (SVG – vlajka, schéma)? URL přes proxy nese původní adresu v base64url
+function isDrawing(src) {
+  if (!src) return false;
+  try {
+    const u = new URL(src, location.href).searchParams.get("u");
+    return /\.svg/i.test(u ? atob(u.replace(/-/g, "+").replace(/_/g, "/")) : src);
+  } catch { return false; }
 }
 
 /* --- lightbox: obrázek otázky přes celou obrazovku --- */
