@@ -202,7 +202,7 @@ function setSetupMode(mode, focus = true) {
 }
 function updateTopicPlaceholder() {
   $("topic").placeholder = $("randomTopic").checked ? "Téma vybere AI"
-    : state.setupMode === "advanced" ? "např. sport, vesmír" : "O čem bude kvíz?";
+    : state.setupMode === "advanced" ? "např. sport, vesmír" : "Napiš jakékoli téma…";
 }
 $("advancedModeBtn").addEventListener("click", () => setSetupMode("advanced"));
 $("simpleModeBtn").addEventListener("click", () => setSetupMode("simple"));
