@@ -100,6 +100,12 @@ const pointsLabel = (n) => (n === 1 ? "1 bod" : n >= 2 && n <= 4 ? `${n} body` :
 
 const scoringActive = () => !state.locked && !!state.quiz && (state.view === "quiz" || state.view === "results");
 
+// pole s tématem s fokusem, ať se dá hned psát (na dotyku ne – vysunula by se klávesnice)
+function focusTopic() {
+  if (state.view !== "setup" || state.bigTeams || isTouch()) return;
+  requestAnimationFrame(() => { if (!document.querySelector("dialog[open]")) $("topic").focus(); });
+}
+
 function show(view) {
   state.view = view;
   document.body.dataset.view = view;
@@ -126,6 +132,7 @@ function show(view) {
   if (view === "setup") applySetupGradient();
   else delete document.body.dataset.diff;
   if (view === "setup") startBubbles(); // bubliny s tématy v jednoduchém i pokročilém zadání
+  if (view === "setup") focusTopic();
   else stopBubbles();
   if (view === "quiz") { preloadImages(); renderQuestion(true); logEvent("question"); }
   if (view === "quiz") startTimer(); else stopTimer();
@@ -1494,6 +1501,7 @@ function applyTeamsLayout() {
   document.body.classList.toggle("teams-big", big);
   renderHeader();
   renderTeams();
+  focusTopic(); // po zavření týmů zpět do pole s tématem
 }
 // horní lišta: vlevo jen název, vpravo vždy menu; zavření podle kontextu je první položkou menu (a Esc)
 function renderHeader() {
