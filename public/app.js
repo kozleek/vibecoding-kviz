@@ -466,12 +466,14 @@ function swapBubble() {
   old.classList.add("out", "pop");
   setTimeout(() => { old.remove(); spawnBubble(); }, 900);
 }
-// kliknutí na bublinu: téma do pole (za čárku se přidá k dalším tématům, jinak nahradí obsah)
+// kliknutí na bublinu: téma se přidá do pole k ostatním
 function pickBubble(b) {
   // pokročilé zadání s náhodným tématem: bublina ho vypne (pole s tématem je jinak zamčené)
   if ($("randomTopic").checked) { $("randomTopic").checked = false; applyRandomTopic(); }
-  const v = $("topic").value.trim();
-  $("topic").value = /[,;]$/.test(v) ? `${v} ${b.dataset.topic}` : b.dataset.topic;
+  // téma se přidá k dalším (oddělené čárkou), stejné téma podruhé ne
+  const topics = topicList();
+  if (!topics.some((t) => t.toLowerCase() === b.dataset.topic.toLowerCase())) topics.push(b.dataset.topic);
+  $("topic").value = topics.join(", ");
   $("topic").classList.remove("invalid");
   $("topic").focus();
   closeSuggest();
