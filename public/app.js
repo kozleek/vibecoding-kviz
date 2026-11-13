@@ -443,6 +443,7 @@ function askToken(hint) {
   const dlg = $("tokenDialog");
   $("tokenHint").textContent = hint || "Generování kvízů je chráněné tokenem. Zadej ho jednou, prohlížeč si ho zapamatuje.";
   $("tokenInput").value = "";
+  $("tokenOk").disabled = true;
   dlg.returnValue = "";
   dlg.showModal();
   return new Promise((resolve) => {
@@ -452,6 +453,8 @@ function askToken(hint) {
     }, { once: true });
   });
 }
+
+$("tokenInput").addEventListener("input", (e) => { $("tokenOk").disabled = !e.target.value.trim(); });
 
 // vygenerovat kvíz přes API (ze zadání i „Hrát znovu“ v archivu) a spustit ho
 async function generateQuiz(body) {
@@ -476,7 +479,7 @@ async function generateQuiz(body) {
       if (res.status !== 401 || data.code !== "token") break;
       setToken("");
     }
-    if (!res.ok) throw new Error(data.error || "Generování selhalo.");
+    if (!res.ok) throw new Error(data.error || `Generování selhalo (${res.status}).`);
     state.quiz = {
       topic: data.topic,
       level: data.level,
@@ -532,9 +535,12 @@ function revealTopicDraw(topic) {
   return new Promise((resolve) => setTimeout(() => { stopTopicDraw(); resolve(); }, 2200));
 }
 
+let errorTimer = null;
 function showError(msg) {
   $("setupError").textContent = msg;
   $("setupError").hidden = false;
+  clearTimeout(errorTimer);
+  errorTimer = setTimeout(() => { $("setupError").hidden = true; }, 8000);
 }
 
 function startLoadingTips() {

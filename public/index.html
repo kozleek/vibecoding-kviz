@@ -99,7 +99,6 @@
           </div>
         </fieldset>
 
-        <p class="error" id="setupError" role="alert" hidden></p>
 
         <button class="btn primary xl adv-only" type="submit" id="generateBtn">Vygenerovat kvíz <span aria-hidden="true">→</span></button>
       </form>
@@ -178,6 +177,8 @@
 
   <!-- ===== Týmy ===== -->
   <footer class="scoreboard">
+    <!-- chyby a hlášky: proužek nad lištou týmů -->
+    <p class="error toast" id="setupError" role="alert" hidden></p>
     <div class="teams" id="teams"></div>
     <!-- malá lišta: nastavení (v kvízu není hamburger menu); vynulování bodů a reset týmů jsou v nastavení -->
     <div class="bar-actions">
@@ -250,10 +251,10 @@
         <button class="icon-btn" value="cancel" formnovalidate aria-label="Zavřít" title="Zavřít"><i class="ph ph-x"></i></button>
       </div>
       <p class="muted extra-hint" id="tokenHint">Generování kvízů je chráněné tokenem. Zadej ho jednou, prohlížeč si ho zapamatuje.</p>
-      <input id="tokenInput" type="password" class="token-input" autocomplete="current-password" aria-label="Přístupový token" required autofocus>
+      <input id="tokenInput" type="password" class="token-input" autocomplete="current-password" aria-label="Přístupový token" placeholder="token" autofocus>
       <div class="confirm-actions">
         <button class="btn ghost" value="cancel" formnovalidate>Zrušit</button>
-        <button class="btn primary" value="ok">Uložit a generovat</button>
+        <button class="btn primary" value="ok" id="tokenOk" disabled>Uložit a generovat</button>
       </div>
     </form>
   </dialog>
