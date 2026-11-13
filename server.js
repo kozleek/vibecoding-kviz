@@ -109,7 +109,7 @@ function requireToken(req, res, next) {
 app.post("/api/generate", requireToken, async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
   const randomTopic = req.body?.randomTopic === true;
-  const instructions = String(req.body?.instructions || "").trim().slice(0, 1500);
+  const instructions = String(req.body?.instructions || "").trim().slice(0, 3000);
   // nedávná témata z archivu – u náhodného tématu se nemají opakovat
   const avoidTopics = (Array.isArray(req.body?.avoidTopics) ? req.body.avoidTopics : [])
     .map((t) => String(t).trim().slice(0, 80)).filter(Boolean).slice(0, 30);
@@ -133,7 +133,7 @@ app.post("/api/generate", requireToken, async (req, res) => {
       : `Téma: ${topics[0]}\nDo pole topic i quizTopic napiš krátký název tématu.`;
   // upřesnění od moderátora (styl otázek, odpovědí, cílová skupina…)
   const extraText = instructions
-    ? `\n\nUpřesnění od moderátora kvízu (dodrž ho, pokud není v rozporu s formátem tří odpovědí a jedné správné):\n${instructions}`
+    ? `\n\nUpřesnění od moderátora kvízu (dodrž ho, pokud není v rozporu s formátem tří odpovědí a jedné správné; bod „Zakázáno“ je závazný pro otázky, odpovědi i vysvětlení):\n${instructions}`
     : "";
 
   try {

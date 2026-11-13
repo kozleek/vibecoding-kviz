@@ -164,22 +164,99 @@ function applyRandomTopic() {
 }
 $("randomTopic").addEventListener("change", applyRandomTopic);
 
-// upřesnění zadání (doplňující prompt) v modálním okně; text se pamatuje
+// upřesnění zadání (doplňující prompt) v modálním okně – strukturované oddíly, pamatují se ve state.extra
+const EXTRA_FIELDS = [
+  { key: "audience", label: "Pro koho", icon: "users-three", placeholder: "např. děti 10–12 let, firemní večírek",
+    chips: ["děti 6–9 let", "děti 10–12 let", "teenageři", "dospělí", "senioři", "rodiny s dětmi", "odborníci na téma"] },
+  { key: "questions", label: "Otázky", icon: "question", placeholder: "zaměření, styl, délka otázek…",
+    chips: ["krátké a jasné", "zajímavosti a kuriozity", "zaměř se na současnost", "zaměř se na historii", "s českým kontextem", "hravé formulace"] },
+  { key: "answers", label: "Odpovědi", icon: "list-checks", placeholder: "jak mají vypadat odpovědi…",
+    chips: ["co nejkratší", "vtipné špatné odpovědi", "špatné odpovědi hodně podobné", "čísla a letopočty", "jména osobností"] },
+  { key: "explanation", label: "Vysvětlení", icon: "lightbulb", placeholder: "co má být ve vysvětlení…",
+    chips: ["jen jedna věta", "přidej zajímavost navíc", "vysvětli srozumitelně pro děti"] },
+  { key: "forbidden", label: "Zakázáno", icon: "prohibit", placeholder: "čemu se vyhnout…", strict: true,
+    chips: ["žádné přesné letopočty", "žádná politika", "žádné násilí a smrt", "žádný alkohol", "žádné chytáky", "žádné otázky „Která z odpovědí NENÍ…“"] },
+  { key: "other", label: "Další přání", icon: "chat-text", placeholder: "cokoli dalšího…", textarea: true, chips: [] },
+];
+// starší uložený stav měl jen volný text (extraPrompt) → patří do „Další přání“
+if (!state.extra) state.extra = state.extraPrompt ? { other: state.extraPrompt } : {};
+delete state.extraPrompt;
+
+const extraState = () => (state.extra ||= {}); // archivní (zamčený) stav upřesnění nemá
+const extraParts = (v) => v.split(",").map((t) => t.trim()).filter(Boolean);
+function extraInstructions() {
+  return EXTRA_FIELDS.map((f) => {
+    const v = (extraState()[f.key] || "").trim();
+    return v ? `${f.label}${f.strict ? " (závazné, nikdy neporuš)" : ""}: ${v}` : "";
+  }).filter(Boolean).join("\n");
+}
+function renderExtraChips(f, wrap) {
+  const parts = extraParts(extraState()[f.key] || "").map((t) => t.toLowerCase());
+  wrap.querySelectorAll(".chip").forEach((c) => {
+    const on = parts.includes(c.dataset.chip.toLowerCase());
+    c.classList.toggle("active", on);
+    c.setAttribute("aria-pressed", on);
+  });
+}
+function buildExtraFields() {
+  const root = $("extraFields");
+  root.replaceChildren();
+  for (const f of EXTRA_FIELDS) {
+    const box = el("div", "extra-field" + (f.strict ? " strict" : ""));
+    const id = "extra-" + f.key;
+    const label = el("label", "extra-label");
+    label.htmlFor = id;
+    label.innerHTML = `<i class="ph ph-${f.icon}" aria-hidden="true"></i> `;
+    label.append(f.label);
+    const input = el(f.textarea ? "textarea" : "input", "extra-input");
+    input.id = id;
+    input.placeholder = f.placeholder;
+    input.maxLength = 400;
+    if (f.textarea) input.rows = 2; else input.type = "text";
+    input.value = extraState()[f.key] || "";
+    const chips = el("div", "chips extra-chips");
+    for (const c of f.chips) {
+      const b = el("button", "chip", c);
+      b.type = "button";
+      b.dataset.chip = c;
+      b.addEventListener("click", () => {
+        const parts = extraParts(input.value);
+        const i = parts.findIndex((t) => t.toLowerCase() === c.toLowerCase());
+        i >= 0 ? parts.splice(i, 1) : parts.push(c);
+        input.value = parts.join(", ");
+        input.dispatchEvent(new Event("input"));
+      });
+      chips.append(b);
+    }
+    input.addEventListener("input", () => {
+      extraState()[f.key] = input.value;
+      save();
+      renderExtraChips(f, chips);
+    });
+    box.append(label, input);
+    if (f.chips.length) box.append(chips);
+    root.append(box);
+    renderExtraChips(f, chips);
+  }
+}
 function renderExtraBtn() {
-  const filled = !!$("extra").value.trim();
+  const filled = !!extraInstructions();
   $("extraBtn").classList.toggle("active", filled);
   $("extraBtn").title = filled ? "Zadání upřesněno – upravit" : "Upřesnit zadání";
 }
-$("extra").value = state.extraPrompt || "";
+buildExtraFields();
 renderExtraBtn();
-$("extraBtn").addEventListener("click", () => { if (!$("extraBtn").disabled) $("extraDialog").showModal(); });
-$("extra").addEventListener("input", () => { state.extraPrompt = $("extra").value; save(); });
+$("extraBtn").addEventListener("click", () => {
+  if ($("extraBtn").disabled) return;
+  $("extraDialog").showModal();
+  $("extra-audience").focus();
+});
 $("extraSave").addEventListener("click", () => $("extraDialog").close());
 $("extraClear").addEventListener("click", () => {
-  $("extra").value = "";
-  state.extraPrompt = "";
+  state.extra = {};
   save();
-  $("extra").focus();
+  buildExtraFields();
+  $("extra-audience").focus();
 });
 $("extraDialog").addEventListener("close", renderExtraBtn);
 $("extraDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
@@ -417,7 +494,7 @@ $("setupForm").addEventListener("submit", async (e) => {
   const body = {
     topic: randomTopic ? "" : topics.join(", "),
     randomTopic,
-    instructions: randomTopic ? "" : $("extra").value.trim(),
+    instructions: randomTopic ? "" : extraInstructions(),
     // náhodné téma: nedávná témata z archivu, ať se neopakují
     avoidTopics: randomTopic ? [...new Set(archive.map((e) => e.topic))].slice(0, 30) : undefined,
     count: Number($("count").value),

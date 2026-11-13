@@ -24,7 +24,7 @@ V aplikaci se token zadá při prvním generování a prohlížeč si ho zapamat
 - **Pokročilé nastavení**:
   - více témat oddělených čárkou (otázky se rovnoměrně rozdělí a promíchají),
   - **náhodné téma** – oblast losuje server, AI v ní zvolí konkrétní téma; nedávná témata z archivu se neopakují,
-  - **upřesnění zadání** (ikona vedle pole) – styl otázek, cílová skupina, na co se zaměřit…,
+  - **upřesnění zadání** (ikona vedle pole) – oddíly Pro koho, Otázky, Odpovědi, Vysvětlení, Zakázáno (závazné) a Další přání, každý s rychlými volbami na kliknutí,
   - počet otázek 3–100,
   - obtížnost: lehká, střední, těžká, hardcore, nebo mix (třetina lehkých/středních/těžkých).
 

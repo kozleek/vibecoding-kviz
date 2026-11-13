@@ -230,15 +230,16 @@
   </div>
 
   <!-- ===== Upřesnění zadání ===== -->
-  <dialog id="extraDialog" class="dialog help">
+  <!-- oddíly (pro koho, otázky, odpovědi, vysvětlení, zakázáno, další) generuje app.js z EXTRA_FIELDS -->
+  <dialog id="extraDialog" class="dialog help extra-dialog">
     <div class="dialog-head">
       <h3>Upřesnit zadání</h3>
       <form method="dialog"><button class="icon-btn" aria-label="Zavřít" title="Zavřít"><i class="ph ph-x"></i></button></form>
     </div>
-    <p class="muted extra-hint">Styl otázek a odpovědí, cílová skupina, na co se zaměřit…</p>
-    <textarea id="extra" rows="5" maxlength="1500" autofocus placeholder="např. otázky pro děti 10–12 let, vtipné špatné odpovědi, zaměř se na zajímavosti"></textarea>
+    <p class="muted extra-hint">Vyplň jen to, na čem ti záleží. Návrhy pod polem přidáš nebo odebereš kliknutím.</p>
+    <div class="extra-fields" id="extraFields"></div>
     <div class="confirm-actions">
-      <button type="button" class="btn ghost" id="extraClear">Vymazat</button>
+      <button type="button" class="btn ghost" id="extraClear">Vymazat vše</button>
       <button type="button" class="btn primary" id="extraSave">Hotovo</button>
     </div>
   </dialog>

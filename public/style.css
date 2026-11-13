@@ -174,15 +174,29 @@ legend.label { margin-bottom: 10px; }
 .extra-btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn:disabled:hover { border-color: var(--border); }
 .dialog .extra-hint { margin: 0 0 10px; }
+/* upřesnění zadání: oddíly s polem a návrhy */
+.dialog.help.extra-dialog { max-width: 1040px; max-height: calc(100dvh - 32px); overflow-y: auto; }
+.extra-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 32px; margin-top: 18px; }
+@media (max-width: 760px) { .extra-fields { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
+.extra-label { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; }
+.extra-label i { font-size: 1.2rem; color: var(--accent); }
+.extra-field.strict .extra-label i { color: var(--bad); }
+.dialog .extra-input { min-height: 0; font-size: 1rem; padding: 10px 14px; }
+textarea.extra-input { resize: vertical; }
+.extra-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.extra-chips .chip { padding: 5px 12px; font-size: .88rem; }
+.extra-chips .chip.active { font-weight: 600; }
+.extra-chips .chip.active::before { content: "✓ "; }
+.extra-field.strict .chip.active { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
 #tokenForm { margin: 0; text-align: left; } /* ne obecné .dialog form (zarovnání doprava) */
 #tokenHint { margin: 0 0 14px; }
 .dialog .token-input { min-height: 0; font-size: 1.15rem; letter-spacing: .04em; }
-#extra, .token-input {
+.extra-input, .token-input {
   width: 100%; display: block;
   font: inherit; font-size: 1.05rem; line-height: 1.45; resize: vertical; min-height: 80px;
   padding: 12px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--bg); color: var(--text);
 }
-#extra:focus, .token-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.extra-input:focus, .token-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
 .input-xl:disabled { opacity: .55; cursor: not-allowed; }
 .chip {
   border: 1px solid var(--border); background: var(--bg);
