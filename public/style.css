@@ -406,7 +406,6 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   background: var(--surface); border: 2px solid var(--border); color: var(--muted);
   transition: all .2s;
 }
-.answer .mark { margin-left: auto; font-size: .9em; }
 .answer:disabled { cursor: default; }
 .answer.correct { border-color: var(--good); background: var(--good-soft); animation: pop .4s ease; }
 .answer.correct .letter { background: var(--good); border-color: var(--good); color: #fff; }
