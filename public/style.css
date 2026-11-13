@@ -604,12 +604,9 @@ body:not(.teams-big) .scoreboard .team .score { font-size: clamp(1.7rem, 1.8vw, 
 /* hamburger menu */
 .menu { position: relative; }
 /* hamburger vždy podbarvený, ať je jasné, že je to tlačítko */
-/* menu v liště: průhledné (jen jemné „sklo“), plná barva až na hover */
 #menuBtn {
-  background: color-mix(in srgb, var(--surface) 30%, transparent);
-  border-color: color-mix(in srgb, var(--surface) 55%, transparent);
-  color: var(--text); box-shadow: none;
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  background: var(--surface); border-color: var(--border); /* bílé tlačítko, ať je vidět na průhledné i bílé liště */
+  color: var(--text); box-shadow: 0 1px 2px rgba(30, 40, 30, .06);
   transition: background .15s, border-color .15s, color .15s;
 }
 #menuBtn:hover, #menuBtn[aria-expanded="true"] {
