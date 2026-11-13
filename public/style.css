@@ -379,14 +379,14 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 }
 .q-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; } /* výřez spíš nahoře – hlavy u portrétů */
 /* obrázek na výšku nebo malý: celý a nezvětšený, kolem rozmazaná verze téhož obrázku */
-.q-image.fit:not(.contain) img { object-fit: scale-down; }
+.q-image.fit:not(.contain) img { object-fit: scale-down; object-position: center; }
 .q-image.fit:not(.contain)::before {
   content: ""; position: absolute; inset: -20px;
   background: var(--img) center / cover; filter: blur(18px) brightness(.85); opacity: .7;
 }
 /* vlajky a kresby (SVG) neořezávat – celé na bílém */
 .q-image.contain { background: #fff; }
-.q-image.contain img { object-fit: contain; padding: 6%; }
+.q-image.contain img { object-fit: contain; object-position: center; padding: 6%; }
 /* autor a licence: malým písmem dole přes fotku (nerozšiřuje sloupec) */
 .q-image figcaption {
   position: absolute; left: 0; right: 0; bottom: 0;
