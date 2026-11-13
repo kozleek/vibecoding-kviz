@@ -399,6 +399,7 @@ function stopBubbles() {
   $("topicBubbles").innerHTML = "";
 }
 // nová bublina na náhodném volném místě (mimo pole se zadáním a ostatní bubliny); vrací false, když se nevejde
+const BUBBLE_EDGE_BOTTOM = 64; // volné místo nad lištou týmů (px)
 function spawnBubble(delay = 0) {
   const box = $("topicBubbles");
   const area = box.getBoundingClientRect();
@@ -441,7 +442,7 @@ function spawnBubble(delay = 0) {
   for (const o of box.children) if (o !== b && o.env) avoid.push(o.env);
   for (let tries = 0; tries < 80; tries++) {
     const x = w / 2 + Math.random() * Math.max(0, area.width - w);
-    const y = h / 2 + Math.random() * Math.max(0, area.height - h);
+    const y = h / 2 + Math.random() * Math.max(0, area.height - h - BUBBLE_EDGE_BOTTOM); // ochranná zóna nad lištou týmů
     const r = { l: x - w / 2, t: y - h / 2, r: x + w / 2, b: y + h / 2 };
     if (avoid.some((a) => r.l < a.r && r.r > a.l && r.t < a.b && r.b > a.t)) continue;
     b.env = r;
