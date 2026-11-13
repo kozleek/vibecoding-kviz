@@ -378,6 +378,12 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0, 0, 0, .06); /* světlý obrázek nesplyne s bílou kartou */
 }
 .q-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; } /* výřez spíš nahoře – hlavy u portrétů */
+/* obrázek na výšku nebo malý: celý a nezvětšený, kolem rozmazaná verze téhož obrázku */
+.q-image.fit:not(.contain) img { object-fit: scale-down; }
+.q-image.fit:not(.contain)::before {
+  content: ""; position: absolute; inset: -20px;
+  background: var(--img) center / cover; filter: blur(18px) brightness(.85); opacity: .7;
+}
 /* vlajky a kresby (SVG) neořezávat – celé na bílém */
 .q-image.contain { background: #fff; }
 .q-image.contain img { object-fit: contain; padding: 6%; }

@@ -739,6 +739,8 @@ function renderQuestion(animate = false) {
   $("qImage").hidden = !q.image;
   // vlajky a kresby (SVG z Wikimedia) se neořezávají
   $("qImage").classList.toggle("contain", isDrawing(q.image?.src));
+  if (q.image) $("qImage").style.setProperty("--img", `url("${q.image.src}")`);
+  fitImage();
   if (q.image) {
     if ($("qImg").getAttribute("src") !== q.image.src) $("qImg").src = q.image.src;
     $("qImgCredit").hidden = !q.revealed;
@@ -816,6 +818,20 @@ function imageReady(q, timeout = 2000) {
   preloadImages();
   return Promise.race([imgCache.get(q.image.src), new Promise((r) => setTimeout(r, timeout))]);
 }
+
+// cover jen když se z obrázku ořízne málo a nezvětšuje se; jinak celý (na výšku, malý) na rozmazaném pozadí
+function fitImage() {
+  const fig = $("qImage"), im = $("qImg");
+  if (fig.hidden || !im.naturalWidth) return;
+  const box = fig.getBoundingClientRect();
+  if (!box.width || !box.height) return;
+  const ar = im.naturalWidth / im.naturalHeight, arBox = box.width / box.height;
+  const crop = 1 - Math.min(ar / arBox, arBox / ar); // podíl obrázku, který by cover uřízl
+  const small = im.naturalWidth < box.width || im.naturalHeight < box.height;
+  fig.classList.toggle("fit", small || crop > 0.3);
+}
+$("qImg").addEventListener("load", fitImage);
+window.addEventListener("resize", fitImage);
 
 // obrázek je kresba (SVG – vlajka, schéma)? URL přes proxy nese původní adresu v base64url
 function isDrawing(src) {
