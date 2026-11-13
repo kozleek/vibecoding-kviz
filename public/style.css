@@ -818,6 +818,9 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .dialog td { padding: 8px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .dialog .shortcuts td:first-child { width: 45%; }
 .dialog.help { max-width: 580px; padding: 28px 36px 32px; }
+/* klávesové zkratky: širší, popisy na jeden řádek */
+#helpDialog { max-width: 860px; }
+#helpDialog .shortcuts td:first-child { width: 34%; }
 .dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -6px -10px 14px 0; } /* křížek zarovnaný s nadpisem */
 .dialog .dialog-head h3 { margin: 0; outline: none; line-height: 1.2; }
 .dialog .dialog-head form { margin: 0; }
