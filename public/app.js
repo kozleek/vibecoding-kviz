@@ -1495,7 +1495,6 @@ function applyTeamsLayout() {
   renderHeader();
   renderTeams();
 }
-// běžící kvíz, archiv a archivní kvíz; hamburger menu jen na zadání a při načítání
 // horní lišta: vlevo jen název, vpravo vždy menu; zavření podle kontextu je první položkou menu (a Esc)
 function renderHeader() {
   const big = !!state.bigTeams;
