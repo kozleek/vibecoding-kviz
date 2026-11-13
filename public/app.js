@@ -1947,28 +1947,62 @@ function timelineText(ev, entry) {
     default: return ev.type;
   }
 }
+// průběh kvízu: každá návštěva otázky je karta, pod ní štítky s odpověďmi a body; ostatní události jsou milníky na ose
+const TL_ICONS = { start: "ph-flag", results: "ph-trophy", leave: "ph-door-open", resume: "ph-play", teams: "ph-users-three" };
 function renderTimeline() {
   const { entry } = state;
   const list = $("timelineList");
   list.innerHTML = "";
   const start = entry.events[0]?.t ?? entry.createdAt;
-  for (const ev of entry.events) {
-    const li = el("li", "tl-" + ev.type + (ev.type === "points" && ev.delta < 0 ? " tl-minus" : ""));
-    const s = Math.max(0, Math.round((ev.t - start) / 1000));
+  const fmtTime = (t) => {
+    const s = Math.max(0, Math.round((t - start) / 1000));
     const time = el("time", null, `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`);
-    time.dateTime = new Date(ev.t).toISOString();
-    time.title = fmtDate(ev.t);
-    li.append(time, el("span", "tl-text", timelineText(ev, entry)));
-    if (ev.scores?.length && ev.type !== "start") {
-      li.append(el("span", "tl-scores", ev.scores.map((t) => `${t.emoji} ${t.score}`).join("  ")));
+    time.dateTime = new Date(t).toISOString();
+    time.title = fmtDate(t);
+    return time;
+  };
+  let group = null; // aktuální karta otázky
+  for (const ev of entry.events) {
+    if (ev.type === "question") {
+      const q = entry.questions[ev.q];
+      group = el("li", "tl-group");
+      group.title = `Otevřít otázku ${ev.q + 1}`;
+      group.addEventListener("click", () => goTo(ev.q));
+      const head = el("div", "tl-head");
+      head.append(el("span", "tl-num", String(ev.q + 1)), el("span", "tl-qtext", q?.question ?? ""), fmtTime(ev.t));
+      group.append(head, el("div", "tl-items"));
+      group.dataset.q = ev.q;
+      list.appendChild(group);
+      continue;
     }
-    if (ev.q != null) {
-      li.dataset.q = ev.q;
-      li.title = `Otevřít otázku ${ev.q + 1}`;
-      li.addEventListener("click", () => goTo(ev.q));
+    // odpověď a body k otázce → štítek do karty
+    if (group && ["pick", "reveal", "points"].includes(ev.type) && ev.q === Number(group.dataset.q)) {
+      let chip;
+      if (ev.type === "pick") chip = el("span", "tl-chip " + (ev.correct ? "ok" : "bad"), `${ev.key.toUpperCase()} · ${ev.correct ? "správně" : "špatně"}`);
+      else if (ev.type === "reveal") chip = el("span", "tl-chip", "odpověď ukázána");
+      else {
+        const pts = ev.delta > 0 ? `+${ev.delta}` : String(ev.delta);
+        const who = ev.all ? [{ emoji: "👥", name: "Všem", color: "var(--accent)" }] : ev.who;
+        for (const t of who) {
+          const c = el("span", "tl-chip tl-team" + (ev.delta < 0 ? " minus" : ""), `${t.emoji} ${t.name} ${pts}`);
+          c.style.setProperty("--team", t.color);
+          group.lastChild.append(c);
+        }
+        continue;
+      }
+      group.lastChild.append(chip);
+      continue;
     }
+    // ostatní: milník na ose
+    group = ev.type === "teams" ? group : null;
+    const li = el("li", "tl-milestone tl-" + ev.type);
+    const icon = el("i", "ph " + (TL_ICONS[ev.type] || "ph-dot"));
+    icon.setAttribute("aria-hidden", "true");
+    li.append(icon, el("span", "tl-text", timelineText(ev, entry).replace(/^🏆\s*/, "")), fmtTime(ev.t));
     list.appendChild(li);
   }
+  // karty bez odpovědi i bodů: štítek „bez odpovědi“, ať karta nevypadá rozbitě
+  list.querySelectorAll(".tl-items:empty").forEach((x) => x.append(el("span", "tl-chip muted", "bez odpovědi")));
 }
 
 /* ---------- Start ---------- */

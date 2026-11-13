@@ -1085,25 +1085,46 @@ body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: c
 }
 .team .gain.minus { background: var(--bad); }
 
-.timeline { max-width: 820px; margin: clamp(28px, 5vh, 56px) auto 0; text-align: left; }
-.timeline h3 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; margin: 0 0 12px; }
-.timeline ol { list-style: none; margin: 0 0 0 8px; padding: 0; border-left: 2px solid var(--border); }
-.timeline li { position: relative; display: flex; align-items: baseline; gap: 14px; padding: 6px 8px 6px 20px; border-radius: 10px; }
-.timeline li::before {
-  content: ""; position: absolute; left: -6px; top: 13px;
-  width: 10px; height: 10px; border-radius: 50%; background: var(--border);
+.timeline { max-width: 860px; margin: clamp(28px, 5vh, 56px) auto 0; text-align: left; }
+.timeline h3 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; margin: 0 0 16px; }
+/* svislá osa vlevo, na ní čísla otázek a ikony milníků */
+.timeline ol { list-style: none; margin: 0; padding: 0 0 0 46px; position: relative; display: grid; gap: 10px; }
+.timeline ol::before { content: ""; position: absolute; left: 17px; top: 14px; bottom: 14px; width: 2px; background: var(--border); }
+.timeline time { flex: none; margin-left: auto; color: var(--muted); font-weight: 500; font-size: .82rem; font-variant-numeric: tabular-nums; }
+/* karta otázky */
+.tl-group {
+  position: relative; padding: 12px 16px; border-radius: 16px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); transition: border-color .15s, box-shadow .15s;
 }
-.timeline li.tl-question { font-weight: 700; margin-top: 8px; }
-.timeline li.tl-question::before, .timeline li.tl-start::before, .timeline li.tl-results::before { background: var(--accent); }
-.timeline li.tl-points::before { background: var(--good); }
-.timeline li.tl-minus::before { background: var(--bad); }
-.timeline li.tl-pick, .timeline li.tl-reveal, .timeline li.tl-teams { color: var(--muted); }
-.timeline li[data-q] { cursor: pointer; }
-.timeline li[data-q]:hover { background: var(--surface); }
-.timeline time { flex: none; width: 3.6em; color: var(--muted); font-weight: 500; font-size: .85rem; font-variant-numeric: tabular-nums; }
-.timeline .tl-text { flex: 1; min-width: 0; }
-.timeline .tl-scores { flex: none; color: var(--muted); font-size: .85rem; font-weight: 500; white-space: pre; }
-@media (max-width: 720px) { .timeline .tl-scores { display: none; } }
+.tl-group:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.tl-head { display: flex; align-items: baseline; gap: 12px; }
+.tl-num {
+  position: absolute; left: -46px; top: 10px; width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; font-weight: 800; font-size: .95rem;
+  background: var(--accent); color: #fff; box-shadow: 0 0 0 4px var(--bg);
+}
+.tl-qtext { flex: 1; min-width: 0; font-weight: 600; line-height: 1.35; }
+.tl-items { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tl-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px;
+  font-size: .82rem; font-weight: 600; background: var(--bg-2); color: var(--muted);
+}
+.tl-chip.ok { background: var(--good-soft); color: var(--good); }
+.tl-chip.bad { background: var(--bad-soft); color: var(--bad); }
+.tl-chip.tl-team { background: color-mix(in srgb, var(--team) 14%, var(--surface)); color: var(--text); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--team) 40%, transparent); }
+.tl-chip.tl-team.minus { color: var(--bad); }
+.tl-chip.muted { background: transparent; box-shadow: inset 0 0 0 1px var(--border); font-weight: 500; }
+/* milník (start, výsledky, zavření, změny týmů) */
+.tl-milestone { position: relative; display: flex; align-items: center; gap: 10px; padding: 4px 16px 4px 0; color: var(--muted); font-weight: 600; font-size: .92rem; }
+.tl-milestone .ph {
+  position: absolute; left: -46px; width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.05rem;
+  background: var(--surface); border: 2px solid var(--border); box-shadow: 0 0 0 4px var(--bg);
+}
+.tl-milestone.tl-results { color: var(--text); }
+.tl-milestone.tl-results .ph { background: #f5c542; border-color: #f5c542; color: #6b4e00; }
+.tl-milestone .tl-text { padding-left: 2px; }
+.tl-milestone { min-height: 36px; }
 /* výsledky: pořadí s body je na stupních, spodní lišta týmů by se jen opakovala (v nastavení zůstává) */
 body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important; }
 body[data-view="results"]:not(.teams-big) { grid-template-rows: auto 1fr; }
