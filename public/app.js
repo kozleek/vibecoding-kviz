@@ -146,7 +146,7 @@ function applySetupGradient() {
   document.body.dataset.diff = LEVEL_DIFF[level];
 }
 document.querySelectorAll('input[name="level"]').forEach((r) =>
-  r.addEventListener("change", () => { if (state.view === "setup") applySetupGradient(); })
+  r.addEventListener("change", () => { if (state.view === "setup") applySetupGradient(); renderSettingsSummary(); })
 );
 function topicList() {
   return $("topic").value.split(/[,;]+/).map((t) => t.trim()).filter(Boolean);
@@ -258,7 +258,7 @@ $("extraClear").addEventListener("click", () => {
   buildExtraFields();
   $("extra-audience").focus();
 });
-$("extraDialog").addEventListener("close", renderExtraBtn);
+$("extraDialog").addEventListener("close", () => { renderExtraBtn(); renderSettingsSummary(); });
 $("extraDialog").addEventListener("click", (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 
 /* ---------- Jednoduché / pokročilé zadání ---------- */
@@ -491,6 +491,7 @@ function setCount(n) {
   n = Math.min(100, Math.max(3, Number(n) || 10));
   $("count").value = n;
   document.querySelectorAll("#countChips .chip").forEach((c) => c.classList.toggle("active", Number(c.dataset.count) === n));
+  renderSettingsSummary();
 }
 document.querySelectorAll(".stepper button[data-step]").forEach((b) =>
   b.addEventListener("click", () => setCount(Number($("count").value) + Number(b.dataset.step)))
@@ -505,12 +506,29 @@ function setAnswerTime(n) {
   document.querySelectorAll("#timeChips .chip").forEach((c) => c.classList.toggle("active", Number(c.dataset.time) === n));
   state.answerTime = n;
   save();
+  renderSettingsSummary();
 }
 document.querySelectorAll(".stepper button[data-tstep]").forEach((b) =>
   b.addEventListener("click", () => setAnswerTime(Number($("answerTime").value) + Number(b.dataset.tstep)))
 );
 document.querySelectorAll("#timeChips .chip").forEach((c) => c.addEventListener("click", () => setAnswerTime(c.dataset.time)));
 $("answerTime").addEventListener("change", () => setAnswerTime($("answerTime").value));
+
+// jednoduchý režim: místo „Pokročilé nastavení“ shrnutí aktuálního nastavení (klik otevře pokročilé)
+const IMAGE_LABELS = { none: "bez obrázků", some: "některé s obrázky", all: "všechny s obrázky" };
+function renderSettingsSummary() {
+  const level = document.querySelector('input[name="level"]:checked')?.value || "mix";
+  const t = state.answerTime || 0;
+  const parts = [
+    plural(Number($("count").value) || 10, "otázka", "otázky", "otázek"),
+    (LEVEL_NAMES[level] || level).toLowerCase(),
+    IMAGE_LABELS[state.images] || IMAGE_LABELS.none,
+    t ? `${t} s na odpověď` : "bez odpočtu",
+  ];
+  if (extraInstructions()) parts.push("upřesněno");
+  $("settingsSummary").textContent = parts.join(" · ");
+  $("advancedModeBtn").setAttribute("aria-label", `Pokročilé nastavení: ${parts.join(", ")}`);
+}
 
 // obrázkové otázky: none / some / all (pamatuje se ve state.images)
 function setImageMode(mode) {
@@ -521,6 +539,7 @@ function setImageMode(mode) {
     c.setAttribute("aria-checked", on);
   });
   save();
+  renderSettingsSummary();
 }
 document.querySelectorAll("#imageModes .chip").forEach((c) => c.setAttribute("role", "radio"));
 document.querySelectorAll("#imageModes .chip").forEach((c) => c.addEventListener("click", () => setImageMode(c.dataset.images)));
