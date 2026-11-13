@@ -426,6 +426,33 @@ $("setupForm").addEventListener("submit", async (e) => {
   generateQuiz(body);
 });
 
+/* ---------- Přístupový token ---------- */
+// generování na serveru je chráněné tokenem; drží se v localStorage, jde předat i odkazem ?token=…
+const TOKEN_KEY = "kviz-token";
+const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; } };
+const setToken = (t) => { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} };
+(() => {
+  const url = new URL(location.href);
+  const t = url.searchParams.get("token");
+  if (t === null) return;
+  setToken(t.trim());
+  url.searchParams.delete("token"); // token nenechávat v adresním řádku ani historii
+  history.replaceState(null, "", url);
+})();
+function askToken(hint) {
+  const dlg = $("tokenDialog");
+  $("tokenHint").textContent = hint || "Generování kvízů je chráněné tokenem. Zadej ho jednou, prohlížeč si ho zapamatuje.";
+  $("tokenInput").value = "";
+  dlg.returnValue = "";
+  dlg.showModal();
+  return new Promise((resolve) => {
+    dlg.addEventListener("close", () => {
+      const t = $("tokenInput").value.trim();
+      if (dlg.returnValue === "ok" && t) { setToken(t); resolve(t); } else resolve("");
+    }, { once: true });
+  });
+}
+
 // vygenerovat kvíz přes API (ze zadání i „Hrát znovu“ v archivu) a spustit ho
 async function generateQuiz(body) {
   const randomTopic = !!body.randomTopic;
@@ -434,12 +461,21 @@ async function generateQuiz(body) {
   if (randomTopic) startTopicDraw();
   else showLoadingTopic(body.topic);
   try {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json().catch(() => ({}));
+    let res, data;
+    // bez platného tokenu se zeptat na token a zkusit to znovu
+    for (let hint = ""; ; hint = "Token nesedí, zkus to znovu.") {
+      let token = getToken();
+      if (!token) token = await askToken(hint);
+      if (!token) { stopTopicDraw(); show("setup"); return; }
+      res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body),
+      });
+      data = await res.json().catch(() => ({}));
+      if (res.status !== 401 || data.code !== "token") break;
+      setToken("");
+    }
     if (!res.ok) throw new Error(data.error || "Generování selhalo.");
     state.quiz = {
       topic: data.topic,

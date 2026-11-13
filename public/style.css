@@ -174,12 +174,12 @@ legend.label { margin-bottom: 10px; }
 .extra-btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn:disabled:hover { border-color: var(--border); }
 .dialog .extra-hint { margin: 0 0 10px; }
-#extra {
+#extra, .token-input {
   width: 100%; display: block;
   font: inherit; font-size: 1.05rem; line-height: 1.45; resize: vertical; min-height: 80px;
   padding: 12px 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--bg); color: var(--text);
 }
-#extra:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+#extra:focus, .token-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
 .input-xl:disabled { opacity: .55; cursor: not-allowed; }
 .chip {
   border: 1px solid var(--border); background: var(--bg);

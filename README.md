@@ -8,9 +8,15 @@ Vyžaduje Node.js 22+.
 
 ```bash
 npm install
-cp .env.example .env   # doplň ANTHROPIC_API_KEY
+cp .env.example .env   # doplň ANTHROPIC_API_KEY a ACCESS_TOKEN
 npm start              # http://localhost:3000  (npm run dev = s auto-reloadem)
 ```
+
+## Přístupový token
+
+Generování přes API je chráněné tokenem z env proměnné `ACCESS_TOKEN` (např. `openssl rand -hex 24`), aby nikdo cizí negeneroval kvízy na tvůj API klíč. Bez nastaveného tokenu je generování vypnuté.
+
+V aplikaci se token zadá při prvním generování a prohlížeč si ho zapamatuje (`localStorage`, klíč `kviz-token`). Lze ho předat i odkazem `https://…/?token=…` – uloží se a z adresy se hned odstraní. Ukázkové kvízy a archiv token nepotřebují.
 
 ## Zadání kvízu
 
@@ -66,9 +72,9 @@ Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlí
 
 ## Struktura
 
-- `server.js` – Express server, statické soubory z `public/` a endpoint `POST /api/generate` (strukturovaný výstup přes JSON schema).
+- `server.js` – Express server, statické soubory z `public/` a endpoint `POST /api/generate` (hlavička `Authorization: Bearer <ACCESS_TOKEN>`, strukturovaný výstup přes JSON schema).
 - `public/index.html`, `public/app.js`, `public/style.css` – celá aplikace na klientu, bez buildu.
 
 ## Deploy (Coolify / Nixpacks)
 
-Nixpacks pozná Node app a spustí `npm start`. V Coolify nastav env proměnnou `ANTHROPIC_API_KEY` (volitelně `CLAUDE_MODEL`, port bere z `PORT`).
+Nixpacks pozná Node app a spustí `npm start`. V Coolify nastav env proměnné `ANTHROPIC_API_KEY` a `ACCESS_TOKEN` (volitelně `CLAUDE_MODEL`, port bere z `PORT`).

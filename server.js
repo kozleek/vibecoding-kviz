@@ -1,8 +1,11 @@
 import express from "express";
 import Anthropic from "@anthropic-ai/sdk";
+import { createHash, timingSafeEqual } from "node:crypto";
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5-5";
+// přístupový token pro generování – bez něj by kdokoli mohl generovat kvízy na náš API klíč
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "";
 const MIN_QUESTIONS = 3;
 const MAX_QUESTIONS = 100;
 // náhodné téma: oblast losuje server – se stále stejným promptem by model volil pořád totéž (např. kávu)
@@ -90,7 +93,19 @@ function shuffleAnswers(q) {
   return { ...q, answers, correct };
 }
 
-app.post("/api/generate", async (req, res) => {
+// porovnání hashů v konstantním čase (bez úniku délky / prefixu tokenu)
+const sha = (v) => createHash("sha256").update(String(v)).digest();
+function requireToken(req, res, next) {
+  if (!ACCESS_TOKEN) return res.status(503).json({ error: "Generování není povolené: na serveru chybí ACCESS_TOKEN." });
+  const header = req.get("authorization") || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  if (!token || !timingSafeEqual(sha(token), sha(ACCESS_TOKEN))) {
+    return res.status(401).json({ error: "Neplatný nebo chybějící přístupový token.", code: "token" });
+  }
+  next();
+}
+
+app.post("/api/generate", requireToken, async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
   const randomTopic = req.body?.randomTopic === true;
   const instructions = String(req.body?.instructions || "").trim().slice(0, 1500);
@@ -172,4 +187,5 @@ app.post("/api/generate", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Kvíz běží na http://localhost:${PORT}`);
   if (!process.env.ANTHROPIC_API_KEY) console.warn("⚠️  Není nastaven ANTHROPIC_API_KEY (viz .env.example).");
+  if (!ACCESS_TOKEN) console.warn("⚠️  Není nastaven ACCESS_TOKEN – generování kvízů je vypnuté (viz .env.example).");
 });

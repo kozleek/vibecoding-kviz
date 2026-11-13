@@ -242,6 +242,22 @@
     </div>
   </dialog>
 
+  <!-- ===== Přístupový token ===== -->
+  <dialog id="tokenDialog" class="dialog help">
+    <form method="dialog" id="tokenForm">
+      <div class="dialog-head">
+        <h3>Přístupový token</h3>
+        <button class="icon-btn" value="cancel" formnovalidate aria-label="Zavřít" title="Zavřít"><i class="ph ph-x"></i></button>
+      </div>
+      <p class="muted extra-hint" id="tokenHint">Generování kvízů je chráněné tokenem. Zadej ho jednou, prohlížeč si ho zapamatuje.</p>
+      <input id="tokenInput" type="password" class="token-input" autocomplete="current-password" aria-label="Přístupový token" required autofocus>
+      <div class="confirm-actions">
+        <button class="btn ghost" value="cancel" formnovalidate>Zrušit</button>
+        <button class="btn primary" value="ok">Uložit a generovat</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- ===== Potvrzení ===== -->
   <dialog id="confirmDialog" class="dialog confirm">
     <form method="dialog">
