@@ -481,6 +481,18 @@ document.querySelectorAll(".stepper button").forEach((b) =>
 document.querySelectorAll("#countChips .chip").forEach((c) => c.addEventListener("click", () => setCount(c.dataset.count)));
 $("count").addEventListener("change", () => setCount($("count").value));
 
+// obrázkové otázky: none / some / all (pamatuje se ve state.images)
+function setImageMode(mode) {
+  state.images = ["none", "some", "all"].includes(mode) ? mode : "none";
+  document.querySelectorAll("#imageModes .chip").forEach((c) => {
+    const on = c.dataset.images === state.images;
+    c.classList.toggle("active", on);
+    c.setAttribute("aria-pressed", on);
+  });
+  save();
+}
+document.querySelectorAll("#imageModes .chip").forEach((c) => c.addEventListener("click", () => setImageMode(c.dataset.images)));
+
 $("setupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const topics = topicList();
@@ -499,6 +511,7 @@ $("setupForm").addEventListener("submit", async (e) => {
     avoidTopics: randomTopic ? [...new Set(archive.map((e) => e.topic))].slice(0, 30) : undefined,
     count: Number($("count").value),
     level: new FormData(e.target).get("level"),
+    images: state.images || "none",
   };
   generateQuiz(body);
 });
@@ -563,7 +576,9 @@ async function generateQuiz(body) {
       questions: data.questions.map((q) => ({ ...q, picked: null, revealed: false })),
     };
     state.index = 0;
-    archiveStart("ai", { count: body.count, instructions: body.instructions, randomTopic });
+    archiveStart("ai", { count: body.count, instructions: body.instructions, randomTopic, images: body.images });
+    // obrázky přednačíst hned, ať se pak při kvízu nečeká (slabá wifi)
+    for (const q of state.quiz.questions) if (q.image) new Image().src = q.image.src;
     // náhodné téma: nejdřív chvíli ukázat vylosované téma, pak kvíz
     if (randomTopic) await revealTopicDraw(data.topic);
     else stopTopicDraw();
@@ -705,6 +720,15 @@ function renderQuestion(animate = false) {
   $("qPoints").hidden = !adaptiveOn();
   $("qPoints").textContent = adaptiveOn() ? pointsLabel(diffPoints(q.difficulty)) : "";
   $("qText").textContent = q.question;
+  // obrázková otázka: autor a licence obrázku až s odpovědí (popisek by mohl napovídat)
+  const card = $("questionCard");
+  card.classList.toggle("has-image", !!q.image);
+  $("qImage").hidden = !q.image;
+  if (q.image) {
+    if ($("qImg").getAttribute("src") !== q.image.src) $("qImg").src = q.image.src;
+    $("qImgCredit").hidden = !q.revealed;
+    $("qImgCredit").textContent = `${q.image.page} · ${q.image.credit} · Wikimedia Commons`;
+  } else $("qImg").removeAttribute("src");
 
   const wrap = $("answers");
   wrap.innerHTML = "";
@@ -738,7 +762,6 @@ function renderQuestion(animate = false) {
   $("nextBtn").classList.toggle("primary", q.revealed);
 
   if (animate) {
-    const card = $("questionCard");
     card.classList.remove("enter");
     void card.offsetWidth;
     card.classList.add("enter");
@@ -1704,6 +1727,7 @@ async function replayEntry(id) {
       instructions: entry.request?.instructions || "",
       count: entry.questions.length,
       level: entry.level,
+      images: entry.request?.images || "none",
     });
   }
   state.quiz = {
@@ -1899,6 +1923,7 @@ function renderTimeline() {
 
 /* ---------- Start ---------- */
 setSetupMode(state.setupMode, false);
+setImageMode(state.images);
 setCount($("count").value);
 applyTeamsLayout();
 if (state.view === "loading" || (!state.quiz && !["setup", "archive"].includes(state.view))) state.view = state.quiz ? "quiz" : "setup";

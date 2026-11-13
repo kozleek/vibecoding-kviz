@@ -98,7 +98,14 @@
             <label class="level"><input type="radio" name="level" value="mix" checked><span><i>🍂</i><b>Mix</b><small>od všeho trochu</small></span></label>
           </div>
         </fieldset>
-
+        <div class="field adv-only">
+          <span class="label" id="imagesLabel">Obrázkové otázky <span class="muted">· obrázky z Wikipedie</span></span>
+          <div class="chips" id="imageModes" role="group" aria-labelledby="imagesLabel">
+            <button type="button" class="chip" data-images="none"><i class="ph ph-text-aa" aria-hidden="true"></i> Bez obrázků</button>
+            <button type="button" class="chip" data-images="some"><i class="ph ph-image" aria-hidden="true"></i> Některé</button>
+            <button type="button" class="chip" data-images="all"><i class="ph ph-images" aria-hidden="true"></i> Všechny</button>
+          </div>
+        </div>
 
         <button class="btn primary xl adv-only" type="submit" id="generateBtn">Vygenerovat kvíz <span aria-hidden="true">→</span></button>
       </form>
@@ -133,6 +140,11 @@
           <span class="pill skipped-pill" id="qSkipped" hidden>během kvízu neodhaleno</span>
         </div>
 
+        <!-- obrázková otázka: obrázek z Wikipedie, autor a licence až po odhalení odpovědi -->
+        <figure class="q-image" id="qImage" hidden>
+          <img id="qImg" alt="Obrázek k otázce">
+          <figcaption id="qImgCredit" hidden></figcaption>
+        </figure>
         <h2 class="q-text" id="qText"></h2>
 
         <div class="answers" id="answers"></div>
