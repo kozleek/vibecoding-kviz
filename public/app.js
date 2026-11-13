@@ -1441,7 +1441,7 @@ document.addEventListener("keydown", (e) => {
   if (k === "a" || k === "b" || k === "c") pick(k);
   else if (e.key === " " || e.key === "Enter") {
     e.preventDefault();
-    currentQ()?.revealed ? go(1) : reveal();
+    if (currentQ()?.revealed) { flashButton("nextBtn"); go(1); } else reveal();
   } else if (e.key === "ArrowRight") { flashButton("nextBtn"); go(1); }
   else if (e.key === "ArrowLeft") { flashButton("prevBtn"); go(-1); }
 });

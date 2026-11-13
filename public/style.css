@@ -436,8 +436,8 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 }
 .side-btn:hover:not(:disabled) { border-color: var(--border); color: var(--text); background: var(--surface); }
 .side-btn:active:not(:disabled), .side-btn.is-pressed { transform: scale(.92); }
-.side-btn.is-pressed:not(.primary) { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
-.side-btn.primary.is-pressed { filter: brightness(1.15); }
+/* stisk klávesou: stejná odezva u obou šipek, i když je „další“ zvýrazněné (primary) */
+.side-btn.is-pressed, .side-btn.primary.is-pressed { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .side-btn.is-pressed:disabled { opacity: 1; }
 .side-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .side-btn:disabled { opacity: .15; cursor: default; box-shadow: none; }
