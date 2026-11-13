@@ -339,19 +339,23 @@ body.teams-big .answer-timer { display: none; }
   padding: 6px 14px; border-radius: 99px; font-weight: 600; font-size: .95rem;
   background: var(--bg-2); color: var(--text);
 }
-.level-pill.lehká { background: var(--good-soft); color: var(--good); }
-.level-pill.střední { background: var(--warn-soft); color: var(--warn); }
-.level-pill.těžká { background: var(--bad-soft); color: var(--bad); }
-.level-pill.hardcore { background: var(--text); color: var(--surface); }
-/* mix: jemný duhový přechod (barvy úrovní + fialová a modrá), funguje i v tmavém režimu */
+/* štítky obtížnosti: podklad + rámeček v barvě úrovně */
+.level-pill { border: 1.5px solid transparent; }
+.level-pill.lehká { background: var(--good-soft); color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.level-pill.střední { background: var(--warn-soft); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+.level-pill.těžká { background: var(--bad-soft); color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+.level-pill.hardcore { background: var(--text); color: var(--surface); border-color: var(--text); }
+/* mix: jemný duhový přechod (barvy úrovní + fialová a modrá) a sytější duhový rámeček; funguje i v tmavém režimu */
 .level-pill.mix {
   color: var(--text);
-  background: linear-gradient(90deg,
-    color-mix(in srgb, #5bb77d 42%, var(--surface)),
-    color-mix(in srgb, #eaa846 42%, var(--surface)),
-    color-mix(in srgb, #e2685a 42%, var(--surface)),
-    color-mix(in srgb, #9a72d6 42%, var(--surface)),
-    color-mix(in srgb, #4f8fd6 42%, var(--surface)));
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, #5bb77d 42%, var(--surface)),
+      color-mix(in srgb, #eaa846 42%, var(--surface)),
+      color-mix(in srgb, #e2685a 42%, var(--surface)),
+      color-mix(in srgb, #9a72d6 42%, var(--surface)),
+      color-mix(in srgb, #4f8fd6 42%, var(--surface))) padding-box,
+    linear-gradient(90deg, #5bb77d, #eaa846, #e2685a, #9a72d6, #4f8fd6) border-box;
 }
 body[data-diff="lehká"] { --dc: #5bb77d; --dd: #2a6b45; }
 body[data-diff="střední"] { --dc: #eaa846; --dd: #9c5a16; }
