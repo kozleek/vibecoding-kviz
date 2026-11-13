@@ -1787,8 +1787,9 @@ function archiveItem(entry, liveId) {
     const item = el("div", "card archive-item");
     const open = el("button", "archive-open");
     open.setAttribute("aria-label", `${finished ? "Zobrazit" : "Pokračovat v kvízu"} ${entry.topic}`);
+    // dokončený kvíz (i ten právě běžící, např. dohraný ukázkový) = detail s křížkem; nedokončený se hraje dál
     open.addEventListener("click", () =>
-      entry.id === liveId ? openReview(entry.id) : finished ? openReview(entry.id) : resumeQuiz(entry.id)
+      finished ? openReview(entry.id, true) : entry.id === liveId ? openReview(entry.id) : resumeQuiz(entry.id)
     );
 
     const main = el("div", "archive-main");
