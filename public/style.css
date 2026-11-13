@@ -1086,7 +1086,6 @@ body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: c
 .team .gain.minus { background: var(--bad); }
 
 .timeline { max-width: 860px; margin: clamp(28px, 5vh, 56px) auto 0; text-align: left; }
-.timeline h3 { font-family: var(--display); font-weight: 800; font-size: 1.5rem; margin: 0 0 16px; }
 /* svislá osa vlevo, na ní čísla otázek a ikony milníků */
 .timeline ol { list-style: none; margin: 0; padding: 0 0 0 46px; position: relative; display: grid; gap: 10px; }
 .timeline ol::before { content: ""; position: absolute; left: 17px; top: 14px; bottom: 14px; width: 2px; background: var(--border); }
