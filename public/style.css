@@ -927,7 +927,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
     color-mix(in srgb, var(--tint) 16%, var(--surface));
   border: 1.5px solid color-mix(in srgb, var(--tint) 38%, var(--surface));
   box-shadow: 0 6px 20px color-mix(in srgb, var(--tint) 18%, transparent), inset 0 -3px 8px color-mix(in srgb, var(--tint) 10%, transparent);
-  opacity: var(--o, 1);
+  opacity: calc(var(--o, 1) * .55); /* nevýrazné, ať neruší zadání – plná barva až na hover */
   translate: -50% -50%;
   animation:
     bubble-float var(--dur, 8s) ease-in-out infinite alternate,
@@ -937,6 +937,7 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 .bubble-emoji { font-size: 1.15em; line-height: 1; }
 .bubble:hover {
   scale: 1.1; opacity: 1; z-index: 5 !important; border-color: var(--tint);
+  transition: opacity .2s ease, scale .3s cubic-bezier(.34, 1.4, .64, 1), border-color .2s, box-shadow .2s;
   box-shadow: 0 10px 28px color-mix(in srgb, var(--tint) 32%, transparent);
 }
 .bubble.out { opacity: 0; scale: .3; pointer-events: none; }
