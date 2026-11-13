@@ -378,11 +378,20 @@ function startBubbles() {
     if (state.view !== "setup" || state.setupMode === "advanced") return;
     const box = $("topicBubbles");
     const area = box.getBoundingClientRect();
-    const target = Math.round(Math.min(24, Math.max(7, (area.width * area.height) / 36000)));
-    // postupné „vyplutí“ bublin jedna po druhé
-    for (let i = 0; i < target * 6 && box.children.length < target; i++) spawnBubble(box.children.length * 160);
+    bubbleTarget = Math.round(Math.min(24, Math.max(7, (area.width * area.height) / 36000)));
+    fillBubbles();
+    // pojistka: po přepnutí režimu se rozložení může ještě chvíli měnit – dorovnat znovu
+    setTimeout(fillBubbles, 400);
     bubbleTimer = setInterval(swapBubble, 3200);
   });
+}
+// doplnit bubliny do cílového počtu (postupné „vyplutí“ jedna po druhé)
+let bubbleTarget = 0;
+function fillBubbles() {
+  if (state.view !== "setup" || state.setupMode === "advanced") return;
+  const box = $("topicBubbles");
+  const start = box.children.length;
+  for (let i = 0; i < bubbleTarget * 6 && box.children.length < bubbleTarget; i++) spawnBubble((box.children.length - start) * 160);
 }
 function stopBubbles() {
   clearInterval(bubbleTimer);
@@ -448,7 +457,10 @@ function spawnBubble(delay = 0) {
 }
 // jedna bublina „praskne“ a jinde vypluje nová
 function swapBubble() {
-  const live = [...$("topicBubbles").children].filter((b) => !b.classList.contains("out"));
+  const box = $("topicBubbles");
+  // chybí-li bubliny (nevešly se), dorovnat místo výměny – obrazovka nikdy nezůstane prázdná
+  if (box.children.length < bubbleTarget) return void spawnBubble();
+  const live = [...box.children].filter((b) => !b.classList.contains("out"));
   if (!live.length) return;
   const old = live[Math.floor(Math.random() * live.length)];
   old.classList.add("out", "pop");
