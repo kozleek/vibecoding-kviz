@@ -1125,7 +1125,7 @@ body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important
 /* ============ Horní lišta: logo vlevo, týmy uprostřed, menu vpravo ============ */
 /* lišta týmů leží ve stejném řádku mřížky jako hlavička (přes ni, uprostřed); nastavení týmů zabere plochu pod ní */
 .topbar {
-  grid-row: 1; grid-column: 1; position: relative; min-height: 64px; /* bez z-index: menu (z 30) je nad týmy, týmy nad pozadím hlavičky */
+  grid-row: 1; grid-column: 1; position: relative; min-height: 80px; /* bez z-index: menu (z 30) je nad týmy, týmy nad pozadím hlavičky */
   background: var(--surface); border-bottom: 1px solid var(--border);
   pointer-events: none; /* prázdná plocha hlavičky nepřekrývá týmy */
 }
@@ -1141,7 +1141,7 @@ body.teams-big .topbar, body.no-teams .topbar { background: transparent; border-
 main { grid-row: 2; grid-column: 1; }
 .scoreboard { grid-row: 1; grid-column: 1; z-index: 4; }
 body:not(.teams-big) .scoreboard {
-  background: transparent; border-top: 0; padding-top: 6px; padding-bottom: 6px;
+  background: transparent; border-top: 0; padding-top: 12px; padding-bottom: 12px;
   pointer-events: none; /* klikat jde jen na týmy, logo a menu pod nimi zůstanou dostupné */
 }
 body:not(.teams-big) .scoreboard .teams { pointer-events: auto; }
