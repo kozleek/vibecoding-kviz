@@ -289,9 +289,9 @@ let bubbleTimer = null;
 let bubbleResize = null;
 const BUBBLE_TINTS = ANIMALS.map((a) => a.color);
 const BUBBLE_DEPTHS = [
-  { size: [1.45, 1.85], drift: 34, dur: [13, 17], opacity: 1 },
-  { size: [1.15, 1.4], drift: 24, dur: [16, 21], opacity: .92 },
-  { size: [0.95, 1.1], drift: 16, dur: [20, 28], opacity: .7 },
+  { size: [1.45, 1.85], drift: 20, dur: [13, 17], opacity: 1 },
+  { size: [1.15, 1.4], drift: 14, dur: [16, 21], opacity: .92 },
+  { size: [0.95, 1.1], drift: 10, dur: [20, 28], opacity: .7 },
 ];
 const rand = (min, max) => min + Math.random() * (max - min);
 function startBubbles() {
@@ -303,7 +303,7 @@ function startBubbles() {
     const area = box.getBoundingClientRect();
     const target = Math.round(Math.min(24, Math.max(7, (area.width * area.height) / 36000)));
     // postupné „vyplutí“ bublin jedna po druhé
-    for (let i = 0; i < target * 4 && box.children.length < target; i++) spawnBubble(box.children.length * 160);
+    for (let i = 0; i < target * 6 && box.children.length < target; i++) spawnBubble(box.children.length * 160);
     bubbleTimer = setInterval(swapBubble, 3200);
   });
 }
@@ -328,7 +328,9 @@ function spawnBubble(delay = 0) {
   b.append(el("span", "bubble-emoji", emoji), topic);
   b.style.setProperty("--tint", BUBBLE_TINTS[Math.floor(Math.random() * BUBBLE_TINTS.length)]);
   b.style.setProperty("--o", depth.opacity);
-  b.style.fontSize = rand(...depth.size).toFixed(2) + "rem";
+  // na menších obrazovkách menší bubliny, ať se jich vejde víc
+  const scale = Math.min(1, Math.max(0.72, area.width / 1300));
+  b.style.fontSize = (rand(...depth.size) * scale).toFixed(2) + "rem";
   b.style.zIndex = String(3 - BUBBLE_DEPTHS.indexOf(depth));
   const dx = rand(-1, 1) * depth.drift, dy = rand(-1, 1) * depth.drift * 0.8;
   b.style.setProperty("--dx", dx.toFixed(0) + "px");
@@ -339,23 +341,26 @@ function spawnBubble(delay = 0) {
   b.style.animationDelay = `-${rand(0, 16).toFixed(1)}s, -${rand(0, 10).toFixed(1)}s`;
   b.style.visibility = "hidden";
   box.appendChild(b);
-  const w = b.offsetWidth + Math.abs(dx) * 2 + 10, h = b.offsetHeight + Math.abs(dy) * 2 + 10;
+  // celá dráha bubliny: šířka a výška + rozsah plutí na obě strany + rezerva na naklonění a zvětšení při najetí
+  const bw = b.offsetWidth, bh = b.offsetHeight;
+  const w = bw * 1.06 + Math.abs(dx) * 2 + 8, h = bh * 1.06 + bw * 0.05 + Math.abs(dy) * 2 + 8;
   const form = $("setupForm").getBoundingClientRect();
   // ochranná zóna kolem pole: na velké obrazovce víc volného místa, na mobilu méně (není kam bubliny dát)
   const padX = Math.min(110, area.width * 0.08), padY = Math.min(90, area.height * 0.11);
-  const avoid = [{ l: form.left - padX, t: form.top - padY, r: form.right + padX, b: form.bottom + padY }];
-  for (const o of box.children) {
-    if (o === b) continue;
-    const r = o.getBoundingClientRect();
-    avoid.push({ l: r.left - 6, t: r.top - 6, r: r.right + 6, b: r.bottom + 6 });
-  }
-  for (let tries = 0; tries < 60; tries++) {
-    const x = area.left + w / 2 + Math.random() * Math.max(0, area.width - w);
-    const y = area.top + h / 2 + Math.random() * Math.max(0, area.height - h);
+  const avoid = [{
+    l: form.left - area.left - padX, t: form.top - area.top - padY,
+    r: form.right - area.left + padX, b: form.bottom - area.top + padY,
+  }];
+  // ostatní bubliny: jejich celé dráhy (ne aktuální poloha), aby se nepotkaly ani při plutí
+  for (const o of box.children) if (o !== b && o.env) avoid.push(o.env);
+  for (let tries = 0; tries < 80; tries++) {
+    const x = w / 2 + Math.random() * Math.max(0, area.width - w);
+    const y = h / 2 + Math.random() * Math.max(0, area.height - h);
     const r = { l: x - w / 2, t: y - h / 2, r: x + w / 2, b: y + h / 2 };
     if (avoid.some((a) => r.l < a.r && r.r > a.l && r.t < a.b && r.b > a.t)) continue;
-    b.style.left = (x - area.left) + "px";
-    b.style.top = (y - area.top) + "px";
+    b.env = r;
+    b.style.left = x + "px";
+    b.style.top = y + "px";
     b.style.visibility = "";
     b.addEventListener("click", () => pickBubble(b));
     setTimeout(() => b.classList.remove("out"), 30 + delay);
