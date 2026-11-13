@@ -1,6 +1,7 @@
 import express from "express";
 import Anthropic from "@anthropic-ai/sdk";
 import { createHash, timingSafeEqual } from "node:crypto";
+import { attachImages, imageProxy } from "./images.js";
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5-5";
@@ -22,6 +23,8 @@ const RANDOM_AREAS = [
   "peníze a ekonomika", "rekordy a kuriozity", "kriminalistika a detektivky", "piráti a námořnictví", "rytíři a hrady",
 ];
 const pickArea = () => RANDOM_AREAS[Math.floor(Math.random() * RANDOM_AREAS.length)];
+// obrázkové otázky: žádné / některé / všechny
+const IMAGE_MODES = ["none", "some", "all"];
 const LEVELS = { lehka: "lehká", stredni: "střední", tezka: "těžká", hardcore: "hardcore", mix: "mix" };
 
 const client = new Anthropic();
@@ -49,8 +52,11 @@ const QUIZ_SCHEMA = {
           },
           correct: { type: "string", enum: ["a", "b", "c"] },
           explanation: { type: "string" },
+          // obrázková otázka: název článku na anglické Wikipedii (jinak "") a verze otázky bez obrázku
+          imageWiki: { type: "string" },
+          questionNoImage: { type: "string" },
         },
-        required: ["topic", "question", "difficulty", "answers", "correct", "explanation"],
+        required: ["topic", "question", "difficulty", "answers", "correct", "explanation", "imageWiki", "questionNoImage"],
         additionalProperties: false,
       },
     },
@@ -106,6 +112,8 @@ function requireToken(req, res, next) {
   next();
 }
 
+app.get("/api/img", imageProxy);
+
 app.post("/api/generate", requireToken, async (req, res) => {
   const topic = String(req.body?.topic || "").trim().slice(0, 300);
   const randomTopic = req.body?.randomTopic === true;
@@ -115,6 +123,7 @@ app.post("/api/generate", requireToken, async (req, res) => {
     .map((t) => String(t).trim().slice(0, 80)).filter(Boolean).slice(0, 30);
   const count = Math.min(MAX_QUESTIONS, Math.max(MIN_QUESTIONS, parseInt(req.body?.count, 10) || 10));
   const level = LEVELS[req.body?.level] ? req.body.level : "mix";
+  const images = IMAGE_MODES.includes(req.body?.images) ? req.body.images : "none";
 
   if (!topic && !randomTopic) return res.status(400).json({ error: "Zadej téma kvízu nebo zapni náhodné téma." });
 
@@ -136,6 +145,15 @@ app.post("/api/generate", requireToken, async (req, res) => {
     ? `\n\nUpřesnění od moderátora kvízu (dodrž ho, pokud není v rozporu s formátem tří odpovědí a jedné správné; bod „Zakázáno“ je závazný pro otázky, odpovědi i vysvětlení):\n${instructions}`
     : "";
 
+  const imageText = images === "none"
+    ? "\n\nObrázkové otázky nepoužívej: pole imageWiki a questionNoImage nech prázdná."
+    : `\n\nObrázkové otázky: ${images === "all" ? "všechny otázky, u kterých to jde" : "přibližně třetina až polovina otázek"} se ptá na obrázek, který tým uvidí na plátně.
+U obrázkové otázky:
+- do imageWiki napiš PŘESNÝ název existujícího článku na anglické Wikipedii, jehož hlavní obrázek ukazuje to, na co se ptáš (stavba, zvíře, rostlina, umělecké dílo, vlajka, známá osobnost, předmět…); vybírej články, které určitě mají výstižnou fotku nebo obrázek;
+- otázka se odkazuje na obrázek („Jak se jmenuje stavba na obrázku?“, „Kdo namaloval obraz na obrázku?“) a sama v textu odpověď neprozrazuje;
+- do questionNoImage napiš rovnocennou otázku bez obrázku se stejnými odpověďmi (použije se, když obrázek nepůjde zobrazit).
+U ostatních otázek nech imageWiki i questionNoImage prázdné.`;
+
   try {
     const stream = client.beta.messages.stream({
       model: MODEL,
@@ -150,7 +168,7 @@ app.post("/api/generate", requireToken, async (req, res) => {
       messages: [
         {
           role: "user",
-          content: `${topicText}\nPočet otázek: ${count}\n${levelText}${extraText}`,
+          content: `${topicText}\nPočet otázek: ${count}\n${levelText}${extraText}${imageText}`,
         },
       ],
     });
@@ -165,7 +183,10 @@ app.post("/api/generate", requireToken, async (req, res) => {
 
     const text = msg.content.filter((b) => b.type === "text").map((b) => b.text).join("");
     const data = JSON.parse(text);
-    let questions = data.questions.slice(0, count).map(shuffleAnswers);
+    let questions = data.questions.slice(0, count);
+    if (images === "none") for (const q of questions) { delete q.imageWiki; delete q.questionNoImage; }
+    else await attachImages(client, MODEL, questions);
+    questions = questions.map(shuffleAnswers);
     if (level === "mix") questions = shuffle(questions); // mix: obtížnosti náhodně promíchané, ne popořadě
 
     const quizTopic = randomTopic ? String(data.quizTopic || "Náhodné téma").slice(0, 120) : topics.join(", ");
