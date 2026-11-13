@@ -10,7 +10,7 @@ Kvízová aplikace pro týmové kvízy promítané na plátno: otázky generuje 
 
 ## Struktura
 
-- `server.js` – statické soubory a jediný endpoint `POST /api/generate`: validace vstupu, prompt, strukturovaný výstup (`QUIZ_SCHEMA`), míchání odpovědí, u náhodného tématu losuje oblast server (`RANDOM_AREAS`).
+- `server.js` – statické soubory, `GET /api/img` (proxy obrázků z `images.js`) a `POST /api/generate`: validace vstupu, prompt, strukturovaný výstup (`QUIZ_SCHEMA`), míchání odpovědí, u náhodného tématu losuje oblast server (`RANDOM_AREAS`).
 - `images.js` – obrázkové otázky: `attachImages()` (Wikipedia pageimages + licence z Commons → kontrola přes vision → `q.image = { src, credit, page }`, jinak fallback na `questionNoImage`) a `imageProxy` pro `GET /api/img?u=<base64url>`.
 - `public/app.js` – celá aplikace: stav, obrazovky (`setup`, `loading`, `quiz`, `results`, `archive` přes `show(view)`), týmy a bodování, klávesové zkratky, archiv s průběhem (timeline), zadání tokenu.
 - `public/index.html` – markup všech obrazovek a dialogů (`<dialog>`), `public/style.css` – styly s CSS proměnnými.
