@@ -370,8 +370,8 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 .question.has-image > .q-text { text-wrap: pretty; } /* plná šířka řádku, ne vyvážené půlky */
 .q-image { margin: 0; display: grid; gap: 8px; }
 .q-image img {
-  display: block; width: 100%; height: auto; max-height: 50vh; object-fit: contain;
-  border-radius: clamp(14px, 1.4vw, 24px); background: var(--bg);
+  display: block; width: auto; height: auto; max-width: 100%; max-height: 40vh; margin-inline: auto; /* ve skutečném poměru, bez pruhů */
+  border-radius: clamp(14px, 1.4vw, 24px);
 }
 .q-image figcaption { font-size: clamp(.75rem, .9vw, 1rem); color: var(--muted); text-align: center; animation: enter .35s ease both; }
 #imageModes .chip { display: inline-flex; align-items: center; gap: 6px; }
