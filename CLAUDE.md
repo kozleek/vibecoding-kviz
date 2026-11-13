@@ -26,7 +26,7 @@ Kvízová aplikace pro týmové kvízy promítané na plátno: otázky generuje 
 - Max. 4 týmy (`MAX_TEAMS`), 3–100 otázek, tři odpovědi a/b/c.
 - Klávesové zkratky jsou v `keydown` handleru v `app.js` **a** v dialogu nápovědy v `index.html` a v tabulce v README – měnit všude.
 - Chyby a hlášky přes `showError()` – zobrazují se v proužku pod horní lištou.
-- **Horní lišta:** v hlavičce jen logo, týmy a menu ☰ – nic dalšího. Lišta týmů (`.scoreboard`) leží v mřížce ve stejném řádku jako `.topbar` (překrývá ji uprostřed, `pointer-events` jen na týmech); nastavení týmů (`body.teams-big`) ji roztáhne do řádku pod hlavičkou. Zavírání (opustit kvíz, zavřít archiv / archivní kvíz) je kontextová položka menu `#menuClose` + `Esc`. Výjimka: v kvízu a na jeho výsledcích (běžící i archivní) a v nastavení týmů (`body.quiz-head`) je místo menu jen křížek `#closeDetailBtn` (opustit kvíz / zavřít detail); v běžícím kvízu vedle něj `#teamsBtn` (týmy a korekce bodů).
+- **Horní lišta:** v hlavičce jen logo (v kvízu název kvízu, šířku hlídá `fitBrand()`), týmy a menu ☰ – nic dalšího. Lišta týmů (`.scoreboard`) leží v mřížce ve stejném řádku jako `.topbar` (překrývá ji uprostřed, `pointer-events` jen na týmech); nastavení týmů (`body.teams-big`) ji roztáhne do řádku pod hlavičkou. Zavírání (opustit kvíz, zavřít archiv / archivní kvíz) je kontextová položka menu `#menuClose` + `Esc`. Výjimka: v kvízu a na jeho výsledcích (běžící i archivní) a v nastavení týmů (`body.quiz-head`) je místo menu jen křížek `#closeDetailBtn` (opustit kvíz / zavřít detail); v běžícím kvízu vedle něj `#teamsBtn` (týmy a korekce bodů).
 
 ## Konvence
 

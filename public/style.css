@@ -1130,6 +1130,8 @@ body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important
   pointer-events: none; /* prázdná plocha hlavičky nepřekrývá týmy */
 }
 .topbar > * { pointer-events: auto; }
+/* název kvízu místo loga: zkrátit, ať nezasahuje do týmů uprostřed lišty */
+.brand.quiz-title { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* max. šířku dopočítá fitBrand() podle týmů */
 /* bez týmů v liště (výsledky, archiv, nastavení týmů, žádné týmy) je hlavička průhledná */
 body[data-view="results"]:not(.teams-big) .topbar, body[data-view="archive"] .topbar,
 body.teams-big .topbar, body.no-teams .topbar { background: transparent; border-bottom-color: transparent; }

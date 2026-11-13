@@ -1107,6 +1107,7 @@ function renderTeams() {
     wrap.appendChild(add);
   }
   if (state.view === "results") renderResults();
+  fitBrand(); // šířka týmů se mohla změnit
 }
 
 // i = index týmu, nebo "all" pro všechny týmy najednou
@@ -1492,6 +1493,17 @@ function applyTeamsLayout() {
   renderTeams();
   focusTopic(); // po zavření týmů zpět do pole s tématem
 }
+// název kvízu vlevo nesmí zasahovat do týmů, které jsou ve stejném řádku lišty (uprostřed)
+function fitBrand() {
+  const b = $("brand");
+  b.style.maxWidth = "";
+  if (!b.classList.contains("quiz-title")) return;
+  const br = b.getBoundingClientRect(), t = $("teams").getBoundingClientRect(), menu = document.querySelector(".topbar-actions").getBoundingClientRect();
+  const sameRow = t.width > 0 && t.top < br.bottom && t.bottom > br.top;
+  b.style.maxWidth = Math.max(60, (sameRow ? t.left : menu.left) - br.left - 24) + "px";
+}
+window.addEventListener("resize", fitBrand);
+
 // horní lišta: vlevo jen název, vpravo vždy menu; zavření podle kontextu je první položkou menu (a Esc)
 function renderHeader() {
   const big = !!state.bigTeams;
@@ -1509,6 +1521,12 @@ function renderHeader() {
   $("menuClose").hidden = !label;
   // kvíz (běžící i archivní), jeho výsledky a nastavení týmů: místo menu jen křížek
   document.body.classList.toggle("quiz-head", big || liveQuiz || !!state.locked);
+  // v kvízu (běžícím i archivním) je vlevo místo názvu aplikace název kvízu
+  const quizTitle = !big && (liveQuiz || !!state.locked) && state.quiz?.topic;
+  $("brand").textContent = quizTitle || "Kvíz";
+  $("brand").title = quizTitle || "";
+  $("brand").classList.toggle("quiz-title", !!quizTitle);
+  fitBrand();
   $("closeDetailBtn").title = `${label} (Esc)`;
   $("closeDetailBtn").setAttribute("aria-label", label);
   $("menuTeams").hidden = big || !!state.locked;
