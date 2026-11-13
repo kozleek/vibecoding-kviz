@@ -11,6 +11,7 @@ Kvízová aplikace pro týmové kvízy promítané na plátno: otázky generuje 
 ## Struktura
 
 - `server.js` – statické soubory a jediný endpoint `POST /api/generate`: validace vstupu, prompt, strukturovaný výstup (`QUIZ_SCHEMA`), míchání odpovědí, u náhodného tématu losuje oblast server (`RANDOM_AREAS`).
+- `images.js` – obrázkové otázky: `attachImages()` (Wikipedia pageimages + licence z Commons → kontrola přes vision → `q.image = { src, credit, page }`, jinak fallback na `questionNoImage`) a `imageProxy` pro `GET /api/img?u=<base64url>`.
 - `public/app.js` – celá aplikace: stav, obrazovky (`setup`, `loading`, `quiz`, `results`, `archive` přes `show(view)`), týmy a bodování, klávesové zkratky, archiv s průběhem (timeline), zadání tokenu.
 - `public/index.html` – markup všech obrazovek a dialogů (`<dialog>`), `public/style.css` – styly s CSS proměnnými.
 - `public/sample-quiz*.json` – ukázkové kvízy (nevolají API).
@@ -20,6 +21,7 @@ Kvízová aplikace pro týmové kvízy promítané na plátno: otázky generuje 
 - **Přístupový token:** generování chrání `ACCESS_TOKEN`. Klient posílá hlavičku **`X-Access-Token`**, ne `Authorization` – ta patří basic auth proxy v Coolify a přepsání by vyvolalo přihlašovací okno prohlížeče. Bez `ACCESS_TOKEN` je generování vypnuté (503).
 - **Stav v `localStorage`:** `kviz-state-v1` (běžící kvíz), `kviz-archive-v1` (archiv), `kviz-token`. Při změně tvaru dat zachovat kompatibilitu se starším uloženým stavem (viz normalizace po načtení stavu v `app.js`), případně zvýšit verzi klíče.
 - **Archivní kvíz** je jen ke čtení (`state.locked`) – nové akce musí zamčený stav respektovat; akce běžícího kvízu se zapisují do timeline (`logEvent`).
+- **Obrázkové otázky:** obrázek se zobrazuje jen přes proxy `/api/img` (povolené hosty `IMAGE_HOSTS`), nikdy přímou URL – název souboru prozrazuje odpověď. Autor/licence (`q.image.credit`) se ukazuje až po odhalení. Nesvobodné (NonFree) obrázky nepoužívat. Pole `imageWiki` a `questionNoImage` server před odesláním klientovi maže.
 - Max. 4 týmy (`MAX_TEAMS`), 3–100 otázek, tři odpovědi a/b/c.
 - Klávesové zkratky jsou v `keydown` handleru v `app.js` **a** v dialogu nápovědy v `index.html` a v tabulce v README – měnit všude.
 - Chyby a hlášky přes `showError()` – zobrazují se v proužku nad lištou týmů.

@@ -28,6 +28,16 @@ V aplikaci se token zadá při prvním generování a prohlížeč si ho zapamat
   - počet otázek 3–100,
   - obtížnost: lehká, střední, těžká, hardcore, nebo mix (třetina lehkých/středních/těžkých).
 
+### Obrázkové otázky
+
+V pokročilém nastavení volba **Obrázkové otázky: bez obrázků / některé / všechny**. Postup na serveru (`images.js`):
+
+1. Claude u obrázkové otázky vrátí název článku na anglické Wikipedii a k tomu verzi otázky bez obrázku.
+2. Server stáhne hlavní obrázek článku (Wikipedia API) a autora s licencí z Wikimedia Commons; nesvobodné obrázky (fair use) přeskočí.
+3. Claude (vision) jedním voláním zkontroluje, že obrázek ukazuje to, na co se otázka ptá, a neprozrazuje odpověď. Když obrázek neprojde, použije se textová verze otázky.
+
+Obrázky jdou přes proxy `/api/img` (jen Wikimedia), aby název souboru v URL neprozradil odpověď. Na plátně je obrázek vlevo a otázka s odpověďmi vpravo, autor a licence se ukážou až s odpovědí. Po vygenerování se obrázky přednačtou.
+
 Každá otázka má tři odpovědi (A/B/C), jednu správnou a krátké vysvětlení. Pořadí odpovědí se na serveru náhodně míchá.
 
 V menu ☰ jsou i **ukázkové kvízy** (Sport, Příroda, Vesmír) z `public/sample-quiz*.json`, které nevolají API.
@@ -72,6 +82,7 @@ Archiv je v `localStorage` (klíč `kviz-archive-v1`), tedy jen v daném prohlí
 
 ## Struktura
 
+- `images.js` – obrázkové otázky: Wikipedia API, kontrola obrázků přes vision, proxy `/api/img`.
 - `server.js` – Express server, statické soubory z `public/` a endpoint `POST /api/generate` (hlavička `X-Access-Token: <ACCESS_TOKEN>` – `Authorization` zůstává volná pro basic auth v Coolify; strukturovaný výstup přes JSON schema).
 - `public/index.html`, `public/app.js`, `public/style.css` – celá aplikace na klientu, bez buildu.
 
