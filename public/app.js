@@ -1827,15 +1827,13 @@ function archiveItem(entry, liveId) {
       replay.addEventListener("click", () => replayEntry(entry.id));
       item.append(replay);
     }
-    // smazání (běžící kvíz ne – nejdřív ho zavři)
-    if (entry.id !== liveId) {
-      const del = el("button", "icon-btn archive-del");
-      del.innerHTML = '<i class="ph ph-trash" aria-hidden="true"></i>';
-      del.title = "Smazat kvíz";
-      del.setAttribute("aria-label", `Smazat kvíz ${entry.topic}`);
-      del.addEventListener("click", () => deleteEntry(entry.id));
-      item.append(del);
-    }
+    // smazání (i běžící kvíz – po potvrzení se ukončí)
+    const del = el("button", "icon-btn archive-del");
+    del.innerHTML = '<i class="ph ph-trash" aria-hidden="true"></i>';
+    del.title = "Smazat kvíz";
+    del.setAttribute("aria-label", `Smazat kvíz ${entry.topic}`);
+    del.addEventListener("click", () => deleteEntry(entry.id));
+    item.append(del);
     return item;
 }
 
@@ -1877,17 +1875,21 @@ $("replayBtn").addEventListener("click", () => state.locked && replayEntry(state
 
 async function deleteEntry(id) {
   const entry = archive.find((e) => e.id === id);
-  if (!entry || entry.id === state.quiz?.archiveId) return;
+  if (!entry) return;
+  const live = entry.id === state.quiz?.archiveId; // právě běžící kvíz – smazáním se ukončí
   const ok = await confirmDialog({
     icon: "🗑️",
     title: "Smazat kvíz?",
-    text: `„${entry.topic}“ z ${fmtDate(entry.createdAt)} se i s průběhem a výsledky natrvalo smaže.`,
+    text: `„${entry.topic}“ z ${fmtDate(entry.createdAt)} se i s průběhem a výsledky natrvalo smaže.` +
+      (live ? " Kvíz právě probíhá – smazáním se ukončí a body týmů se vynulují." : ""),
     ok: "Smazat",
     danger: true,
   });
   if (!ok) return;
+  if (live) closeQuiz();
   archive = archive.filter((e) => e.id !== id);
   saveArchive();
+  save();
   renderArchive();
 }
 
