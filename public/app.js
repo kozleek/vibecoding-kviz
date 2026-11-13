@@ -720,6 +720,7 @@ function renderQuestion(animate = false) {
   $("qPoints").hidden = !adaptiveOn();
   $("qPoints").textContent = adaptiveOn() ? pointsLabel(diffPoints(q.difficulty)) : "";
   $("qText").textContent = q.question;
+  $("qText").classList.toggle("long", q.question.length > 90);
   // obrázková otázka: autor a licence obrázku až s odpovědí (popisek by mohl napovídat)
   const card = $("questionCard");
   card.classList.toggle("has-image", !!q.image);
