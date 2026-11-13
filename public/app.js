@@ -1510,6 +1510,8 @@ function renderHeader() {
   }
   // zavření je vždy první položka menu (i pro nastavení týmů – položka „Týmy“ se pak skryje)
   $("menuClose").hidden = !label;
+  $("closeDetailBtn").title = `${label} (Esc)`;
+  $("closeDetailBtn").setAttribute("aria-label", label);
   $("menuTeams").hidden = big || !!state.locked;
   $("menuCloseLabel").textContent = label;
   // běžící kvíz: „Nový kvíz“ by dělal totéž co „Opustit kvíz“
@@ -1936,6 +1938,7 @@ function closeReview() {
   if (state.view === "quiz") show("results");
   else exitReview();
 }
+$("closeDetailBtn").addEventListener("click", () => closeReview());
 $("menuClose").addEventListener("click", menuAction(() =>
   state.bigTeams ? toggleTeamsLayout() : state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()
 ));
