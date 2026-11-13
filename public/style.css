@@ -1131,7 +1131,10 @@ body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important
 }
 .topbar > * { pointer-events: auto; }
 /* název kvízu místo loga: zkrátit, ať nezasahuje do týmů uprostřed lišty */
-.brand.quiz-title { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* max. šířku dopočítá fitBrand() podle týmů */
+/* max. šířku dopočítá fitBrand() podle týmů; zkracuje se jen název, štítek obtížnosti zůstane celý */
+.brand.quiz-title { min-width: 0; gap: 10px; }
+.brand.quiz-title .brand-text { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-level { flex: none; font-family: var(--font); font-size: .82rem; padding: .25em .8em; }
 /* bez týmů v liště (výsledky, archiv, nastavení týmů, žádné týmy) je hlavička průhledná */
 body[data-view="results"]:not(.teams-big) .topbar, body[data-view="archive"] .topbar,
 body.teams-big .topbar, body.no-teams .topbar { background: transparent; border-bottom-color: transparent; }

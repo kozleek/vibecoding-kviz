@@ -1523,9 +1523,14 @@ function renderHeader() {
   document.body.classList.toggle("quiz-head", big || liveQuiz || !!state.locked);
   // v kvízu (běžícím i archivním) je vlevo místo názvu aplikace název kvízu
   const quizTitle = !big && (liveQuiz || !!state.locked) && state.quiz?.topic;
-  $("brand").textContent = quizTitle || "Kvíz";
-  $("brand").title = quizTitle || "";
-  $("brand").classList.toggle("quiz-title", !!quizTitle);
+  const brand = $("brand");
+  brand.replaceChildren(el("span", "brand-text", quizTitle || "Kvíz"));
+  brand.title = quizTitle || "";
+  if (quizTitle) {
+    const lvl = state.quiz.level;
+    brand.append(el("span", "pill level-pill brand-level " + (LEVEL_DIFF[lvl] || "mix"), LEVEL_NAMES[lvl] || lvl));
+  }
+  brand.classList.toggle("quiz-title", !!quizTitle);
   fitBrand();
   $("closeDetailBtn").title = `${label} (Esc)`;
   $("closeDetailBtn").setAttribute("aria-label", label);
