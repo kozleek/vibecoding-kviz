@@ -58,7 +58,7 @@ body {
   transition: --dc .6s ease, --dd .6s ease;
   color: var(--text);
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   grid-template-columns: minmax(0, 1fr);
   height: 100dvh;
   -webkit-font-smoothing: antialiased;
@@ -85,10 +85,6 @@ kbd {
   color: var(--text); text-decoration: none;
 }
 .brand-logo { font-size: 1.5rem; }
-.topbar-info {
-  flex: 1; min-width: 0; color: var(--muted); font-weight: 500;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 .topbar-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .icon-btn {
   width: 40px; height: 40px; border-radius: 12px;
@@ -277,22 +273,22 @@ textarea.extra-input { resize: vertical; }
   margin: 0; padding: 12px 16px; border-radius: 12px;
   background: var(--bad-soft); color: var(--bad); font-weight: 500;
 }
-/* hláška nad lištou týmů, vystředěná */
+/* hláška pod horní lištou, vystředěná */
 .scoreboard { position: relative; }
 .toast {
-  position: absolute; bottom: calc(100% + 14px); left: 50%; transform: translateX(-50%); z-index: 20;
+  position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); z-index: 20;
   width: max-content; max-width: calc(100% - 32px); text-align: center;
   border: 1px solid color-mix(in srgb, var(--bad) 25%, transparent); box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
   animation: toastIn .2s ease both;
 }
-@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 6px); } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, -6px); } }
 body.teams-big .toast { display: none; }
-/* odpočet času na odpověď: tenký progressbar přes celou šířku nad lištou týmů, sekundy nad ním */
-.answer-timer { position: absolute; left: 0; right: 0; bottom: 100%; z-index: 6; pointer-events: none; }
+/* odpočet času na odpověď: tenký progressbar přes celou šířku pod horní lištou, sekundy pod ním */
+.answer-timer { position: absolute; left: 0; right: 0; top: 100%; z-index: 6; pointer-events: none; }
 .answer-timer-track { height: 8px; background: color-mix(in srgb, var(--text) 10%, transparent); }
 .answer-timer-fill { height: 100%; width: 100%; background: var(--accent); transition: width .1s linear, background-color .3s; }
 .answer-timer-text {
-  position: absolute; left: 50%; bottom: 18px; translate: -50% 0; white-space: nowrap;
+  position: absolute; left: 50%; top: 18px; translate: -50% 0; white-space: nowrap;
   padding: 4px 14px; border-radius: 99px; background: var(--surface); box-shadow: var(--shadow);
   font-family: var(--display); font-weight: 800; font-size: clamp(1rem, 1.4vw, 1.6rem); font-variant-numeric: tabular-nums;
 }
@@ -523,16 +519,6 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   grid-template-columns: 1fr minmax(0, max-content) 1fr; /* týmy uprostřed */
 }
 .teams { grid-column: 2; grid-row: 1; min-width: 0; display: flex; justify-content: safe center; gap: 10px; overflow-x: auto; padding: 6px 2px; }
-.bar-actions { grid-column: 3; grid-row: 1; justify-self: end; display: flex; gap: 12px; } /* vždy u pravého okraje */
-.bar-btn { width: 44px; height: 44px; font-size: 1.35rem; }
-/* spodní ikony na bílé liště: šedé, na hover tmavší */
-.scoreboard .bar-btn { color: var(--muted); border-color: var(--border); background: transparent; }
-body .scoreboard .bar-btn:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
-body.teams-big .bar-actions { display: none; }
-/* jen na velkých monitorech – na tabletu, mobilu a úzkých obrazovkách ne */
-/* nastavení v liště jen tam, kde v hlavičce místo hamburger menu je křížek (i na dotyku – jinak by se do nastavení nedalo dostat) */
-#barSettings { display: none; }
-body.close-head #barSettings { display: grid; }
 .team-actions { display: none; }
 button.team { font: inherit; color: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 button.team:active { transform: scale(.97); }
@@ -590,7 +576,6 @@ body:not(.teams-big) .scoreboard .team .avatar { width: clamp(36px, 2.3vw, 50px)
 body:not(.teams-big) .scoreboard .team .key { width: 19px; height: 19px; font-size: .68rem; bottom: -5px; right: -5px; }
 body:not(.teams-big) .scoreboard .team .name { font-size: clamp(1rem, 1vw, 1.4rem); }
 body:not(.teams-big) .scoreboard .team .score { font-size: clamp(1.7rem, 1.8vw, 2.6rem); padding: 2px 4px; }
-body:not(.teams-big) .scoreboard .bar-btn { width: 38px; height: 38px; font-size: 1.15rem; }
 
 /* v malém zobrazení nejde měnit skóre ani odebrat tým (jen klávesami 1–4) */
 .scoreboard .team .pm, .scoreboard .team .tools { display: none; }
@@ -620,15 +605,15 @@ body:not(.teams-big) .scoreboard .bar-btn { width: 38px; height: 38px; font-size
 /* hamburger menu */
 .menu { position: relative; }
 /* hamburger vždy podbarvený, ať je jasné, že je to tlačítko */
-/* menu a tlačítka v liště: průhledná (jen jemné „sklo“), plná barva až na hover */
-#menuBtn, .bar-btn {
+/* menu v liště: průhledné (jen jemné „sklo“), plná barva až na hover */
+#menuBtn {
   background: color-mix(in srgb, var(--surface) 30%, transparent);
   border-color: color-mix(in srgb, var(--surface) 55%, transparent);
   color: var(--text); box-shadow: none;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
   transition: background .15s, border-color .15s, color .15s;
 }
-#menuBtn:hover, #menuBtn[aria-expanded="true"], .bar-btn:hover {
+#menuBtn:hover, #menuBtn[aria-expanded="true"] {
   background: var(--surface); border-color: var(--accent); color: var(--accent);
   box-shadow: 0 1px 2px rgba(30, 40, 30, .08);
 }
@@ -652,17 +637,8 @@ body:not(.teams-big) .scoreboard .bar-btn { width: 38px; height: 38px; font-size
 .menu-panel button span { flex: 1; white-space: nowrap; }
 .menu-panel kbd { margin-left: auto; }
 /* nastavení týmů: nadpis a křížek v hlavičce místo tématu kvízu a menu */
-.settings-title, #closeSettingsBtn, #closeReviewBtn { display: none; }
-.settings-title { flex: 1; margin: 0; padding-left: 16px; border-left: 2px solid var(--border); font-family: var(--display); font-weight: 800; font-size: 1.35rem; line-height: 1.6; }
-body.teams-big .settings-title { display: block; }
-body.teams-big #closeSettingsBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
 /* archiv a archivní kvíz: stejná hlavička jako nastavení – křížek místo hamburger menu */
-body.close-head .settings-title { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-body.close-head #closeReviewBtn { display: grid; width: 44px; height: 44px; font-size: 1.5rem; }
-body.close-head .topbar-info, body.close-head .menu { display: none; }
 body.close-head .brand, body.teams-big .brand { cursor: default; }
-.header-sub { margin-left: 14px; font-family: var(--font); font-weight: 500; font-size: 1rem; color: var(--muted); }
-body.teams-big .topbar-info, body.teams-big .menu { display: none; }
 body.teams-big .scoreboard-tools { display: none; }
 /* nastavení: přepínač adaptivního bodování */
 body.teams-big .settings-options { justify-content: center; padding-top: 14px; }
@@ -707,14 +683,13 @@ body.teams-big .settings-options { flex-direction: column; align-items: center; 
 /* ============ Velké zobrazení týmů ============ */
 .big-only { display: none; }
 body.teams-big .big-only { display: flex; }
-body.teams-big { grid-template-rows: auto 1fr; background: var(--bg); } /* nastavení bez gradientu zadání – hlavička stejné barvy jako zbytek */
+body.teams-big { background: var(--bg); } /* nastavení bez gradientu zadání – hlavička stejné barvy jako zbytek */
 body.teams-big main { display: none; }
 body.teams-big .scoreboard {
   display: flex;
   min-height: 0; flex-direction: column; align-items: stretch; gap: 14px;
   padding: 8px 24px 24px; border-top: 0; background: var(--bg);
 }
-#closeSettingsBtn:hover, #closeReviewBtn:hover { background: var(--surface); border-color: var(--border); color: var(--text); }
 body.teams-big .team-actions { justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; margin-bottom: auto; }
 body.teams-big .scoreboard .teams { flex: 0 1 auto; margin-top: auto; } /* karty + akce jako jeden blok uprostřed */
 body.teams-big .teams {
@@ -985,7 +960,6 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
   .setup { padding: 22px; }
   .view-setup.simple .input-xl { padding: 16px 18px; border-radius: 18px; }
   .go-btn { border-radius: 18px; font-size: 1.6rem; }
-  .topbar-info { display: none; }
   .scoreboard { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding-top: 12px; padding-bottom: 12px; }
   .scoreboard-tools { justify-content: flex-end; }
   .answer { gap: 14px; padding: 12px 14px; }
@@ -1050,7 +1024,6 @@ body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--te
 /* ============ Archiv ============ */
 .view-archive { max-width: 960px; padding-top: 3vh; }
 body[data-view="archive"] .scoreboard { display: none !important; }
-body[data-view="archive"] { grid-template-rows: auto 1fr; }
 .archive-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 22px; }
 .stat { padding: 18px 22px; display: grid; gap: 4px; }
 .stat b { font-family: var(--display); font-weight: 800; font-size: 2.6rem; line-height: 1; }
@@ -1092,7 +1065,6 @@ body[data-view="archive"] { grid-template-rows: auto 1fr; }
 }
 
 /* ============ Zamčený (archivní) kvíz ============ */
-body.locked .bar-actions { display: none; }
 body.locked.no-scoring:not(.teams-big) .scoreboard { cursor: default; }
 body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: color-mix(in srgb, var(--team) 40%, transparent); border-top-color: var(--team); }
 .skipped-pill { background: var(--warn-soft); color: var(--warn); }
@@ -1144,4 +1116,30 @@ body.locked.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: c
 .tl-milestone { min-height: 36px; }
 /* výsledky: pořadí s body je na stupních, spodní lišta týmů by se jen opakovala (v nastavení zůstává) */
 body[data-view="results"]:not(.teams-big) .scoreboard { display: none !important; }
-body[data-view="results"]:not(.teams-big) { grid-template-rows: auto 1fr; }
+
+/* ============ Horní lišta: logo vlevo, týmy uprostřed, menu vpravo ============ */
+/* lišta týmů leží ve stejném řádku mřížky jako hlavička (přes ni, uprostřed); nastavení týmů zabere plochu pod ní */
+.topbar {
+  grid-row: 1; grid-column: 1; position: relative; min-height: 64px; /* bez z-index: menu (z 30) je nad týmy, týmy nad pozadím hlavičky */
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  pointer-events: none; /* prázdná plocha hlavičky nepřekrývá týmy */
+}
+.topbar > * { pointer-events: auto; }
+main { grid-row: 2; grid-column: 1; }
+.scoreboard { grid-row: 1; grid-column: 1; z-index: 4; }
+body:not(.teams-big) .scoreboard {
+  background: transparent; border-top: 0; padding-top: 6px; padding-bottom: 6px;
+  pointer-events: none; /* klikat jde jen na týmy, logo a menu pod nimi zůstanou dostupné */
+}
+body:not(.teams-big) .scoreboard .teams { pointer-events: auto; }
+body.teams-big .scoreboard { grid-row: 2; z-index: 1; }
+/* užší obrazovka: týmy se vedle loga a menu nevejdou – vlastní řádek hned pod hlavičkou */
+@media (max-width: 1180px) {
+  body { grid-template-rows: auto auto 1fr; }
+  main { grid-row: 3; }
+  body:not(.teams-big) .scoreboard {
+    grid-row: 2; pointer-events: auto;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  body.teams-big .scoreboard { grid-row: 2 / 4; }
+}

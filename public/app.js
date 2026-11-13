@@ -106,7 +106,6 @@ function show(view) {
   document.body.classList.toggle("locked", !!state.locked);
   for (const v of ["setup", "loading", "quiz", "results", "archive"]) $(v + "View").hidden = v !== view;
   $("newQuizBtn").hidden = !state.quiz || view === "setup" || view === "loading";
-  renderQuizInfo(view);
   // archivní (zamčený) kvíz: bez nastavení, místo „Nový kvíz“ návrat do archivu
   renderHeader();
   $("menuTeams").hidden = !!state.locked;
@@ -399,7 +398,7 @@ function stopBubbles() {
   $("topicBubbles").innerHTML = "";
 }
 // nová bublina na náhodném volném místě (mimo pole se zadáním a ostatní bubliny); vrací false, když se nevejde
-const BUBBLE_EDGE_BOTTOM = 64; // volné místo nad lištou týmů (px)
+const BUBBLE_EDGE_BOTTOM = 16; // volné místo u spodního okraje (px)
 function spawnBubble(delay = 0) {
   const box = $("topicBubbles");
   const area = box.getBoundingClientRect();
@@ -1272,7 +1271,6 @@ async function resetScores() {
 $("resetTeamsBtn").addEventListener("click", resetTeams);
 $("resetScoresBtn").addEventListener("click", resetScores);
 // tlačítko v malé liště – zastavit klik, jinak by ho zachytil i klik na lištu
-$("barSettings").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 
 /* ---------- Výběr emoji ---------- */
 // emoji: [název týmu, barva týmu]
@@ -1502,27 +1500,22 @@ function applyTeamsLayout() {
 // hlavička jako v nastavení (název + zavírací křížek místo menu) pro nastavení, archiv a archivní kvíz
 // hlavička jako v nastavení (název + zavírací křížek místo hamburger menu):
 // běžící kvíz, archiv a archivní kvíz; hamburger menu jen na zadání a při načítání
+// horní lišta: vlevo jen název, vpravo vždy menu; zavření podle kontextu je první položkou menu (a Esc)
 function renderHeader() {
   const big = !!state.bigTeams;
   const liveQuiz = !state.locked && !!state.quiz && (state.view === "quiz" || state.view === "results");
   const closeHead = !big && (!!state.locked || state.view === "archive" || liveQuiz);
-  document.body.classList.toggle("close-head", closeHead);
-  const title = $("headerTitle");
-  title.innerHTML = "";
-  if (!closeHead) return (title.textContent = "Nastavení");
-  let label;
-  if (liveQuiz) {
-    title.append(state.quiz.topic, el("span", "header-sub", LEVEL_NAMES[state.quiz.level]));
-    label = (isFinished(liveEntry()) ? "Zavřít kvíz (zůstane v archivu)" : "Opustit kvíz (uloží se mezi rozehrané)") + " (Esc)";
-  } else {
-    title.append("Archiv");
-    if (state.locked) {
-      title.append(el("span", "header-sub", `${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]} · ${fmtDate(state.entry.createdAt)}`));
-    }
-    label = (!state.locked ? "Zavřít archiv" : state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz") + " (Esc)";
+  document.body.classList.toggle("close-head", closeHead); // brand v té chvíli neodvádí na zadání
+  let label = "";
+  if (closeHead) {
+    if (liveQuiz) label = isFinished(liveEntry()) ? "Zavřít kvíz" : "Opustit kvíz";
+    else if (!state.locked) label = "Zavřít archiv";
+    else label = state.view === "quiz" ? "Zpět na výsledky" : "Zavřít archivní kvíz";
   }
-  $("closeReviewBtn").title = label;
-  $("closeReviewBtn").setAttribute("aria-label", label);
+  $("menuClose").hidden = !closeHead;
+  $("menuCloseLabel").textContent = label;
+  // běžící kvíz: „Nový kvíz“ by dělal totéž co „Opustit kvíz“
+  if (liveQuiz) $("newQuizBtn").hidden = true;
 }
 function toggleTeamsLayout() {
   if (state.locked) return; // archivní kvíz nejde nastavovat
@@ -1531,7 +1524,6 @@ function toggleTeamsLayout() {
   applyTeamsLayout();
   save();
 }
-$("closeSettingsBtn").addEventListener("click", (e) => { e.stopPropagation(); toggleTeamsLayout(); });
 // mimo běžící kvíz: kliknutí kamkoli do lišty týmů otevře nastavení týmů
 document.querySelector(".scoreboard").addEventListener("click", (e) => {
   if (!state.bigTeams && !scoringActive() && !state.locked) { e.stopPropagation(); toggleTeamsLayout(); }
@@ -1944,9 +1936,9 @@ function closeReview() {
   if (state.view === "quiz") show("results");
   else exitReview();
 }
-$("closeReviewBtn").addEventListener("click", () =>
+$("menuClose").addEventListener("click", menuAction(() =>
   state.locked ? closeReview() : state.view === "archive" ? closeArchive() : leaveQuiz()
-);
+));
 
 // stav týmů v archivním kvízu: u otázky body po poslední akci u ní, ve výsledcích konečné
 function syncReviewTeams() {
@@ -1980,13 +1972,6 @@ function questionGains(entry, i) {
     for (const t of ev.who) gains[t.emoji] = (gains[t.emoji] || 0) + ev.delta;
   }
   return gains;
-}
-
-function renderQuizInfo(view) {
-  const info = $("quizInfo");
-  info.innerHTML = "";
-  if (!state.quiz || view === "setup" || view === "archive" || state.locked) return;
-  info.append(`${state.quiz.topic} · ${LEVEL_NAMES[state.quiz.level]}`);
 }
 
 // celý průběh kvízu v časové ose; klik na řádek s otázkou ji otevře

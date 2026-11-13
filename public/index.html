@@ -14,15 +14,13 @@
 <body>
   <header class="topbar">
     <a class="brand" href="#" id="brand"><span class="brand-logo">🦊</span> Kvíz</a>
-    <div class="topbar-info" id="quizInfo"></div>
-    <h2 class="settings-title" id="headerTitle">Nastavení</h2>
     <div class="topbar-actions">
-      <button class="icon-btn" id="closeReviewBtn" title="Zavřít archivní kvíz (Esc)" aria-label="Zavřít archivní kvíz"><i class="ph ph-x"></i></button>
-      <button class="icon-btn" id="closeSettingsBtn" title="Zavřít nastavení (Esc)" aria-label="Zavřít nastavení"><i class="ph ph-x"></i></button>
       <div class="menu">
         <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu" aria-haspopup="menu" aria-expanded="false" aria-controls="menuPanel"><i class="ph ph-list"></i></button>
         <div class="menu-panel" id="menuPanel" role="menu" hidden>
           <div class="menu-box">
+          <!-- zavření podle kontextu (opustit kvíz, zavřít archiv, archivní kvíz) – dřív křížek v hlavičce -->
+          <button role="menuitem" id="menuClose" hidden><i class="ph ph-x"></i><span id="menuCloseLabel"></span><kbd>Esc</kbd></button>
           <button role="menuitem" id="newQuizBtn" hidden><i class="ph ph-plus"></i><span>Nový kvíz</span></button>
           <button role="menuitem" id="menuArchive"><i class="ph ph-archive"></i><span>Archiv</span><kbd>A</kbd></button>
           <button role="menuitem" id="menuTeams"><i class="ph ph-gear-six"></i><span id="menuTeamsLabel">Nastavení</span><kbd>T</kbd></button>
@@ -203,18 +201,14 @@
 
   <!-- ===== Týmy ===== -->
   <footer class="scoreboard">
-    <!-- chyby a hlášky: proužek nad lištou týmů -->
+    <!-- chyby a hlášky: proužek pod horní lištou -->
     <p class="error toast" id="setupError" role="alert" hidden></p>
-    <!-- odpočet času na odpověď: progressbar nad lištou týmů -->
+    <!-- odpočet času na odpověď: progressbar pod horní lištou -->
     <div class="answer-timer" id="answerTimer" hidden>
       <span class="answer-timer-text" id="timerText" aria-live="off"></span>
       <div class="answer-timer-track"><div class="answer-timer-fill" id="timerFill"></div></div>
     </div>
     <div class="teams" id="teams"></div>
-    <!-- malá lišta: nastavení (v kvízu není hamburger menu); vynulování bodů a reset týmů jsou v nastavení -->
-    <div class="bar-actions">
-      <button class="icon-btn bar-btn" id="barSettings" title="Nastavení (T)" aria-label="Nastavení"><i class="ph ph-gear-six"></i></button>
-    </div>
     <div class="settings-options big-only">
       <label class="toggle">
         <input type="checkbox" id="adaptiveToggle">
@@ -252,9 +246,9 @@
       <tr><td><kbd>F</kbd></td><td>celá obrazovka</td></tr>
       <tr><td><kbd>?</kbd></td><td>tato nápověda</td></tr>
       <tr><td><kbd>A</kbd></td><td>archiv (u otázky běžícího kvízu vybírá odpověď A)</td></tr>
-      <tr><td><kbd>Esc</kbd></td><td>zavřít (jako křížek): nastavení, archiv, archivní kvíz, opustit kvíz</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>zavřít nastavení, archiv nebo archivní kvíz; opustit kvíz</td></tr>
     </table>
-    <p class="muted">S adaptivním bodováním pro mix se místo 1 bodu přičítá počet bodů uvedený u otázky. V nastavení (menu ☰) jdou body upravit i tlačítky −/+.</p>
+    <p class="muted">S adaptivním bodováním pro mix se místo 1 bodu přičítá počet bodů uvedený u otázky. V nastavení (menu ☰ nebo <kbd>T</kbd>) jdou body upravit i tlačítky −/+.</p>
   </dialog>
 
   <div class="emoji-picker" id="emojiPicker" role="dialog" aria-label="Výběr ikony týmu" hidden>

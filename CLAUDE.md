@@ -25,7 +25,8 @@ Kvízová aplikace pro týmové kvízy promítané na plátno: otázky generuje 
 - **Obrázkové otázky:** obrázek se zobrazuje jen přes proxy `/api/img` (povolené hosty `IMAGE_HOSTS`), nikdy přímou URL – název souboru prozrazuje odpověď. Autor/licence (`q.image.credit`) se ukazuje až po odhalení. Nesvobodné (NonFree) obrázky nepoužívat. Pole `imageWiki` a `questionNoImage` server před odesláním klientovi maže. Vision kontrola jde po dávkách `VISION_BATCH` (20) s náhledy 500 px (`visionSrc`) – kvůli limitu velikosti požadavku při 100 otázkách.
 - Max. 4 týmy (`MAX_TEAMS`), 3–100 otázek, tři odpovědi a/b/c.
 - Klávesové zkratky jsou v `keydown` handleru v `app.js` **a** v dialogu nápovědy v `index.html` a v tabulce v README – měnit všude.
-- Chyby a hlášky přes `showError()` – zobrazují se v proužku nad lištou týmů.
+- Chyby a hlášky přes `showError()` – zobrazují se v proužku pod horní lištou.
+- **Horní lišta:** v hlavičce jen logo, týmy a menu ☰ – nic dalšího. Lišta týmů (`.scoreboard`) leží v mřížce ve stejném řádku jako `.topbar` (překrývá ji uprostřed, `pointer-events` jen na týmech); nastavení týmů (`body.teams-big`) ji roztáhne do řádku pod hlavičkou. Zavírání (opustit kvíz, zavřít archiv / archivní kvíz) je kontextová položka menu `#menuClose` + `Esc`.
 
 ## Konvence
 

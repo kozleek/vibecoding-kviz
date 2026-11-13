@@ -21,6 +21,10 @@ Generování je chráněné tokenem z env proměnné `ACCESS_TOKEN` (dlouhý ná
 - **Rate limit** na IP: `POST /api/generate` max. 20 za hodinu (`GENERATE_LIMIT`, počítají se i pokusy se špatným tokenem), proxy obrázků `/api/img` max. 600 za 15 minut. IP se bere z `X-Forwarded-For` přes jednu proxy (`TRUST_PROXY=1`, Traefik v Coolify).
 - Doporučení: nastav si v Anthropic Console limit útraty pro případ, že token unikne.
 
+## Rozložení
+
+Jedna horní lišta: vlevo logo, uprostřed týmy s body, vpravo menu ☰ (archiv, nastavení, celá obrazovka, zkratky, ukázkové kvízy a podle situace „Opustit kvíz“ / „Zavřít archiv“). Na užší obrazovce jsou týmy ve vlastním řádku pod hlavičkou.
+
 ## Zadání kvízu
 
 - **Jednoduchý režim** (výchozí): pole s tématem, našeptávač a pod ním shrnutí nastavení (např. „10 otázek · mix · bez obrázků · bez odpočtu“) – kliknutím se otevře pokročilé nastavení.
@@ -51,12 +55,12 @@ Na plátně: otázka nahoře, pod ní obrázek (třetina šířky) a vedle odpov
 ## Průběh kvízu
 
 - Odpovědi: správná se zvýrazní zeleně, špatně vybraná červeně, pod nimi vysvětlení.
-- **Odpočet** (je-li nastavený čas na odpověď): progressbar nad lištou týmů, posledních 5 s červeně, po vypršení „Čas vypršel“ – odpověď se sama neodhalí. Po odhalení odpovědi zmizí, u další neodhalené otázky začne znovu.
-- Opuštění kvízu (křížek nebo `Esc`) se potvrzuje: uložit mezi rozehrané, nebo opustit bez uložení.
+- **Odpočet** (je-li nastavený čas na odpověď): progressbar pod horní lištou, posledních 5 s červeně, po vypršení „Čas vypršel“ – odpověď se sama neodhalí. Po odhalení odpovědi zmizí, u další neodhalené otázky začne znovu.
+- Opuštění kvízu (menu ☰ → Opustit kvíz, nebo `Esc`) se potvrzuje: uložit mezi rozehrané, nebo opustit bez uložení.
 
 ## Týmy a bodování
 
-- Max. 4 týmy; přidávají se výběrem emoji (zvířata, postavy, sport – např. ⚽ Fotbalisti…), název i barva podle emoji, přejmenování kliknutím na název. Nastavení (`T` nebo ozubené kolo ve spodní liště) obsahuje i vynulování bodů a reset týmů.
+- Max. 4 týmy; přidávají se výběrem emoji (zvířata, postavy, sport – např. ⚽ Fotbalisti…), název i barva podle emoji, přejmenování kliknutím na název. Nastavení (`T` nebo menu ☰) obsahuje i vynulování bodů a reset týmů.
 - Na dotykovém zařízení se během kvízu přičítá bod klepnutím na kartu týmu.
 - **Adaptivní bodování pro mix**: místo 1 bodu se přičítá podle obtížnosti otázky (výchozí lehká 1, střední 2, těžká 3; upravitelné v nastavení).
 - **Výsledky**: karty týmů seřazené podle bodů, první tři místa s body mají medaili.
@@ -75,7 +79,7 @@ Na plátně: otázka nahoře, pod ní obrázek (třetina šířky) a vedle odpov
 | `T` | nastavení (týmy, bodování) |
 | `F` | celá obrazovka |
 | `A` | archiv (u otázky běžícího kvízu vybírá odpověď A) |
-| `Esc` | zavřít jako křížek: nastavení, archiv, archivní kvíz, opustit kvíz (s potvrzením) |
+| `Esc` | zavřít nastavení, archiv nebo archivní kvíz; opustit kvíz (s potvrzením) |
 | `?` | nápověda s klávesovými zkratkami |
 
 S adaptivním bodováním se místo 1 bodu přičítá počet bodů uvedený u otázky.
