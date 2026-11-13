@@ -1682,6 +1682,13 @@ function leaveCurrent() {
 // dokončený kvíz je v archivu automaticky; nedokončený jde uložit mezi rozehrané, nebo zahodit
 async function leaveQuiz() {
   const entry = liveEntry();
+  // ukázkový kvíz se opouští vždy bez ptaní a bez uložení do archivu
+  if (entry?.source === "demo") {
+    closeQuiz();
+    archive = archive.filter((e) => e.id !== entry.id);
+    saveArchive();
+    return openNewSetup();
+  }
   const finished = isFinished(entry);
   const choice = await askDialog(
     finished

@@ -56,7 +56,7 @@ Na plátně: otázka nahoře, pod ní obrázek (třetina šířky) a vedle odpov
 
 - Odpovědi: správná se zvýrazní zeleně, špatně vybraná červeně, pod nimi vysvětlení.
 - **Odpočet** (je-li nastavený čas na odpověď): progressbar pod horní lištou, posledních 5 s červeně, po vypršení „Čas vypršel“ – odpověď se sama neodhalí. Po odhalení odpovědi zmizí, u další neodhalené otázky začne znovu.
-- Opuštění kvízu (menu ☰ → Opustit kvíz, nebo `Esc`) se potvrzuje: uložit mezi rozehrané, nebo opustit bez uložení.
+- Opuštění kvízu (menu ☰ → Opustit kvíz, nebo `Esc`) se potvrzuje: uložit mezi rozehrané, nebo opustit bez uložení. Ukázkový kvíz se opouští vždy bez ptaní a do archivu se neukládá.
 
 ## Týmy a bodování
 
