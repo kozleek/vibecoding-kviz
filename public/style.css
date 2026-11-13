@@ -1011,18 +1011,8 @@ body.no-scoring:not(.teams-big) .scoreboard:hover .team { border-color: var(--te
   }
   body.teams-big .team .key { width: 32px; height: 32px; font-size: 1.05rem; }
 
-  /* lišta týmů: menší karty, ať se 4 týmy vejdou vedle sebe */
-  .scoreboard { padding: 16px; gap: 12px; }
+  /* lišta týmů: stejná kompaktní karta jako na desktopu (ikona | název | skóre) */
   .teams { gap: 8px; }
-  /* ikona vlevo, vpravo název a pod ním skóre – název má celou šířku */
-  .scoreboard .team {
-    flex: 0 1 234px; width: 234px; min-width: 0; padding: 12px 14px; column-gap: 14px; row-gap: 2px; border-radius: 14px;
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-  .scoreboard .team .avatar { width: 44px; height: 44px; font-size: 1.5rem; border-radius: 12px; }
-  .scoreboard .team .name { font-size: 1.1rem; grid-column: 2; grid-row: 1; }
-  .scoreboard .team .score-row { grid-column: 2; grid-row: 2; }
-  .scoreboard .team .score { font-size: 1.7rem; text-align: left; padding: 0; }
   .scoreboard .team .crown { display: none; }
   body.teams-big .scoreboard .team { flex: none; width: auto; padding: 16px; border-radius: 28px; }
 
