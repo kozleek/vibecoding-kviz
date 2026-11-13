@@ -777,14 +777,14 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 
 /* ============ Emoji picker ============ */
 .emoji-picker {
-  position: fixed; z-index: 20; width: min(360px, calc(100vw - 16px));
+  position: fixed; z-index: 20; width: min(440px, calc(100vw - 16px));
   padding: 10px; border-radius: 18px;
   background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
   border-top: 4px solid var(--team, var(--accent));
   animation: pickerIn .15s ease both;
 }
 @keyframes pickerIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; max-height: calc(100vh - 48px); overflow-y: auto; } /* celá mřížka bez posuvníku, posouvání jen na nízkých obrazovkách */
+.emoji-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; max-height: calc(100vh - 48px); overflow-y: auto; } /* celá mřížka bez posuvníku, posouvání jen na nízkých obrazovkách */
 .emoji {
   aspect-ratio: 1; border: 0; border-radius: 10px;
   background: color-mix(in srgb, var(--c) 16%, transparent);

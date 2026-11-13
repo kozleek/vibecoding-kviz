@@ -1179,6 +1179,15 @@ const EMOJI_DATA = {
   "🧙": ["Čarodějové", "#6a4fb3"], "🧛": ["Upíři", "#9b2346"], "🧟": ["Zombíci", "#5d8a4a"],
   "🥷": ["Nindžové", "#3b3b4f"], "🦸": ["Superhrdinové", "#d63a3a"], "🏴‍☠️": ["Piráti", "#3f3f48"],
   "👸": ["Princezny", "#d65a9c"], "🧚": ["Víly", "#8a6fd6"],
+  // sport – tým se jmenuje podle sportovců, ne podle náčiní
+  "⚽": ["Fotbalisti", "#2f8f4e"], "🏀": ["Basketbalisté", "#e07a2a"], "🏐": ["Volejbalisté", "#3a7bd5"],
+  "🏉": ["Ragbisté", "#8a5a3b"], "⚾": ["Baseballisté", "#b8332f"], "🎾": ["Tenisté", "#8fa31f"],
+  "🏓": ["Pingpongáři", "#d6453f"], "🏸": ["Badmintonisté", "#2f9aa3"], "🏒": ["Hokejisté", "#2f5d8a"],
+  "⛳": ["Golfisté", "#4f9a4a"], "🎳": ["Kuželkáři", "#7a5ac0"], "🥊": ["Boxeři", "#c62828"],
+  "⛷️": ["Lyžaři", "#4a90c8"], "🏂": ["Snowboardisté", "#5c6bc0"], "⛸️": ["Bruslaři", "#5f9fd0"],
+  "🚴": ["Cyklisté", "#e09a1f"], "🏊": ["Plavci", "#1f8fb0"], "🛶": ["Vodáci", "#2f7fa0"],
+  "🧗": ["Lezci", "#9b6b43"], "🛹": ["Skejťáci", "#6b5b95"], "🏹": ["Lukostřelci", "#6b8e23"],
+  "🎯": ["Šipkaři", "#d6332f"], "♟️": ["Šachisté", "#3f3f48"], "🏆": ["Šampioni", "#c99a2e"],
   // věci a jídlo
   "🌵": ["Kaktusy", "#4f9a4a"], "🍕": ["Pizzy", "#e0922f"], "🥑": ["Avokáda", "#6b9a2f"],
   "🍩": ["Donuty", "#d46a9a"], "🎸": ["Kytary", "#c0502f"], "🛸": ["UFO", "#5f7fa8"],
