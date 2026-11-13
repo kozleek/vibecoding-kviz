@@ -503,10 +503,11 @@ function setImageMode(mode) {
   document.querySelectorAll("#imageModes .chip").forEach((c) => {
     const on = c.dataset.images === state.images;
     c.classList.toggle("active", on);
-    c.setAttribute("aria-pressed", on);
+    c.setAttribute("aria-checked", on);
   });
   save();
 }
+document.querySelectorAll("#imageModes .chip").forEach((c) => c.setAttribute("role", "radio"));
 document.querySelectorAll("#imageModes .chip").forEach((c) => c.addEventListener("click", () => setImageMode(c.dataset.images)));
 
 $("setupForm").addEventListener("submit", async (e) => {

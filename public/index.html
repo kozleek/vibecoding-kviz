@@ -94,19 +94,19 @@
         <fieldset class="field adv-only">
           <legend class="label">Obtížnost</legend>
           <div class="levels">
-            <label class="level"><input type="radio" name="level" value="lehka"><span><b>Lehká</b><small>zná skoro každý</small></span></label>
-            <label class="level"><input type="radio" name="level" value="stredni"><span><b>Střední</b><small>chce to přehled</small></span></label>
-            <label class="level"><input type="radio" name="level" value="tezka"><span><b>Těžká</b><small>pro znalce</small></span></label>
-            <label class="level hardcore"><input type="radio" name="level" value="hardcore"><span><b>Hardcore</b><small>pro experty</small></span></label>
-            <label class="level"><input type="radio" name="level" value="mix" checked><span><b>Mix</b><small>od všeho trochu</small></span></label>
+            <label class="level"><input type="radio" name="level" value="lehka"><span><b>Lehká</b></span></label>
+            <label class="level"><input type="radio" name="level" value="stredni"><span><b>Střední</b></span></label>
+            <label class="level"><input type="radio" name="level" value="tezka"><span><b>Těžká</b></span></label>
+            <label class="level hardcore"><input type="radio" name="level" value="hardcore"><span><b>Hardcore</b></span></label>
+            <label class="level"><input type="radio" name="level" value="mix" checked><span><b>Mix</b></span></label>
           </div>
         </fieldset>
         <div class="field adv-only">
           <span class="label" id="imagesLabel">Obrázkové otázky <span class="muted">· obrázky z Wikipedie</span></span>
-          <div class="chips" id="imageModes" role="group" aria-labelledby="imagesLabel">
-            <button type="button" class="chip" data-images="none"><i class="ph ph-text-aa" aria-hidden="true"></i> Bez obrázků</button>
-            <button type="button" class="chip" data-images="some"><i class="ph ph-image" aria-hidden="true"></i> Některé</button>
-            <button type="button" class="chip" data-images="all"><i class="ph ph-images" aria-hidden="true"></i> Všechny</button>
+          <div class="chips radio-chips" id="imageModes" role="radiogroup" aria-labelledby="imagesLabel">
+            <button type="button" class="chip" data-images="none">Bez obrázků</button>
+            <button type="button" class="chip" data-images="some">Některé</button>
+            <button type="button" class="chip" data-images="all">Všechny</button>
           </div>
         </div>
 
