@@ -653,7 +653,7 @@ let drawTimer = null;
 function setLoadingLevel(level) {
   const pill = $("loadingLevel");
   pill.textContent = LEVEL_NAMES[level] || LEVEL_NAMES.mix;
-  pill.className = "pill level-pill loading-level " + (level === "mix" ? "" : LEVEL_DIFF[level] || "");
+  pill.className = "pill level-pill loading-level " + (LEVEL_DIFF[level] || "mix");
 }
 function startTopicDraw() {
   $("loadingTopic").classList.add("drawing");
@@ -961,7 +961,7 @@ function renderResults() {
   $("resultsSub").innerHTML = "";
   if (state.quiz) {
     const lvl = state.quiz.level;
-    const pill = el("span", "pill level-pill " + (lvl === "mix" ? "" : LEVEL_DIFF[lvl] || ""), LEVEL_NAMES[lvl] || lvl);
+    const pill = el("span", "pill level-pill " + (LEVEL_DIFF[lvl] || "mix"), LEVEL_NAMES[lvl] || lvl);
     pill.title = "Obtížnost";
     $("resultsSub").append(pill);
   }
@@ -1808,7 +1808,7 @@ function archiveItem(entry, liveId) {
     main.append(el("div", "archive-topic", entry.topic));
     const meta = el("div", "archive-meta");
     meta.append(el("span", null, fmtDate(entry.createdAt)));
-    meta.append(el("span", "pill", LEVEL_NAMES[entry.level] || entry.level));
+    meta.append(el("span", "pill level-pill " + (LEVEL_DIFF[entry.level] || "mix"), LEVEL_NAMES[entry.level] || entry.level));
     meta.append(el("span", null, `${revealedCount(entry)} / ${plural(entry.questions.length, "otázka", "otázky", "otázek")}`));
     if (entry.source === "demo") meta.append(el("span", "pill", "ukázka"));
     if (entry.source === "remix") meta.append(el("span", "pill", "nové pořadí"));

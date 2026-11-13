@@ -303,7 +303,6 @@ body.teams-big .answer-timer { display: none; }
 .loader p { min-height: 1.5em; margin: 0 0 clamp(20px, 4vh, 36px); font-size: clamp(1.1rem, 1.8vw, 1.4rem); }
 /* obtížnost nad tématem, téma jako černý nadpis */
 .loading-level { font-size: clamp(.95rem, 1.3vw, 1.2rem); padding: .35em 1em; }
-.loading-level:not(.lehká):not(.střední):not(.těžká):not(.hardcore) { background: var(--bg-2); }
 .loading-topic {
   font-family: var(--display); font-weight: 800; color: var(--text); text-wrap: balance;
   font-size: clamp(2.2rem, min(5.5vw, 8vh), 4.6rem); line-height: 1.1; letter-spacing: -.015em;
@@ -344,6 +343,16 @@ body.teams-big .answer-timer { display: none; }
 .level-pill.střední { background: var(--warn-soft); color: var(--warn); }
 .level-pill.těžká { background: var(--bad-soft); color: var(--bad); }
 .level-pill.hardcore { background: var(--text); color: var(--surface); }
+/* mix: jemný duhový přechod (barvy úrovní + fialová a modrá), funguje i v tmavém režimu */
+.level-pill.mix {
+  color: var(--text);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, #5bb77d 42%, var(--surface)),
+    color-mix(in srgb, #eaa846 42%, var(--surface)),
+    color-mix(in srgb, #e2685a 42%, var(--surface)),
+    color-mix(in srgb, #9a72d6 42%, var(--surface)),
+    color-mix(in srgb, #4f8fd6 42%, var(--surface)));
+}
 body[data-diff="lehká"] { --dc: #5bb77d; --dd: #2a6b45; }
 body[data-diff="střední"] { --dc: #eaa846; --dd: #9c5a16; }
 body[data-diff="těžká"] { --dc: #e2685a; --dd: #8f2c24; }
