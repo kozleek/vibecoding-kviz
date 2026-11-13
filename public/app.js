@@ -167,16 +167,16 @@ $("randomTopic").addEventListener("change", applyRandomTopic);
 // upřesnění zadání (doplňující prompt) v modálním okně – strukturované oddíly, pamatují se ve state.extra
 const EXTRA_FIELDS = [
   { key: "audience", label: "Pro koho", icon: "users-three", placeholder: "např. děti 10–12 let, firemní večírek",
-    chips: ["děti 6–9 let", "děti 10–12 let", "teenageři", "dospělí", "senioři", "rodiny s dětmi", "odborníci na téma"] },
+    chips: ["děti 10–12 let", "teenageři", "dospělí", "rodiny s dětmi"], wide: true },
   { key: "questions", label: "Otázky", icon: "question", placeholder: "zaměření, styl, délka otázek…",
-    chips: ["krátké a jasné", "zajímavosti a kuriozity", "zaměř se na současnost", "zaměř se na historii", "s českým kontextem", "hravé formulace"] },
+    chips: ["krátké a jasné", "zajímavosti a kuriozity", "s českým kontextem"] },
   { key: "answers", label: "Odpovědi", icon: "list-checks", placeholder: "jak mají vypadat odpovědi…",
-    chips: ["co nejkratší", "vtipné špatné odpovědi", "špatné odpovědi hodně podobné", "čísla a letopočty", "jména osobností"] },
+    chips: ["co nejkratší", "vtipné špatné odpovědi", "podobné špatné odpovědi"] },
   { key: "explanation", label: "Vysvětlení", icon: "lightbulb", placeholder: "co má být ve vysvětlení…",
-    chips: ["jen jedna věta", "přidej zajímavost navíc", "vysvětli srozumitelně pro děti"] },
+    chips: ["jen jedna věta", "přidej zajímavost navíc"] },
   { key: "forbidden", label: "Zakázáno", icon: "prohibit", placeholder: "čemu se vyhnout…", strict: true,
-    chips: ["žádné přesné letopočty", "žádná politika", "žádné násilí a smrt", "žádný alkohol", "žádné chytáky", "žádné otázky „Která z odpovědí NENÍ…“"] },
-  { key: "other", label: "Další přání", icon: "chat-text", placeholder: "cokoli dalšího…", textarea: true, chips: [] },
+    chips: ["žádná politika", "žádné násilí", "žádné přesné letopočty", "žádné chytáky"] },
+  { key: "other", label: "Další přání", icon: "chat-text", placeholder: "cokoli dalšího…", textarea: true, chips: [], wide: true },
 ];
 // starší uložený stav měl jen volný text (extraPrompt) → patří do „Další přání“
 if (!state.extra) state.extra = state.extraPrompt ? { other: state.extraPrompt } : {};
@@ -202,7 +202,7 @@ function buildExtraFields() {
   const root = $("extraFields");
   root.replaceChildren();
   for (const f of EXTRA_FIELDS) {
-    const box = el("div", "extra-field" + (f.strict ? " strict" : ""));
+    const box = el("div", "extra-field" + (f.strict ? " strict" : "") + (f.wide ? " wide" : ""));
     const id = "extra-" + f.key;
     const label = el("label", "extra-label");
     label.htmlFor = id;

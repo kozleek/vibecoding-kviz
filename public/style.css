@@ -177,6 +177,7 @@ legend.label { margin-bottom: 10px; }
 /* upřesnění zadání: oddíly s polem a návrhy */
 .dialog.help.extra-dialog { max-width: 1040px; max-height: calc(100dvh - 32px); overflow-y: auto; }
 .extra-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 32px; margin-top: 18px; }
+.extra-field.wide { grid-column: 1 / -1; } /* Pro koho a Další přání přes oba sloupce */
 @media (max-width: 760px) { .extra-fields { grid-template-columns: minmax(0, 1fr); gap: 18px; } }
 .extra-label { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; }
 .extra-label i { font-size: 1.2rem; color: var(--accent); }
@@ -184,10 +185,12 @@ legend.label { margin-bottom: 10px; }
 .dialog .extra-input { min-height: 0; font-size: 1rem; padding: 10px 14px; }
 textarea.extra-input { resize: vertical; }
 .extra-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.extra-chips .chip { padding: 5px 12px; font-size: .88rem; }
-.extra-chips .chip.active { font-weight: 600; }
+/* rychlé volby: nenápadné, jen tenká linka a tlumený text */
+.extra-chips .chip { padding: 3px 10px; font-size: .82rem; font-weight: 400; background: transparent; color: var(--muted); border-color: var(--border); }
+.extra-chips .chip:hover { color: var(--text); border-color: var(--muted); }
+.extra-chips .chip.active { background: var(--accent-soft); border-color: transparent; color: var(--accent); font-weight: 500; }
 .extra-chips .chip.active::before { content: "✓ "; }
-.extra-field.strict .chip.active { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.extra-field.strict .chip.active { background: var(--bad-soft); color: var(--bad); }
 #tokenForm { margin: 0; text-align: left; } /* ne obecné .dialog form (zarovnání doprava) */
 #tokenHint { margin: 0 0 14px; }
 .dialog .token-input { min-height: 0; font-size: 1.15rem; letter-spacing: .04em; }
