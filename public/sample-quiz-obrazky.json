@@ -1,0 +1,176 @@
+{
+  "topic": "Svět kolem nás – obrázky (ukázkový kvíz)",
+  "level": "mix",
+  "questions": [
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "lehká",
+      "question": "Ve kterém městě stojí stavba na obrázku?",
+      "answers": {
+        "a": "Paříž",
+        "b": "Lyon",
+        "c": "Brusel"
+      },
+      "correct": "a",
+      "explanation": "Eiffelova věž byla postavena pro světovou výstavu v Paříži v roce 1889 a měla stát jen dvacet let.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iLzgvODUvVG91cl9FaWZmZWxfV2lraW1lZGlhX0NvbW1vbnNfJTI4Y3JvcHBlZCUyOS5qcGcvMTI4MHB4LVRvdXJfRWlmZmVsX1dpa2ltZWRpYV9Db21tb25zXyUyOGNyb3BwZWQlMjkuanBnP3V0bV9zb3VyY2U9ZW4ud2lraXBlZGlhLm9yZyZ1dG1fY2FtcGFpZ249YXBpJnV0bV9jb250ZW50PXRodW1ibmFpbA",
+        "credit": "Benh LIEU SONG · Public domain",
+        "page": "Eiffel Tower"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "lehká",
+      "question": "Čí vlajka je na obrázku?",
+      "answers": {
+        "a": "Rakouska",
+        "b": "Kanady",
+        "c": "Peru"
+      },
+      "correct": "b",
+      "explanation": "Javorový list je na kanadské vlajce od roku 1965. Javor je symbolem Kanady a javorový sirup jejím slavným vývozním artiklem.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iL2QvZDkvRmxhZ19vZl9DYW5hZGFfJTI4UGFudG9uZSUyOS5zdmcvMTI4MHB4LUZsYWdfb2ZfQ2FuYWRhXyUyOFBhbnRvbmUlMjkuc3ZnLnBuZz91dG1fc291cmNlPWVuLndpa2lwZWRpYS5vcmcmdXRtX2NhbXBhaWduPWFwaSZ1dG1fY29udGVudD10aHVtYm5haWw",
+        "credit": "George F. G. Stanley · Public domain",
+        "page": "Flag of Canada"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "lehká",
+      "question": "Kdo namaloval obraz na obrázku?",
+      "answers": {
+        "a": "Raffael",
+        "b": "Michelangelo",
+        "c": "Leonardo da Vinci"
+      },
+      "correct": "c",
+      "explanation": "Mona Lisu maloval Leonardo da Vinci na počátku 16. století. Dnes visí v pařížském Louvru za neprůstřelným sklem.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iL2UvZWMvTW9uYV9MaXNhJTJDX2J5X0xlb25hcmRvX2RhX1ZpbmNpJTJDX2Zyb21fQzJSTUZfcmV0b3VjaGVkLmpwZy8xMjgwcHgtTW9uYV9MaXNhJTJDX2J5X0xlb25hcmRvX2RhX1ZpbmNpJTJDX2Zyb21fQzJSTUZfcmV0b3VjaGVkLmpwZz91dG1fc291cmNlPWVuLndpa2lwZWRpYS5vcmcmdXRtX2NhbXBhaWduPWFwaSZ1dG1fY29udGVudD10aHVtYm5haWw",
+        "credit": "Leonardo da Vinci · Public domain",
+        "page": "Mona Lisa"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "lehká",
+      "question": "Čím se v přírodě živí hlavně zvíře na obrázku?",
+      "answers": {
+        "a": "Bambusem",
+        "b": "Rybami",
+        "c": "Hmyzem"
+      },
+      "correct": "a",
+      "explanation": "Panda velká je sice šelma, ale bambus tvoří přes 99 % její potravy. Denně ho spořádá i přes 12 kilogramů.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iLzAvMGYvR3Jvc3Nlcl9QYW5kYS5KUEcvMTI4MHB4LUdyb3NzZXJfUGFuZGEuSlBHP3V0bV9zb3VyY2U9ZW4ud2lraXBlZGlhLm9yZyZ1dG1fY2FtcGFpZ249YXBpJnV0bV9jb250ZW50PXRodW1ibmFpbA",
+        "credit": "J. Patrick Fischer · CC BY-SA 3.0",
+        "page": "Giant panda"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "střední",
+      "question": "Ve které zemi stojí budova na obrázku?",
+      "answers": {
+        "a": "Na Novém Zélandu",
+        "b": "V Austrálii",
+        "c": "V Kanadě"
+      },
+      "correct": "b",
+      "explanation": "Opera v Sydney byla otevřena v roce 1973. Její střechy připomínající plachty navrhl dánský architekt Jørn Utzon.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iL2UvZTEvU3lkbmV5X09wZXJhX0hvdXNlXzIwMjYuanBnLzEyODBweC1TeWRuZXlfT3BlcmFfSG91c2VfMjAyNi5qcGc_dXRtX3NvdXJjZT1lbi53aWtpcGVkaWEub3JnJnV0bV9jYW1wYWlnbj1hcGkmdXRtX2NvbnRlbnQ9dGh1bWJuYWls",
+        "credit": "BAVhah · CC BY-SA 4.0",
+        "page": "Sydney Opera House"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "střední",
+      "question": "Čí vlajka je na obrázku?",
+      "answers": {
+        "a": "Bhútánu",
+        "b": "Bangladéše",
+        "c": "Nepálu"
+      },
+      "correct": "c",
+      "explanation": "Nepálská vlajka je jediná státní vlajka na světě, která nemá tvar obdélníku – tvoří ji dva trojúhelníky nad sebou.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iLzkvOWIvRmxhZ19vZl9OZXBhbC5zdmcvMTI4MHB4LUZsYWdfb2ZfTmVwYWwuc3ZnLnBuZz91dG1fc291cmNlPWVuLndpa2lwZWRpYS5vcmcmdXRtX2NhbXBhaWduPWFwaSZ1dG1fY29udGVudD10aHVtYm5haWw",
+        "credit": "Drawn by Pumbaa80, Achim1999 · Public domain",
+        "page": "Flag of Nepal"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "střední",
+      "question": "Kdo namaloval obraz na obrázku?",
+      "answers": {
+        "a": "Vincent van Gogh",
+        "b": "Claude Monet",
+        "c": "Paul Cézanne"
+      },
+      "correct": "a",
+      "explanation": "Hvězdnou noc namaloval Vincent van Gogh v roce 1889 v ústavu v Saint-Rémy. Obraz dnes visí v newyorské MoMA.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iL2UvZWEvVmFuX0dvZ2hfLV9TdGFycnlfTmlnaHRfLV9Hb29nbGVfQXJ0X1Byb2plY3QuanBnLzEyODBweC1WYW5fR29naF8tX1N0YXJyeV9OaWdodF8tX0dvb2dsZV9BcnRfUHJvamVjdC5qcGc_dXRtX3NvdXJjZT1lbi53aWtpcGVkaWEub3JnJnV0bV9jYW1wYWlnbj1hcGkmdXRtX2NvbnRlbnQ9dGh1bWJuYWls",
+        "credit": "Vincent van Gogh · Public domain",
+        "page": "The Starry Night"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "střední",
+      "question": "Na kterém ostrově stojí sochy na obrázku?",
+      "answers": {
+        "a": "Na Tahiti",
+        "b": "Na Velikonočním ostrově",
+        "c": "Na Havaji"
+      },
+      "correct": "b",
+      "explanation": "Sochy moai vytesali obyvatelé Velikonočního ostrova (Rapa Nui) z vulkanického tufu. Je jich téměř tisíc.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly91cGxvYWQud2lraW1lZGlhLm9yZy93aWtpcGVkaWEvY29tbW9ucy81LzUwL0FodVRvbmdhcmlraS5KUEc_dXRtX3NvdXJjZT1lbi53aWtpcGVkaWEub3JnJnV0bV9jYW1wYWlnbj1hcGkmdXRtX2NvbnRlbnQ9dGh1bWJuYWlsX3Vuc2NhbGVk",
+        "credit": "Ian Sewell · CC BY 2.5",
+        "page": "Moai"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "těžká",
+      "question": "Jak se jmenuje zvíře na obrázku?",
+      "answers": {
+        "a": "Čolek obecný",
+        "b": "Mlok skvrnitý",
+        "c": "Axolotl mexický"
+      },
+      "correct": "c",
+      "explanation": "Axolotl je mexický obojživelník, který si celý život uchovává larvální podobu s vnějšími žábrami. Umí regenerovat i části mozku.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iLzAvMDAvQXhvbG90bF9nYW56LmpwZy8xMjgwcHgtQXhvbG90bF9nYW56LmpwZz91dG1fc291cmNlPWVuLndpa2lwZWRpYS5vcmcmdXRtX2NhbXBhaWduPWFwaSZ1dG1fY29udGVudD10aHVtYm5haWw",
+        "credit": "LoKiLeCh · CC BY-SA 3.0",
+        "page": "Axolotl"
+      }
+    },
+    {
+      "topic": "Svět kolem nás",
+      "difficulty": "těžká",
+      "question": "Ve které zemi stojí stavba na obrázku?",
+      "answers": {
+        "a": "V Jordánsku",
+        "b": "V Egyptě",
+        "c": "V Sýrii"
+      },
+      "correct": "a",
+      "explanation": "Pokladnice (Al-Khazneh) je nejslavnější stavba skalního města Petra v Jordánsku, vytesaná Nabatejci do pískovcové skály.",
+      "image": {
+        "src": "/api/img?u=aHR0cHM6Ly90aHVtYi53aWtpbWVkaWEub3JnL3dpa2lwZWRpYS9jb21tb25zL3RodW1iL2UvZWQvQWxfa2hhem5laC5qcGcvMTI4MHB4LUFsX2toYXpuZWguanBnP3V0bV9zb3VyY2U9ZW4ud2lraXBlZGlhLm9yZyZ1dG1fY2FtcGFpZ249YXBpJnV0bV9jb250ZW50PXRodW1ibmFpbA",
+        "credit": "Susanahajer · CC BY-SA 3.0",
+        "page": "Al-Khazneh"
+      }
+    }
+  ]
+}

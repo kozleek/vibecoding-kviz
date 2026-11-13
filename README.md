@@ -40,7 +40,7 @@ Obrázky jdou přes proxy `/api/img` (jen Wikimedia), aby název souboru v URL n
 
 Každá otázka má tři odpovědi (A/B/C), jednu správnou a krátké vysvětlení. Pořadí odpovědí se na serveru náhodně míchá.
 
-V menu ☰ jsou i **ukázkové kvízy** (Sport, Příroda, Vesmír) z `public/sample-quiz*.json`, které nevolají API.
+V menu ☰ jsou i **ukázkové kvízy** (Sport, Příroda, Vesmír a Obrázky s obrázkovými otázkami) z `public/sample-quiz*.json`, které nevolají API.
 
 ## Týmy a bodování
 
