@@ -500,6 +500,7 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 .podium-place.p2 .podium-block { height: clamp(70px, 13.5vh, 200px); }
 .podium-place.p3 .podium-block { height: clamp(50px, 9vh, 140px); }
 .podium-place.tie .podium-block { height: clamp(64px, 12vh, 170px); } /* remíza: všichni stejně vysoko */
+.podium-place.zero .podium-block { height: 0; padding: 0; font-size: 0; overflow: hidden; } /* tým bez bodů nemá sloupec ani medaili */
 .rest { list-style: none; padding: 0; margin: clamp(12px, 2.4vh, 32px) auto 0; max-width: min(760px, 60vw); }
 .rest li {
   display: flex; gap: 14px; padding: clamp(6px, 1.2vh, 16px) 18px; font-size: clamp(1.2rem, min(2vw, 3vh), 2.2rem);

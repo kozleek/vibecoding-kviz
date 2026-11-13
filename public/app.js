@@ -927,7 +927,7 @@ function renderResults() {
     order = [...left, ...byRank(1), ...right];
   }
   for (const t of order) {
-    const place = el("div", allTied ? "podium-place tie" : `podium-place p${t.rank}`);
+    const place = el("div", (allTied ? "podium-place tie" : `podium-place p${t.rank}`) + (t.score <= 0 ? " zero" : "")); // 0 bodů = bez sloupce
     place.style.setProperty("--team", t.color);
     place.append(
       el("div", "podium-emoji", t.emoji),
