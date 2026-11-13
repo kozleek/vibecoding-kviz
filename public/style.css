@@ -359,18 +359,17 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
   text-wrap: balance;
 }
 
-/* obrázková otázka: obrázek vlevo přes celou výšku, otázka a odpovědi vpravo */
+/* obrázková otázka: otázka nahoře přes celou šířku, pod ní obrázek vlevo a odpovědi vpravo, vysvětlení dole */
 .question.has-image {
-  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   column-gap: clamp(20px, 3vw, 60px); align-content: center;
 }
-.question.has-image > * { grid-column: 2; }
-.question.has-image > .q-meta { grid-column: 1 / -1; margin-bottom: clamp(8px, 1.6vh, 20px); }
-.question.has-image > .q-image { grid-column: 1; grid-row: 2 / span 4; align-self: center; }
-.question.has-image .q-text { font-size: clamp(1.35rem, min(2.8vw, 4.2vh), 3.4rem); margin-top: 0; }
+.question.has-image > * { grid-column: 1 / -1; }
+.question.has-image > .q-image { grid-column: 1; grid-row: 3; align-self: center; }
+.question.has-image > .answers { grid-column: 2; grid-row: 3; align-self: center; }
 .q-image { margin: 0; display: grid; gap: 8px; }
 .q-image img {
-  display: block; width: 100%; height: auto; max-height: 62vh; object-fit: contain;
+  display: block; width: 100%; height: auto; max-height: 50vh; object-fit: contain;
   border-radius: clamp(14px, 1.4vw, 24px); background: var(--bg);
 }
 .q-image figcaption { font-size: clamp(.75rem, .9vw, 1rem); color: var(--muted); text-align: center; animation: enter .35s ease both; }
@@ -928,7 +927,8 @@ body.teams-big .team.bump { transform: none; } /* v nastavení se dlaždice při
 @media (max-width: 720px) {
   .question.has-image { display: flex; }
   .q-image img { max-height: 34vh; }
-  .question.has-image .q-text { margin-top: 14px; }
+  .question.has-image > .answers, .question.has-image > .q-image { align-self: stretch; }
+  .question.has-image > .q-image { margin-bottom: 14px; }
   .topbar, main, .scoreboard { padding-left: 16px; padding-right: 16px; }
   .setup { padding: 22px; }
   .view-setup.simple .input-xl { padding: 16px 18px; border-radius: 18px; }
