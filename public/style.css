@@ -367,6 +367,7 @@ body[data-diff="mix"] { --dc: #5ea8a0; --dd: #1f5c58; } /* zadání s volbou mix
 .question.has-image > * { grid-column: 1 / -1; }
 .question.has-image > .q-image { grid-column: 1; grid-row: 3; align-self: center; }
 .question.has-image > .answers { grid-column: 2; grid-row: 3; align-self: center; }
+.question.has-image > .q-text { text-wrap: pretty; } /* plná šířka řádku, ne vyvážené půlky */
 .q-image { margin: 0; display: grid; gap: 8px; }
 .q-image img {
   display: block; width: 100%; height: auto; max-height: 50vh; object-fit: contain;
